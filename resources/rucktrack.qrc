@@ -1,0 +1,14 @@
+<RCC>
+  <qresource prefix="resources" >
+    <file>tools-wizard.png</file>
+    <file>googlemaps.html</file>
+    <file>document-new.png</file>
+    <file>document-open.png</file>
+    <file>document-save.png</file>
+    <file>view-table-of-contents-ltr.png</file>
+    <file>map.png</file>
+    <file>office-chart-area.png</file>
+    <file>table.png</file>
+    <file>blue-dot.png</file>
+  </qresource>
+</RCC>
