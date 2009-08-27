@@ -23,6 +23,7 @@
  */
 
 #include <QtCore/QDebug>
+#include <QtGui/QMouseEvent>
 
 #include "PlotView.h"
 
@@ -95,10 +96,16 @@ void PlotCurve::attachData( PlotView * _plotView, double * _xData )
 
 
 PlotView::PlotView( QWidget * _parent ) :
-	QwtPlot( _parent )
+	QwtPlot( _parent ),
+	m_curves(),
+	m_numPoints( 0 ),
+	m_xData( NULL ),
+	m_trackPoints( NULL )
 {
 	enableAxis( yRight );
 	canvas()->setLineWidth( 0 );
+	canvas()->installEventFilter( this );
+	canvas()->setMouseTracking( true );
 
 	QwtLegend * legend = new QwtLegend;
 	legend->setDisplayPolicy( QwtLegend::FixedIdentifier,
@@ -106,7 +113,6 @@ PlotView::PlotView( QWidget * _parent ) :
 	legend->setStyleSheet( "font-weight:bold;" );
 	legend->setFrameStyle( QFrame::NoFrame );
 	insertLegend( legend, QwtPlot::RightLegend );
-
 }
 
 
@@ -114,15 +120,19 @@ PlotView::PlotView( QWidget * _parent ) :
 
 void PlotView::showRoute( const Route & _route )
 {
-	int numPoints = 0;
+	m_numPoints = 0;
 	foreach( const TrackSegment & seg, _route )
 	{
-		numPoints += seg.size()-1;
+		m_numPoints += seg.size()-1;
 	}
-	double * xData = new double[numPoints];
 
-	m_curves[Elevation] = PlotCurve( numPoints, "Elevation", Qt::blue );
-	m_curves[Speed] = PlotCurve( numPoints, "Speed", QColor( 0, 160, 0 ) );
+	delete[] m_trackPoints;
+	delete[] m_xData;
+	m_trackPoints = new const TrackPoint *[m_numPoints];
+	m_xData = new double[m_numPoints];
+
+	m_curves[Elevation] = PlotCurve( m_numPoints, "Elevation", Qt::blue );
+	m_curves[Speed] = PlotCurve( m_numPoints, "Speed", QColor( 0, 160, 0 ) );
 
 
 	double length = 0;
@@ -166,7 +176,8 @@ void PlotView::showRoute( const Route & _route )
 				}
 				// smooth speed a bit
 				speed = speed*0.6 + 0.4*(dist*1000 / secs);
-				xData[pointCount] = length;
+				m_xData[pointCount] = length;
+				m_trackPoints[pointCount] = &pt;
 				m_curves[Elevation].data()[pointCount] = pt.elevation();
 				m_curves[Speed].data()[pointCount] = speed*3.6;
 				++pointCount;
@@ -177,18 +188,48 @@ void PlotView::showRoute( const Route & _route )
 
 	for( CurveMap::Iterator it = m_curves.begin(); it != m_curves.end(); ++it )
 	{
-		it.value().attachData( this, xData );
+		it.value().attachData( this, m_xData );
 	}
 
 	m_curves[Elevation].setYAxis( 0 );
 	m_curves[Speed].setYAxis( 1 );
 
-
-	delete[] xData;
-
 	setAxisScale( xBottom, 0, length );
 	replot();
 }
 
+
+
+
+bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
+{
+	if( _obj != (QObject *) canvas() )
+	{
+		return false;
+	}
+
+	switch( _event->type() )
+	{
+		case QEvent::MouseMove:
+		{
+			const double x = invTransform( xBottom,
+									((QMouseEvent *)_event)->pos().x() );
+			for( int i = 0; i < m_numPoints; ++i )
+			{
+				if( m_xData[i] >= x )
+				{
+					emit clickedPoint( m_trackPoints[i]->latitude(),
+										m_trackPoints[i]->longitude() );
+					break;
+				}
+			}
+			return true;
+		}
+		default:
+			break;
+	}
+
+	return QObject::eventFilter( _obj, _event );
+}
 
 

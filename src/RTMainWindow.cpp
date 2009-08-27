@@ -72,6 +72,8 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 				this, SLOT( highlightSelectedTrackPoint( const QModelIndex &, const QModelIndex & ) ) );
 	connect( ui->mapView, SIGNAL( clickedPoint( double, double ) ),
 				this, SLOT( selectTrackPoint( double, double ) ) );
+	connect( ui->plotView, SIGNAL( clickedPoint( double, double ) ),
+				this, SLOT( selectTrackPoint( double, double ) ) );
 
 	// connect actions
 	connect( ui->actionOpen, SIGNAL(activated()), this, SLOT( openFile() ) );

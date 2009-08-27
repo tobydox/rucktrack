@@ -80,10 +80,19 @@ public:
 
 	void showRoute( const Route & _route );
 
+	virtual bool eventFilter( QObject * _obj, QEvent * _event );
+
 
 private:
 	typedef QMap<Curves, PlotCurve> CurveMap;
 	CurveMap m_curves;
+	int m_numPoints;
+	double * m_xData;
+	const TrackPoint * * m_trackPoints;
+
+
+signals:
+	void clickedPoint( double, double );
 
 } ;
 
