@@ -17,6 +17,7 @@ SOURCES += src/main.cpp \
     src/QtBzip2File.cpp \
     src/3rdparty/quazip/quazip/zip.c \
     src/3rdparty/quazip/quazip/unzip.c \
+    src/3rdparty/quazip/quazip/quazipnewinfo.cpp \
     src/3rdparty/quazip/quazip/quazipfile.cpp \
     src/3rdparty/quazip/quazip/quazip.cpp \
     src/3rdparty/quazip/quazip/ioapi.c \
