@@ -26,6 +26,9 @@
  */
 
 #include "SrtmTiff.h"
+
+#include <math.h>
+
 #include "gdal/gdal_priv.h"
 
 
