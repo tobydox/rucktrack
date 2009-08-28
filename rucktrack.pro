@@ -54,7 +54,8 @@ INCLUDEPATH += src \
     src/3rdparty/quazip/quazip \
 	src/3rdparty/bzip2/ \
 	src/3rdparty/qwt/
-LIBS += -lgdal1.5.0
+unix:LIBS += -lgdal1.5.0
+win32:LIBS += -L. -lgdal -lwsock32
 FORMS += forms/rtmainwindow.ui
 RESOURCES += resources/rucktrack.qrc
 OTHER_FILES += src/3rdparty/quazip/quazip/quazip.pro
