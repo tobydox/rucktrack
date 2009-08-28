@@ -2,7 +2,9 @@
 # Project created by QtCreator 2009-07-23T23:49:12
 # -------------------------------------------------
 QT += script \
-    webkit
+    webkit \
+    network \
+    xml
 CONFIG += release
 TARGET = rucktrack
 TEMPLATE = app
