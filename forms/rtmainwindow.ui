@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>RuckTrack</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/rucktrack.qrc">
+    <normaloff>:/resources/icon.png</normaloff>:/resources/icon.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

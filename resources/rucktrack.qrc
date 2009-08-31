@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="resources" >
+    <file>icon.png</file>
     <file>tools-wizard.png</file>
     <file>googlemaps.html</file>
     <file>document-new.png</file>
