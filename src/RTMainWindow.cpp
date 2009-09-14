@@ -27,6 +27,7 @@
 #include <QtGui/QProgressBar>
 #include <QtXml/QDomDocument>
 
+#include "AboutDialog.h"
 #include "RTMainWindow.h"
 #include "ProgressTrackingNetworkAccessManager.h"
 #include "RouteTableModel.h"
@@ -80,6 +81,7 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 				this, SLOT( selectTrackPoint( double, double ) ) );
 
 	// connect actions
+	connect( ui->actionAbout, SIGNAL(activated()), this, SLOT( about() ) );
 	connect( ui->actionOpen, SIGNAL(activated()), this, SLOT( openFile() ) );
 	connect( ui->actionFixElevations, SIGNAL(activated()),
 				this, SLOT( fixElevations() ) );
@@ -92,6 +94,14 @@ RTMainWindow::~RTMainWindow()
 {
 	delete ui;
 	SrtmLayer::cleanup();
+}
+
+
+
+
+void RTMainWindow::about()
+{
+	AboutDialog( this ).exec();
 }
 
 

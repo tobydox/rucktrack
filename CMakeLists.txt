@@ -61,6 +61,7 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/3rdparty/qwt/qwt-all.cpp)
 
 SET(rucktrack_INCLUDES src/RTMainWindow.h
+			src/AboutDialog.h
 			src/MapView.h
 			src/PlotView.h
 			src/ProgressTrackingNetworkAccessManager.h
@@ -90,7 +91,7 @@ IF(WIN32)
 			DEPENDS ${CMAKE_BINARY_DIR}/rucktrack.rc)
 ENDIF(WIN32)
 
-SET(rucktrack_UI forms/rtmainwindow.ui)
+SET(rucktrack_UI forms/rtmainwindow.ui forms/AboutDialog.ui)
 
 QT4_WRAP_CPP(rucktrack_MOC_out ${rucktrack_INCLUDES})
 QT4_WRAP_UI(rucktrack_UIC_out ${rucktrack_UI})

@@ -32,6 +32,7 @@ SOURCES += src/main.cpp \
 	src/3rdparty/qwt/qwt-all.cpp
 
 HEADERS += src/RTMainWindow.h \
+    src/AboutDialog.h \
     src/MapView.h \
     src/PlotView.h \
     src/ProgressTrackingNetworkAccessManager.h \
@@ -55,7 +56,7 @@ INCLUDEPATH += src \
 	src/3rdparty/qwt/
 unix:LIBS += -lgdal1.5.0
 win32:LIBS += -L. -lgdal -lwsock32
-FORMS += forms/rtmainwindow.ui
+FORMS += forms/rtmainwindow.ui forms/AboutDialog.ui
 RESOURCES += resources/rucktrack.qrc
 OTHER_FILES += src/3rdparty/quazip/quazip/quazip.pro
 OBJECTS_DIR = obj

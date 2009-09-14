@@ -1,5 +1,5 @@
 /*
- * RTMainWindow.h - header file for RTMainWindow class
+ * AboutDialog.h - header file for AboutDialog class
  *
  * Copyright (c) 2009 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
@@ -22,54 +22,25 @@
  *
  */
 
-#ifndef _RTMAINWINDOW_H
-#define _RTMAINWINDOW_H
+#ifndef _ABOUT_DIALOG_H
+#define _ABOUT_DIALOG_H
 
-#include <QtCore/QDebug>
-#include <QtCore/QModelIndex>
-#include <QtGui/QMainWindow>
+#include <QtGui/QDialog>
 
-#include "TrackPoint.h"
+#include "ui_AboutDialog.h"
 
 
-class RouteTableModel;
-
-namespace Ui
+class AboutDialog : public QDialog, public Ui::AboutDialog
 {
-	class RTMainWindow;
-}
-
-class RTMainWindow : public QMainWindow
-{
-	Q_OBJECT
-
 public:
-	RTMainWindow(QWidget *parent = 0);
-	~RTMainWindow();
-
-	static RTMainWindow * instance()
-	{
-		return _this;
-	}
-
-
-private slots:
-	void about();
-	void openFile();
-	void fixElevations();
-	void selectTrackPoint( double _lat, double _lon );
-	void highlightSelectedTrackPoint( const QModelIndex & _current,
-										const QModelIndex & _prev );
-
-
-private:
-	static RTMainWindow * _this;
-
-	Ui::RTMainWindow *ui;
-	Route m_currentRoute;
-	RouteTableModel * m_routeTableModel;
-
+    AboutDialog( QWidget * _parent ) :
+        QDialog( _parent )
+    {
+        setupUi( this );
+        aboutTextLabel->setText(
+            aboutTextLabel->text().arg( "0.1.0" ) );
+    }
 } ;
 
 
-#endif // _RTMAINWINDOW_H
+#endif // _ABOUT_DIALOG_H
