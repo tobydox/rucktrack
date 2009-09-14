@@ -35,7 +35,4 @@ int main(int argc, char *argv[])
 	w.show();
 
 	return a.exec();
-	//SrtmLayer sl;
-	//qDebug() << sl.getElevation( 34.2588, -107.7597222 ); = 2508
-	//qDebug() << sl.getElevation( 50.8706, 12.9631 );// = 365
 }
