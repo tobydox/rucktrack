@@ -177,22 +177,41 @@ void RTMainWindow::fixElevations()
 
 	double err = 0;
 	int items = 0;
+	float curElev = 0;
 	SrtmLayer layer;
-	for( Route::Iterator routeIt = m_currentRoute.begin(); routeIt != m_currentRoute.end(); ++routeIt )
+	bool validData = true;
+	for( Route::Iterator routeIt = m_currentRoute.begin();
+			routeIt != m_currentRoute.end() && validData; ++routeIt )
 	{
 		for( TrackSegment::Iterator it = routeIt->begin(); it != routeIt->end(); ++it )
 		{
-			const double newElevation = layer.getElevation( it->latitude(), it->longitude() );
-			err += qAbs( newElevation - it->elevation() );
-			it->setElevation( newElevation );
+			if( layer.getElevation( it->latitude(), it->longitude(), curElev ) )
+			{
+				err += qAbs( curElev - it->elevation() );
+				it->setElevation( curElev );
+			}
+			else
+			{
+				validData = false;
+				break;
+			}
 		}
 		items += routeIt->size();
 	}
-	ui->statusBar->showMessage(
-		QString( "Fixed elevation of %1 points (average error of %2 m)." ).
-			arg( items ).arg( err / items, 0, 'f', 1 ), 5000 );
-	ui->statsTable->update( m_currentRoute );
-	ui->plotView->showRoute( m_currentRoute );
+	if( validData )
+	{
+		ui->statusBar->showMessage(
+			QString( "Fixed elevation of %1 points (average error of %2 m)." ).
+				arg( items ).arg( err / items, 0, 'f', 1 ), 5000 );
+		ui->statsTable->update( m_currentRoute );
+		ui->plotView->showRoute( m_currentRoute );
+	}
+	else
+	{
+		ui->statusBar->showMessage(
+			QString( "Failed to retrieve SRTM elevation data. "
+						"Please try again." ), 5000 );
+	}
 }
 
 

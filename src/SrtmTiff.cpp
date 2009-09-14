@@ -25,6 +25,8 @@
  *
  */
 
+#include <QtCore/QFile>
+
 #include "SrtmTiff.h"
 
 #include <math.h>
@@ -91,7 +93,12 @@ void SrtmTiff::loadTile( const QString & _filename )
 	GDALAllRegister();
 	m_tile->dataset = static_cast<GDALDataset *>(
 					GDALOpen( _filename.toUtf8().constData(), GA_ReadOnly ) );
-
+	if( !m_tile->dataset )
+	{
+		QFile( _filename ).remove();
+		qWarning( "GDALOpen() returned NULL" );
+		return;
+	}
 	double geotransform[6];
 	m_tile->dataset->GetGeoTransform( geotransform );
 

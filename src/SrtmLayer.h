@@ -43,7 +43,7 @@ public:
 
 	static void cleanup();
 
-	float getElevation( float lat, float lon );
+	bool getElevation( float lat, float lon, float & elev );
 
 	QString cachePath() const;
 	QString fastCachePath() const;

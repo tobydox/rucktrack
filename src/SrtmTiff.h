@@ -34,6 +34,11 @@ class SrtmTiff
 public:
 	SrtmTiff( const QString & _filename );
 
+	inline bool isReady() const
+	{
+		return m_tile != NULL && m_tile->dataset != NULL;
+	}
+
 	double getElevation( double lat, double lon );
 
 

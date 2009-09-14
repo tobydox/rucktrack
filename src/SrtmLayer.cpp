@@ -64,7 +64,7 @@ void SrtmLayer::cleanup()
 
 
 
-float SrtmLayer::getElevation( float lat, float lon )
+bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 {
 	QString fileName = getSrtmFilename( lat, lon );
 	if( !s_cache.contains( fileName ) )
@@ -81,12 +81,26 @@ float SrtmLayer::getElevation( float lat, float lon )
 			{
 				const QString zipFileName = fileName + ".ZIP";
 
-				if( !QFileInfo( fastCachePath() + zipFileName ).isFile() )
+				// create zip object
+				QuaZip zip( fastCachePath() + zipFileName );
+				zip.open( QuaZip::mdUnzip );
+
+				// create zip-file object
+				QuaZipFile zipFile( &zip );
+				zip.goToFirstFile();
+				zipFile.open( QFile::ReadOnly );
+
+				if( !QFileInfo( fastCachePath() + zipFileName ).isFile() ||
+															!zipFile.isOpen() )
 				{
 					if( !downloadSrtmTiff( zipFileName ) )
 					{
-						return -1;
+						return false;
 					}
+					// re-open ZIP file
+					zip.open( QuaZip::mdUnzip );
+					zip.goToFirstFile();
+					zipFile.open( QFile::ReadOnly );
 				}
 
 				QProgressDialog progDlg(
@@ -101,17 +115,8 @@ float SrtmLayer::getElevation( float lat, float lon )
 				QFile outputFile( fastCachePath() + fileName + ".tif" );
 				outputFile.open( QFile::WriteOnly );
 
-				// create zip object
-				QuaZip zip( fastCachePath() + zipFileName );
-				zip.open( QuaZip::mdUnzip );
-
-				// create zip-file object
-				QuaZipFile zipFile( &zip );
-				zip.goToFirstFile();
-				zipFile.open( QFile::ReadOnly );
-
 				// extract our file
-				while( !zipFile.atEnd() )
+				while( zipFile.isOpen() && !zipFile.atEnd() )
 				{
 					outputFile.write( zipFile.read( 1024*1024 ) );	// read 1 MB chunks
 				}
@@ -141,7 +146,16 @@ float SrtmLayer::getElevation( float lat, float lon )
 		s_cache[fileName] = new SrtmTiff( cachedTIF );
 	}
 
-	return s_cache[fileName]->getElevation( lat, lon );
+	if( s_cache[fileName]->isReady() )
+	{
+		elev = s_cache[fileName]->getElevation( lat, lon );
+		return true;
+	}
+
+	delete s_cache[fileName];
+	s_cache.remove( fileName );
+
+	return false;
 }
 
 
