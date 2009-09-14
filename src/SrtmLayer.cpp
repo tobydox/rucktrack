@@ -108,6 +108,8 @@ bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 						"(this may take some time)." ),
 					QString(), 0, 100 );
 				progDlg.setModal( true );
+				progDlg.show();
+				progDlg.setValue( 0 );
 				connect( &bzip2File, SIGNAL( progressChanged( int ) ),
 							&progDlg, SLOT( setValue( int ) ) );
 
@@ -136,6 +138,8 @@ bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 					tr( "Decompressing cached SRTM data (this may take some time)." ),
 					QString(), 0, 100 );
 				progDlg.setModal( true );
+				progDlg.show();
+				progDlg.setValue( 0 );
 				connect( &bzip2File, SIGNAL( progressChanged( int ) ),
 							&progDlg, SLOT( setValue( int ) ) );
 				QCoreApplication::processEvents( QEventLoop::AllEvents );
@@ -232,6 +236,8 @@ bool SrtmLayer::downloadSrtmTiff( const QString & filename )
 								tr( "Cancel" ),
 								0, 100 );
 	progDlg.setModal( true );
+	progDlg.show();
+	progDlg.setValue( 0 );
 	connect( &m_netAccMgr, SIGNAL( progressChanged( int ) ),
 				&progDlg, SLOT( setValue( int ) ) );
 
