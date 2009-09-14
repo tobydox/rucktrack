@@ -47,6 +47,11 @@ public:
 	RTMainWindow(QWidget *parent = 0);
 	~RTMainWindow();
 
+	static RTMainWindow * instance()
+	{
+		return _this;
+	}
+
 
 private slots:
 	void openFile();
@@ -57,6 +62,7 @@ private slots:
 
 
 private:
+	static RTMainWindow * _this;
 
 	Ui::RTMainWindow *ui;
 	Route m_currentRoute;

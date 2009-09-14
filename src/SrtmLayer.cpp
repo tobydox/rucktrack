@@ -31,6 +31,7 @@
 #include <QtCore/QFileInfo>
 #include <QtGui/QProgressDialog>
 
+#include "RTMainWindow.h"
 #include "SrtmLayer.h"
 #include "SrtmTiff.h"
 #include "QtBzip2File.h"
@@ -106,7 +107,7 @@ bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 				QProgressDialog progDlg(
 					tr( "Recompressing downloaded SRTM data for future use "
 						"(this may take some time)." ),
-					QString(), 0, 100 );
+					QString(), 0, 100, RTMainWindow::instance() );
 				progDlg.setModal( true );
 				progDlg.show();
 				progDlg.setValue( 0 );
@@ -136,7 +137,7 @@ bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 			{
 				QProgressDialog progDlg(
 					tr( "Decompressing cached SRTM data (this may take some time)." ),
-					QString(), 0, 100 );
+					QString(), 0, 100, RTMainWindow::instance() );
 				progDlg.setModal( true );
 				progDlg.show();
 				progDlg.setValue( 0 );
@@ -234,7 +235,7 @@ bool SrtmLayer::downloadSrtmTiff( const QString & filename )
 
 	QProgressDialog progDlg( tr( "Initially downloading required SRTM data." ),
 								tr( "Cancel" ),
-								0, 100 );
+								0, 100, RTMainWindow::instance() );
 	progDlg.setModal( true );
 	progDlg.show();
 	progDlg.setValue( 0 );

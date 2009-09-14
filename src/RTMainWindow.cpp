@@ -34,6 +34,8 @@
 
 #include "ui_rtmainwindow.h"
 
+RTMainWindow * RTMainWindow::_this = NULL;
+
 
 RTMainWindow::RTMainWindow(QWidget *parent) :
 	QMainWindow( parent ),
@@ -41,6 +43,8 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 	m_currentRoute(),
 	m_routeTableModel( new RouteTableModel( m_currentRoute, this ) )
 {
+	_this = this;
+
 	ui->setupUi(this);
 
 	// the whole app is DockWidget-based, therefore hide centralWidget
