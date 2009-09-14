@@ -93,10 +93,9 @@ float SrtmLayer::getElevation( float lat, float lon )
 					tr( "Recompressing downloaded SRTM data for future use "
 						"(this may take some time)." ),
 					QString(), 0, 100 );
-				progDlg.setWindowModality( Qt::WindowModal );
+				progDlg.setModal( true );
 				connect( &bzip2File, SIGNAL( progressChanged( int ) ),
 							&progDlg, SLOT( setValue( int ) ) );
-				QCoreApplication::processEvents( QEventLoop::AllEvents );
 
 				// create output file
 				QFile outputFile( fastCachePath() + fileName + ".tif" );
@@ -131,7 +130,7 @@ float SrtmLayer::getElevation( float lat, float lon )
 				QProgressDialog progDlg(
 					tr( "Decompressing cached SRTM data (this may take some time)." ),
 					QString(), 0, 100 );
-				progDlg.setWindowModality( Qt::WindowModal );
+				progDlg.setModal( true );
 				connect( &bzip2File, SIGNAL( progressChanged( int ) ),
 							&progDlg, SLOT( setValue( int ) ) );
 				QCoreApplication::processEvents( QEventLoop::AllEvents );
@@ -218,7 +217,7 @@ bool SrtmLayer::downloadSrtmTiff( const QString & filename )
 	QProgressDialog progDlg( tr( "Initially downloading required SRTM data." ),
 								tr( "Cancel" ),
 								0, 100 );
-	progDlg.setWindowModality( Qt::WindowModal );
+	progDlg.setModal( true );
 	connect( &m_netAccMgr, SIGNAL( progressChanged( int ) ),
 				&progDlg, SLOT( setValue( int ) ) );
 
