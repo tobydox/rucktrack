@@ -81,9 +81,9 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 				this, SLOT( selectTrackPoint( double, double ) ) );
 
 	// connect actions
-	connect( ui->actionAbout, SIGNAL(activated()), this, SLOT( about() ) );
-	connect( ui->actionOpen, SIGNAL(activated()), this, SLOT( openFile() ) );
-	connect( ui->actionFixElevations, SIGNAL(activated()),
+	connect( ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT( about() ) );
+	connect( ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT( openFile() ) );
+	connect( ui->actionFixElevations, SIGNAL(triggered(bool)),
 				this, SLOT( fixElevations() ) );
 
 }
