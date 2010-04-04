@@ -125,7 +125,7 @@ ADD_CUSTOM_TARGET(dist
 						COMMAND rm -rf ${TMP}
 						COMMAND mkdir -p ${TMP}
 						COMMAND cp AUTHORS build_mingw32 CMakeLists.txt rucktrack.pro COPYING INSTALL rucktrack.rc.in README TODO ${TMP}
-						COMMAND cp -r 3rdparty cmake data forms src ${TMP}
+						COMMAND cp -r 3rdparty cmake resources forms src ${TMP}
 						COMMAND rm -rf `find ${TMP} -name cmake_install.cmake` `find ${TMP} -name Makefile` `find ${TMP} -type d -name CMakeFiles` ${TMP}/CMakeCache.txt
 						COMMAND tar cjf rucktrack-${VERSION}.tar.bz2 ${TMP}
 						COMMAND rm -rf ${TMP})
@@ -145,7 +145,7 @@ IF(VERSION_SUFFIX)
 ENDIF(VERSION_SUFFIX)
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "RuckTrack ${VERSION}")
 IF(WIN32)
-SET(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/data\\\\rucktrack.ico")
+SET(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/resources\\\\rucktrack.ico")
 SET(CPACK_NSIS_INSTALLED_ICON_NAME "rucktrack.exe")
 SET(CPACK_NSIS_DISPLAY_NAME "RuckTrack")
 SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\rucktrack.sourceforge.net")
@@ -158,7 +158,7 @@ SET(CPACK_STRIP_FILES "bin/rucktrack")
 SET(CPACK_PACKAGE_EXECUTABLES "rucktrack" "RuckTrack binary")
 ENDIF(WIN32)
 
-SET(MACOSX_BUNDLE_ICON_FILE "${CMAKE_SOURCE_DIR}/data/logo.png")
+SET(MACOSX_BUNDLE_ICON_FILE "${CMAKE_SOURCE_DIR}/resources/logo.png")
 SET(MACOSX_BUNDLE_GUI_IDENTIFIER "RuckTrack")
 SET(MACOSX_BUNDLE_LONG_VERSION_STRING "${VERSION}")
 SET(MACOSX_BUNDLE_BUNDLE_NAME "RuckTrack")
