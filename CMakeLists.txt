@@ -82,9 +82,8 @@ SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/3rdparty/qwt/qwt_scale_widget.h)
 
 IF(WIN32)
-	INSTALL(FILES ${QT_BINARY_DIR}/QtCore4.dll ${QT_BINARY_DIR}/QtGui4.dll ${QT_BINARY_DIR}/QtXml4.dll ${QT_BINARY_DIR}/QtNetwork4.dll ${QT_BINARY_DIR}/QtWebKit4.dll ${QT_BINARY_DIR}/mingwm10.dll ${QT_BINARY_DIR}/libgdal-1.dll ${QT_BINARY_DIR}/libz.dll DESTINATION .)
+	INSTALL(FILES ${QT_BINARY_DIR}/QtCore4.dll ${QT_BINARY_DIR}/QtGui4.dll ${QT_BINARY_DIR}/QtXml4.dll ${QT_BINARY_DIR}/QtNetwork4.dll ${QT_BINARY_DIR}/QtWebKit4.dll ${QT_BINARY_DIR}/phonon4.dll ${QT_BINARY_DIR}/libgdal-1.dll ${QT_BINARY_DIR}/libz.dll DESTINATION .)
 	SET(WINRC "${CMAKE_BINARY_DIR}/rucktrackrc.obj")
-	#	SET(WINDRES /opt/mingw32/bin/i586-pc-mingw32-windres)
 	ADD_CUSTOM_COMMAND(OUTPUT ${WINRC}
 			COMMAND ${WINDRES}
 				-I${CMAKE_SOURCE_DIR}

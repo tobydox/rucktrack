@@ -9,8 +9,8 @@ SET(CMAKE_INSTALL_PREFIX /opt/mingw32)
 SET(CC_PREFIX /opt/mingw32)
 
 # specify the cross compiler
-SET(CMAKE_C_COMPILER   ${CC_PREFIX}/bin/i586-pc-mingw32-gcc)
-SET(CMAKE_CXX_COMPILER ${CC_PREFIX}/bin/i586-pc-mingw32-g++)
+SET(CMAKE_C_COMPILER   ${CC_PREFIX}/bin/i686-w64-mingw32-gcc)
+SET(CMAKE_CXX_COMPILER ${CC_PREFIX}/bin/i686-w64-mingw32-g++)
 
 # where is the target environment 
 SET(CMAKE_FIND_ROOT_PATH  /opt/mingw32)
@@ -31,8 +31,8 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 # for libraries and headers in the target directories
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-SET(WINDRES ${CC_PREFIX}/bin/i586-pc-mingw32-windres)
-SET(STRIP ${CC_PREFIX}/bin/i586-pc-mingw32-strip)
+SET(WINDRES ${CC_PREFIX}/bin/i686-w64-mingw32-windres)
+SET(STRIP ${CC_PREFIX}/bin/i686-w64-mingw32-strip)
 
 SET(PKG_CONFIG_EXECUTABLE ${CC_PREFIX}/bin/pkg-config)
 
