@@ -1,7 +1,7 @@
 /*
  * RTMainWindow.cpp - implementation of RTMainWindow class
  *
- * Copyright (c) 2009 Tobias Doerffel <tobydox/at/users.sourceforge.net>
+ * Copyright (c) 2009-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
  * This file is part of RuckTrack - http://rucktrack.sourceforge.net
  *
@@ -25,9 +25,9 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 #include <QtGui/QProgressBar>
-#include <QtXml/QDomDocument>
 
 #include "AboutDialog.h"
+#include "GpxFile.h"
 #include "RTMainWindow.h"
 #include "ProgressTrackingNetworkAccessManager.h"
 #include "RouteTableModel.h"
@@ -117,64 +117,14 @@ void RTMainWindow::openFile()
 	{
 		return;
 	}
-	QDomDocument doc;
-	QFile f( fileName );
-	if( !f.open( QFile::ReadOnly ) || !doc.setContent( &f ) )
+
+	if( GpxFile( fileName ).loadRoute( m_currentRoute ) )
 	{
-		// TODO: error message
-		return;
+		ui->mapView->showRoute( m_currentRoute );
+		ui->plotView->showRoute( m_currentRoute );
+		ui->statsTable->update( m_currentRoute );
+		m_routeTableModel->update();
 	}
-
-	m_currentRoute.clear();
-
-	int timeOffset = 0;
-	TrackPoint lastPoint;
-	QDomNodeList segs = doc.elementsByTagName( "trkseg" );
-	for( unsigned int seg = 0; seg < segs.length(); ++seg )
-	{
-		QDomNodeList trackPointNodes = segs.at( seg ).childNodes();
-		TrackSegment trackSeg;
-		for( unsigned int point = 0; point < trackPointNodes.length(); ++point )
-		{
-			QDomNode trackPoint = trackPointNodes.at( point );
-			if( trackPoint.isElement() &&
-				trackPoint.nodeName() == "trkpt" )
-			{
-				QDomElement e = trackPoint.toElement();
-				QDomNodeList elev =
-						e.elementsByTagName( "ele" );
-				QDomNodeList timeNode =
-						e.elementsByTagName( "time" );
-				QDateTime time;
-				if( !timeNode.isEmpty() )
-				{
-					time = QDateTime::fromString(
-							timeNode.at( 0 ).toElement().text(),
-								Qt::ISODate );
-				}
-				// fix gaps between track segments
-				if( seg > 0 && point == 0 && lastPoint.isValid() )
-				{
-					timeOffset += qMax<int>( 0, lastPoint.secsTo( TrackPoint( 0, 0, 0, time.addSecs( -timeOffset ) ) ) - 3 );
-				}
-				TrackPoint t(
-					e.attribute( "lat" ).toDouble(),
-					e.attribute( "lon" ).toDouble(),
-					!elev.isEmpty() ?
-						elev.at( 0 ).toElement().text().toDouble() : 0,
-					time.addSecs( -timeOffset ) );
-				trackSeg << t;
-				lastPoint = t;
-				//qDebug() << t.latitude() << t.longitude() << t.elevation() << t.time();
-			}
-		}
-		m_currentRoute << trackSeg;
-	}
-
-	ui->mapView->showRoute( m_currentRoute );
-	ui->plotView->showRoute( m_currentRoute );
-	ui->statsTable->update( m_currentRoute );
-	m_routeTableModel->update();
 }
 
 
