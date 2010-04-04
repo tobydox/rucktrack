@@ -110,10 +110,10 @@ ADD_EXECUTABLE(rucktrack ${rucktrack_SOURCES} ${rucktrack_UIC_out} ${rucktrack_M
 
 IF(WIN32)
 	SET_TARGET_PROPERTIES(rucktrack PROPERTIES LINK_FLAGS "${LINK_FLAGS} -mwindows")
-        ADD_CUSTOM_COMMAND(TARGET rucktrack POST_BUILD COMMAND ${STRIP} ${CMAKE_BINARY_DIR}/rucktrack.exe)
-        INSTALL(TARGETS rucktrack RUNTIME DESTINATION .)
+	ADD_CUSTOM_COMMAND(TARGET rucktrack POST_BUILD COMMAND ${STRIP} ${CMAKE_BINARY_DIR}/rucktrack.exe)
+	INSTALL(TARGETS rucktrack RUNTIME DESTINATION .)
 ELSE(WIN32)
-        INSTALL(TARGETS rucktrack RUNTIME DESTINATION bin)
+	INSTALL(TARGETS rucktrack RUNTIME DESTINATION bin)
 ENDIF(WIN32)
 
 #
@@ -121,14 +121,14 @@ ENDIF(WIN32)
 #
 SET(TMP "rucktrack-${VERSION}")
 ADD_CUSTOM_TARGET(dist
-                        COMMAND make clean
-                        COMMAND rm -rf ${TMP}
-                        COMMAND mkdir -p ${TMP}
-                        COMMAND cp AUTHORS build_mingw32 CMakeLists.txt rucktrack.pro COPYING INSTALL rucktrack.rc.in README TODO ${TMP}
-                        COMMAND cp -r 3rdparty cmake data forms src ${TMP}
-                        COMMAND rm -rf `find ${TMP} -name cmake_install.cmake` `find ${TMP} -name Makefile` `find ${TMP} -type d -name CMakeFiles` ${TMP}/CMakeCache.txt
-                        COMMAND tar cjf rucktrack-${VERSION}.tar.bz2 ${TMP}
-                        COMMAND rm -rf ${TMP})
+						COMMAND make clean
+						COMMAND rm -rf ${TMP}
+						COMMAND mkdir -p ${TMP}
+						COMMAND cp AUTHORS build_mingw32 CMakeLists.txt rucktrack.pro COPYING INSTALL rucktrack.rc.in README TODO ${TMP}
+						COMMAND cp -r 3rdparty cmake data forms src ${TMP}
+						COMMAND rm -rf `find ${TMP} -name cmake_install.cmake` `find ${TMP} -name Makefile` `find ${TMP} -type d -name CMakeFiles` ${TMP}/CMakeCache.txt
+						COMMAND tar cjf rucktrack-${VERSION}.tar.bz2 ${TMP}
+						COMMAND rm -rf ${TMP})
 
 
 INCLUDE(InstallRequiredSystemLibraries)
