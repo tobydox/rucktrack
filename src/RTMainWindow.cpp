@@ -62,7 +62,7 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 	ui->statusBar->addWidget( webPageProgress );
 	//connect( ui->mapView, SIGNAL(loadStarted()), webPageProgress, SLOT(show()));
 	//connect( ui->mapView->page(), SIGNAL(loadFinished(bool)), webPageProgress, SLOT(hide()));
-	connect( ui->mapView, SIGNAL(loadProgress(int)), webPageProgress, SLOT(setValue(int)));
+	connect( ui->mapView, SIGNAL( loadProgress( int ) ), webPageProgress, SLOT( setValue( int ) ) );
 
 	ProgressTrackingNetworkAccessManager * nam =
 			new ProgressTrackingNetworkAccessManager( this );
@@ -81,11 +81,13 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 				this, SLOT( selectTrackPoint( double, double ) ) );
 
 	// connect actions
-	connect( ui->actionAbout, SIGNAL(triggered(bool)), this, SLOT( about() ) );
-	connect( ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT( openFile() ) );
+	connect( ui->actionAbout, SIGNAL( triggered(bool) ), this, SLOT( about() ) );
+	connect( ui->actionOpen, SIGNAL( triggered(bool) ), this, SLOT( openFile() ) );
 	connect( ui->actionFixElevations, SIGNAL(triggered(bool)),
 				this, SLOT( fixElevations() ) );
 
+	// parse command line parameters after map is loaded (would not work if we did it immediately)
+	connect( ui->mapView, SIGNAL( loadFinished(bool) ), this, SLOT( parseCommandLineParameters() ) );
 }
 
 
@@ -201,7 +203,40 @@ void RTMainWindow::highlightSelectedTrackPoint( const QModelIndex & _idx,
 	if( selectedTP.isValid() )
 	{
 		ui->mapView->highlightPoint( selectedTP.latitude(),
-										selectedTP.longitude() );
+									  selectedTP.longitude() );
 	}
 }
 
+
+
+
+void RTMainWindow::parseCommandLineParameters()
+{
+	QStringList args = QApplication::instance()->arguments();
+
+	// Remove the first argument which normally contains the executable
+	//   for that we don't take it as an argument accidentially.
+	if ( !args.isEmpty() )
+	{
+		args.removeFirst();
+	}
+
+	// The last argument is the file name. We want to open this file.
+	if ( !args.isEmpty() )
+	{
+		QString filename = args.first();
+
+		// This has been copied from openFile().
+		if( GpxFile( filename ).loadRoute( m_currentRoute ) )
+		{
+			qDebug() << "Opening file " << filename << ".";
+			ui->mapView->showRoute( m_currentRoute );
+			ui->plotView->showRoute( m_currentRoute );
+			ui->statsTable->update( m_currentRoute );
+			m_routeTableModel->update();
+		}
+	}
+
+	// we do not want to parse command line parameters more than once
+	disconnect( this, SLOT( parseCommandLineParameters() ) );
+}

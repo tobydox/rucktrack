@@ -60,6 +60,7 @@ private slots:
 	void selectTrackPoint( double _lat, double _lon );
 	void highlightSelectedTrackPoint( const QModelIndex & _current,
 										const QModelIndex & _prev );
+	void parseCommandLineParameters();
 
 
 private:
