@@ -99,7 +99,7 @@ QT4_WRAP_UI(rucktrack_UIC_out ${rucktrack_UI})
 QT4_ADD_RESOURCES(rucktrack_RCC_out resources/rucktrack.qrc)
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/3rdparty/quazip/quazip ${CMAKE_SOURCE_DIR}/src/3rdparty/bzip2 ${CMAKE_SOURCE_DIR}/src/3rdparty/qwt ${CMAKE_BINARY_DIR})
-LINK_LIBRARIES(${QT_LIBRARIES})
+LINK_LIBRARIES(${QT_LIBRARIES} -lz)
 IF(WIN32)
 	LINK_LIBRARIES(-lgdal-1)
 ELSE(WIN32)
