@@ -9,6 +9,7 @@ TARGET = rucktrack
 TEMPLATE = app
 SOURCES += src/main.cpp \
     src/RTMainWindow.cpp \
+    src/GpxFile.cpp \
     src/MapView.cpp \
     src/PlotView.cpp \
     src/RouteTableModel.cpp \
@@ -33,6 +34,7 @@ SOURCES += src/main.cpp \
 
 HEADERS += src/RTMainWindow.h \
     src/AboutDialog.h \
+    src/GpxFile.h \
     src/MapView.h \
     src/PlotView.h \
     src/ProgressTrackingNetworkAccessManager.h \
