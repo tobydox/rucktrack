@@ -31,7 +31,7 @@
 
 #include <math.h>
 
-#include "gdal/gdal_priv.h"
+#include <gdal_priv.h>
 
 
 SrtmTiff::SrtmTiff( const QString & _filename ) :
