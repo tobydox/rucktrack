@@ -1,8 +1,8 @@
-RuckTrack can be easily built using QMake:
+RuckTrack can be easily built using CMake:
 
-qmake
+mkdir build && cd build
+cmake ..
 make
 
-and that's it. Alternatively open the project with QtCreator and build
-it with the according toolbuttons.
+Alternatively open and build the project using QtCreator.
 
