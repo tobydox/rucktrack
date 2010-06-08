@@ -17,7 +17,7 @@ BEGIN
       VALUE "CompanyName",	"RuckTrack Developers\0"
       VALUE "FileDescription",	"RuckTrack\0"
       VALUE "FileVersion",	"@VERSION@\0"
-      VALUE "LegalCopyright",	"Copyright (c) 2009 Tobias Doerffel\0"
+      VALUE "LegalCopyright",	"Copyright (c) 2009-2010 Tobias Doerffel\0"
       VALUE "OriginalFilename",	"rucktrack.exe\0"
       VALUE "ProductName",	"RuckTrack\0"
       VALUE "ProductVersion",	"@VERSION@\0"
