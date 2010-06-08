@@ -1,7 +1,7 @@
 /*
- * MapView.h - header file for MapView class
+ * GoogleMapsProvider.h - a MapProvider for GoogleMaps
  *
- * Copyright (c) 2009-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
+ * Copyright (c) 2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
  * This file is part of RuckTrack - http://rucktrack.sourceforge.net
  *
@@ -22,35 +22,24 @@
  *
  */
 
-#ifndef _MAP_VIEW_H
-#define _MAP_VIEW_H
+#ifndef _GOOGLE_MAPS_PROVIDER_H
+#define _GOOGLE_MAPS_PROVIDER_H
 
-#include <QtWebKit/QWebView>
+#include "MapProvider.h"
 
-#include "Route.h"
 
-class MapProvider;
-
-class MapView : public QWebView
+class GoogleMapsProvider : public MapProvider
 {
 public:
-	MapView( QWidget * _parent );
-	virtual ~MapView();
+	GoogleMapsProvider( QWebFrame * _parent );
+	virtual ~GoogleMapsProvider();
 
-	void setMapProvider( MapProvider * mapProvider );
-	MapProvider * mapProvider()
-	{
-		return m_mapProvider;
-	}
+	virtual void showRoute( const Route & _route );
+	virtual void highlightPoint( double _lat, double _lon );
 
-	void showRoute( const Route & _route );
-	void highlightPoint( double _lat, double _lon );
-
-
-private:
-	MapProvider * m_mapProvider;
+	virtual QUrl mapUrl() const;
 
 } ;
 
 
-#endif // _MAP_VIEW_H
+#endif // _GOOGLE_MAPS_PROVIDER_H

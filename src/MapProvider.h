@@ -1,7 +1,7 @@
 /*
- * MapView.h - header file for MapView class
+ * MapProvider.h - header file for MapProvider class
  *
- * Copyright (c) 2009-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
+ * Copyright (c) 2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
  * This file is part of RuckTrack - http://rucktrack.sourceforge.net
  *
@@ -22,35 +22,49 @@
  *
  */
 
-#ifndef _MAP_VIEW_H
-#define _MAP_VIEW_H
+#ifndef _MAP_PROVIDER_H
+#define _MAP_PROVIDER_H
 
-#include <QtWebKit/QWebView>
+#include <QtCore/QObject>
+#include <QtCore/QUrl>
 
 #include "Route.h"
 
-class MapProvider;
+class QWebFrame;
 
-class MapView : public QWebView
+class MapProvider : public QObject
 {
+	Q_OBJECT
 public:
-	MapView( QWidget * _parent );
-	virtual ~MapView();
+	MapProvider( QWebFrame * _parent );
+	virtual ~MapProvider();
 
-	void setMapProvider( MapProvider * mapProvider );
-	MapProvider * mapProvider()
+	// pure virtual functions to be implemented by subclasses
+	virtual void showRoute( const Route & _route ) = 0;
+	virtual void highlightPoint( double _lat, double _lon ) = 0;
+
+	virtual QUrl mapUrl() const = 0;
+
+
+public slots:
+	virtual void selectPoint( double _lat, double _lon );
+
+
+protected:
+	QWebFrame * webFrame()
 	{
-		return m_mapProvider;
+		return m_webFrame;
 	}
-
-	void showRoute( const Route & _route );
-	void highlightPoint( double _lat, double _lon );
 
 
 private:
-	MapProvider * m_mapProvider;
+	QWebFrame * m_webFrame;
+
+
+signals:
+	void clickedPoint( double _lat, double _lon );
 
 } ;
 
 
-#endif // _MAP_VIEW_H
+#endif // _MAP_PROVIDER_H

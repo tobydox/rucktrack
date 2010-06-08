@@ -27,6 +27,7 @@
 #include <QtGui/QProgressBar>
 
 #include "AboutDialog.h"
+#include "GoogleMapsProvider.h"
 #include "GpxFile.h"
 #include "RTMainWindow.h"
 #include "ProgressTrackingNetworkAccessManager.h"
@@ -70,12 +71,17 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 	connect( nam, SIGNAL( progressChanged( int ) ),
 				webPageProgress, SLOT( setValue( int ) ) );
 
+	// install GoogleMapsProvider
+	MapProvider * mapProvider =  new GoogleMapsProvider(
+										ui->mapView->page()->mainFrame() );
+	ui->mapView->setMapProvider( mapProvider );
+
 	// setup TrackPointsView
 	ui->trackPointsView->setModel( m_routeTableModel );
 	connect( ui->trackPointsView->selectionModel(),
 				SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
 				this, SLOT( highlightSelectedTrackPoint( const QModelIndex &, const QModelIndex & ) ) );
-	connect( ui->mapView, SIGNAL( clickedPoint( double, double ) ),
+	connect( mapProvider, SIGNAL( clickedPoint( double, double ) ),
 				this, SLOT( selectTrackPoint( double, double ) ) );
 	connect( ui->plotView, SIGNAL( clickedPoint( double, double ) ),
 				this, SLOT( selectTrackPoint( double, double ) ) );

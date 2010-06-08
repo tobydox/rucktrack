@@ -1,7 +1,7 @@
 /*
- * MapView.h - header file for MapView class
+ * MapProvider.cpp - implementation of abstrat MapProvider class
  *
- * Copyright (c) 2009-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
+ * Copyright (c) 2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
  * This file is part of RuckTrack - http://rucktrack.sourceforge.net
  *
@@ -22,35 +22,29 @@
  *
  */
 
-#ifndef _MAP_VIEW_H
-#define _MAP_VIEW_H
+#include <QtWebKit/QWebFrame>
 
-#include <QtWebKit/QWebView>
+#include "MapProvider.h"
 
-#include "Route.h"
 
-class MapProvider;
-
-class MapView : public QWebView
+MapProvider::MapProvider( QWebFrame * _parent ) :
+	QObject( _parent ),
+	m_webFrame( _parent )
 {
-public:
-	MapView( QWidget * _parent );
-	virtual ~MapView();
-
-	void setMapProvider( MapProvider * mapProvider );
-	MapProvider * mapProvider()
-	{
-		return m_mapProvider;
-	}
-
-	void showRoute( const Route & _route );
-	void highlightPoint( double _lat, double _lon );
+}
 
 
-private:
-	MapProvider * m_mapProvider;
-
-} ;
 
 
-#endif // _MAP_VIEW_H
+MapProvider::~MapProvider()
+{
+}
+
+
+
+
+void MapProvider::selectPoint( double _lat, double _lon )
+{
+	emit clickedPoint( _lat, _lon );
+}
+
