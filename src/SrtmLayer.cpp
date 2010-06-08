@@ -82,6 +82,8 @@ bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 			{
 				const QString zipFileName = fileName + ".ZIP";
 
+				QDir().mkpath( fastCachePath() );
+
 				// create zip object
 				QuaZip zip( fastCachePath() + zipFileName );
 				zip.open( QuaZip::mdUnzip );
