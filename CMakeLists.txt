@@ -29,6 +29,8 @@ SET(QT_USE_QTWEBKIT 1)
 SET(QT_USE_QTXML 1)
 INCLUDE(${QT_USE_FILE})
 
+# check for GDAL
+FIND_PACKAGE(GDAL REQUIRED)
 
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/rucktrack.rc.in ${CMAKE_BINARY_DIR}/rucktrack.rc)
 
@@ -98,14 +100,8 @@ QT4_WRAP_CPP(rucktrack_MOC_out ${rucktrack_INCLUDES})
 QT4_WRAP_UI(rucktrack_UIC_out ${rucktrack_UI})
 QT4_ADD_RESOURCES(rucktrack_RCC_out resources/rucktrack.qrc)
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/3rdparty/quazip/quazip ${CMAKE_SOURCE_DIR}/src/3rdparty/bzip2 ${CMAKE_SOURCE_DIR}/src/3rdparty/qwt ${CMAKE_BINARY_DIR})
-LINK_LIBRARIES(${QT_LIBRARIES} -lz)
-IF(WIN32)
-	LINK_LIBRARIES(-lgdal-1)
-ELSE(WIN32)
-	FIND_PACKAGE(GDAL)
-	LINK_LIBRARIES(${GDAL_LIBRARY})
-ENDIF(WIN32)
+INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/3rdparty/quazip/quazip ${CMAKE_SOURCE_DIR}/src/3rdparty/bzip2 ${CMAKE_SOURCE_DIR}/src/3rdparty/qwt ${CMAKE_BINARY_DIR})
+LINK_LIBRARIES(${QT_LIBRARIES} ${GDAL_LIBRARY} -lz)
 ADD_EXECUTABLE(rucktrack ${rucktrack_SOURCES} ${rucktrack_UIC_out} ${rucktrack_MOC_out} ${rucktrack_RCC_out} ${WINRC})
 
 IF(WIN32)
