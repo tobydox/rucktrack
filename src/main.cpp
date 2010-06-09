@@ -1,7 +1,7 @@
 /*
  * main.cpp - implementation of main() function
  *
- * Copyright (c) 2009 Tobias Doerffel <tobydox/at/users.sourceforge.net>
+ * Copyright (c) 2009-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
  * This file is part of RuckTrack - http://rucktrack.sourceforge.net
  *
@@ -31,6 +31,10 @@
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
+
+	QCoreApplication::setOrganizationName( "RuckTrack Developers" );
+	QCoreApplication::setApplicationName( "RuckTrack" );
+
 	RTMainWindow w;
 	w.show();
 
