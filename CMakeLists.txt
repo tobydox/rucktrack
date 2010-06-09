@@ -35,8 +35,8 @@ FIND_PACKAGE(GDAL REQUIRED)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/rucktrack.rc.in ${CMAKE_BINARY_DIR}/rucktrack.rc)
 
 # set compiler flags
-SET(CMAKE_C_FLAGS "-O2 -g -Wall ${CMAKE_C_FLAGS}")
-SET(CMAKE_CXX_FLAGS "-O2 -g -fno-exceptions -Wall ${CMAKE_CXX_FLAGS}")
+SET(CMAKE_C_FLAGS "-g -Wall ${CMAKE_C_FLAGS}")
+SET(CMAKE_CXX_FLAGS "-g -fno-exceptions -Wall ${CMAKE_CXX_FLAGS}")
 
 SET(rucktrack_SOURCES src/main.cpp
 			src/RTMainWindow.cpp
