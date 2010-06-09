@@ -22,6 +22,7 @@
  *
  */
 
+#include <QtCore/QSettings>
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 #include <QtGui/QProgressBar>
@@ -117,14 +118,20 @@ void RTMainWindow::about()
 
 void RTMainWindow::openFile()
 {
+	QSettings settings;
+
 	QString fileName =
 		QFileDialog::getOpenFileName(
-			this, tr( "Open File" ), QString(),
+			this, tr( "Open File" ),
+			settings.value( "Misc/LastDirectory" ).toString(),
 			tr("GPX files (*.gpx)") );
 	if( fileName.isEmpty() )
 	{
 		return;
 	}
+
+	settings.setValue( "Misc/LastDirectory",
+						QFileInfo( fileName ).absoluteDir().absolutePath() );
 
 	if( GpxFile( fileName ).loadRoute( m_currentRoute ) )
 	{
