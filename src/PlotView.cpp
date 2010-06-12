@@ -24,6 +24,7 @@
 
 #include <QtCore/QDebug>
 #include <QtGui/QMouseEvent>
+#include <QtGui/QToolTip>
 
 #include "PlotView.h"
 
@@ -179,7 +180,8 @@ void PlotView::showRoute( const Route & _route )
 				m_xData[pointCount] = length;
 				m_trackPoints[pointCount] = &pt;
 				m_curves[Elevation].data()[pointCount] = pt.elevation();
-				m_curves[Speed].data()[pointCount] = speed*3.6;
+				m_curves[Speed].data()[pointCount] =
+											qRound( speed*3.6 * 100 ) / 100.0;
 				++pointCount;
 			}
 			lastPoint = pt;
@@ -220,6 +222,12 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 				{
 					emit clickedPoint( m_trackPoints[i]->latitude(),
 										m_trackPoints[i]->longitude() );
+					QToolTip::showText( QCursor::pos(),
+						QString( "at %1 km\nspeed: %2 km/h\nelevation: %3 m" ).
+									arg( qRound( x*100 ) / 100.0 ).
+									arg( m_curves[Speed].y( i ) ).
+									arg( m_curves[Elevation].y( i ) ),
+									this );
 					break;
 				}
 			}
