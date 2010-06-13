@@ -39,6 +39,10 @@ namespace Ui
 	class RTMainWindow;
 }
 
+
+/**
+ *  Main window of Rucktrack.
+ */
 class RTMainWindow : public QMainWindow
 {
 	Q_OBJECT

@@ -39,7 +39,10 @@
 
 RTMainWindow * RTMainWindow::_this = NULL;
 
-
+/**
+ *  Constructor for the Rucktrack Main Window.
+ *  \param
+ */
 RTMainWindow::RTMainWindow(QWidget *parent) :
 	QMainWindow( parent ),
 	ui( new Ui::RTMainWindow ),
@@ -99,6 +102,9 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 
 
 
+/**
+ *  Destroy the Rucktrack main window and cleanup.
+ */
 RTMainWindow::~RTMainWindow()
 {
 	delete ui;
@@ -108,6 +114,9 @@ RTMainWindow::~RTMainWindow()
 
 
 
+/**
+ *  Show the “About” dialog.
+ */
 void RTMainWindow::about()
 {
 	AboutDialog( this ).exec();
@@ -116,6 +125,9 @@ void RTMainWindow::about()
 
 
 
+/**
+ *  Open the “Open File” dialog and load the specified GPX file.
+ */
 void RTMainWindow::openFile()
 {
 	QSettings settings;
@@ -137,6 +149,11 @@ void RTMainWindow::openFile()
 }
 
 
+
+/**
+ *  Do all the necessary internal and UI stuff to load a GPX file.
+ *  \param fileName name of the GPX file to be loaded.
+ */
 void RTMainWindow::loadRoute( const QString & fileName )
 {
 	if( GpxFile( fileName ).loadRoute( m_currentRoute ) )
@@ -149,6 +166,11 @@ void RTMainWindow::loadRoute( const QString & fileName )
 }
 
 
+
+
+/**
+ *  Fix elevations of the route by using SRTM data and update the user interface.
+ */
 void RTMainWindow::fixElevations()
 {
 	if( m_currentRoute.isEmpty() )
@@ -200,6 +222,12 @@ void RTMainWindow::fixElevations()
 
 
 
+/**
+ *  Select a track point on the map. Move the blue marker (Google Maps)
+ *  to the trackpoint least distant to the given position.
+ *  \param _lat Latitude of the desired point.
+ *  \param _lat Longitude of the desired point.
+ */
 void RTMainWindow::selectTrackPoint( double _lat, double _lon )
 {
 	const int row = m_routeTableModel->rowOfNearestTrackPoint(
@@ -213,6 +241,12 @@ void RTMainWindow::selectTrackPoint( double _lat, double _lon )
 
 
 
+/**
+ *  Highlight a position on the map. Put markers to the indicated track
+ *  points.
+ *  \param _current Track point index of the first marker.
+ *  \param _prev    Track point index of the second marker.
+ */
 void RTMainWindow::highlightSelectedTrackPoint( const QModelIndex & _idx,
 												const QModelIndex & )
 {
@@ -227,6 +261,10 @@ void RTMainWindow::highlightSelectedTrackPoint( const QModelIndex & _idx,
 
 
 
+/**
+ *  Parse the command line parameters given to the application and do
+ *  all tasks demanded there.
+ */
 void RTMainWindow::parseCommandLineParameters()
 {
 	// we do not want to parse command line parameters more than once
