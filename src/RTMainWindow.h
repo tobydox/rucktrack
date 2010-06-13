@@ -64,6 +64,8 @@ private slots:
 
 
 private:
+	void loadRoute( const QString & fileName );
+
 	static RTMainWindow * _this;
 
 	Ui::RTMainWindow *ui;

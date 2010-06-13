@@ -55,7 +55,7 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 
 	// graphsDock and trackDetailsDock should be tabified per default - designer doesn't
 	// allow to configure this, so do this manually and make sure, graphsDock still is on top
-	tabifyDockWidget( ui->graphsDock, ui->trackDetailsDock );	
+	tabifyDockWidget( ui->graphsDock, ui->trackDetailsDock );
 	ui->graphsDock->raise();
 
 	QProgressBar * webPageProgress = new QProgressBar;
@@ -133,6 +133,12 @@ void RTMainWindow::openFile()
 	settings.setValue( "Misc/LastDirectory",
 						QFileInfo( fileName ).absoluteDir().absolutePath() );
 
+  loadRoute( fileName );
+}
+
+
+void RTMainWindow::loadRoute( const QString & fileName )
+{
 	if( GpxFile( fileName ).loadRoute( m_currentRoute ) )
 	{
 		ui->mapView->showRoute( m_currentRoute );
@@ -141,8 +147,6 @@ void RTMainWindow::openFile()
 		m_routeTableModel->update();
 	}
 }
-
-
 
 
 void RTMainWindow::fixElevations()
@@ -225,10 +229,13 @@ void RTMainWindow::highlightSelectedTrackPoint( const QModelIndex & _idx,
 
 void RTMainWindow::parseCommandLineParameters()
 {
+	// we do not want to parse command line parameters more than once
+	disconnect( this, SLOT( parseCommandLineParameters() ) );
+
 	QStringList args = QApplication::instance()->arguments();
 
 	// Remove the first argument which normally contains the executable
-	//   for that we don't take it as an argument accidentially.
+	// for that we don't take it as an argument accidentially.
 	if ( !args.isEmpty() )
 	{
 		args.removeFirst();
@@ -239,17 +246,6 @@ void RTMainWindow::parseCommandLineParameters()
 	{
 		QString filename = args.first();
 
-		// This has been copied from openFile().
-		if( GpxFile( filename ).loadRoute( m_currentRoute ) )
-		{
-			qDebug() << "Opening file " << filename << ".";
-			ui->mapView->showRoute( m_currentRoute );
-			ui->plotView->showRoute( m_currentRoute );
-			ui->statsTable->update( m_currentRoute );
-			m_routeTableModel->update();
-		}
+		loadRoute( filename );
 	}
-
-	// we do not want to parse command line parameters more than once
-	disconnect( this, SLOT( parseCommandLineParameters() ) );
 }
