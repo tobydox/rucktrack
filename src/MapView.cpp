@@ -35,7 +35,6 @@ MapView::MapView( QWidget * _parent ) :
 	m_mapProvider( NULL )
 {
 	page()->mainFrame()->addToJavaScriptWindowObject( "mapView", this );
-	setUrl( QUrl( "qrc:/resources/googlemaps.html" ) );
 }
 
 
@@ -52,6 +51,7 @@ MapView::~MapView()
 void MapView::setMapProvider( MapProvider * mapProvider )
 {
 	m_mapProvider = mapProvider;
+	setUrl( mapProvider->mapUrl() );
 }
 
 
