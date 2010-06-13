@@ -76,15 +76,25 @@ bool GpxFile::loadRoute( Route & route ) const
 				{
 					timeOffset += qMax<int>( 0, lastPoint.secsTo( TrackPoint( 0, 0, 0, time.addSecs( -timeOffset ) ) ) - 3 );
 				}
-				TrackPoint t(
-					e.attribute( "lat" ).toDouble(),
-					e.attribute( "lon" ).toDouble(),
-					!elev.isEmpty() ?
-						elev.at( 0 ).toElement().text().toDouble() : 0,
-					time.addSecs( -timeOffset ) );
-				trackSeg << t;
-				lastPoint = t;
-				//qDebug() << t.latitude() << t.longitude() << t.elevation() << t.time();
+
+				if( lastPoint.time() < time )
+				{
+					TrackPoint t(
+						e.attribute( "lat" ).toDouble(),
+						e.attribute( "lon" ).toDouble(),
+						!elev.isEmpty() ?
+							elev.at( 0 ).toElement().text().toDouble() : 0,
+						time.addSecs( -timeOffset ) );
+					trackSeg << t;
+					lastPoint = t;
+					//qDebug() << t.latitude() << t.longitude() << t.elevation() << t.time();
+				}
+				else
+				{
+					qWarning( "%s",
+						qPrintable(
+							QObject::tr( "Track point %1 dropped because its time is not later than previous one." ).arg( point + 1 ) ) );
+				}
 			}
 		}
 		route << trackSeg;
