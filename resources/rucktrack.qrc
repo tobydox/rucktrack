@@ -11,5 +11,8 @@
     <file>office-chart-area.png</file>
     <file>table.png</file>
     <file>blue-dot.png</file>
+    <file>openstreetmap.html</file>
+    <file>openstreetmap.css</file>
+    <file>tom.js</file>
   </qresource>
 </RCC>

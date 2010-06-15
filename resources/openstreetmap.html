@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de-de">
+<head>
+<title>RuckTrack OpenStreetMap MapProvider</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-script-type" content="text/javascript" />
+<meta http-equiv="content-style-type" content="text/css" />
+<meta http-equiv="content-language" content="de" />
+<meta name="author" content="Thomas Heiles" />
+<link rel="stylesheet" type="text/css" href="openstreetmap.css" />
+<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js"></script>
+<script type="text/javascript" src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
+<script type="text/javascript" src="tom.js"></script>
+ 
+<script type="text/javascript">
+var map;
+var layerMapnik;
+var layerMarkers;
+var layerTrack;
+var highlightMarker;
+
+var downtown;
+
+function drawmap() {
+    OpenLayers.Lang.setCode('de');
+    
+    // Position und Zoomstufe der Karte
+    var lon = 12.916;
+    var lat = 50.833;
+    var zoom = 10;
+    
+
+    map = new OpenLayers.Map('map', {
+        projection: new OpenLayers.Projection("EPSG:900913"),
+        displayProjection: new OpenLayers.Projection("EPSG:4326"),
+        controls: [
+            new OpenLayers.Control.MouseDefaults(),
+            new OpenLayers.Control.LayerSwitcher(),
+            new OpenLayers.Control.PanZoomBar()],
+        maxExtent:
+            new OpenLayers.Bounds(-20037508.34,-20037508.34,
+                                    20037508.34, 20037508.34),
+        numZoomLevels: 18,
+        maxResolution: 156543,
+        units: 'meters'
+    });
+    
+
+    layerMapnik = new OpenLayers.Layer.OSM.Mapnik("Mapnik");
+    layerMarkers = new OpenLayers.Layer.Markers("Highlight Marker", { projection: new OpenLayers.Projection("EPSG:4326"), visibility: true, displayInLayerSwitcher: false });
+
+    layerTrack = new OpenLayers.Layer.Vector("Simple Geometry", {
+                styleMap: new OpenLayers.StyleMap({'default':{
+                    strokeColor: "#00FF99",
+                    strokeOpacity: 1,
+                    strokeWidth: 3,
+                    fillColor: "#FF5500",
+                    fillOpacity: 0.5,
+                    pointRadius: 6,
+                    pointerEvents: "visiblePainted",
+//                    label : "name: ${name}, age: ${age}",
+                    
+                    fontColor: "${favColor}",
+                    fontSize: "12px",
+                    fontFamily: "Courier New, monospace",
+                    fontWeight: "bold",
+                    labelAlign: "${align}",
+                    labelXOffset: "${xOffset}",
+                    labelYOffset: "${yOffset}"
+                }}),
+                projection: new OpenLayers.Projection("EPSG:4326"), visibility: true, displayInLayerSwitcher: false
+                });
+
+    map.addLayers([layerMapnik, layerMarkers, layerTrack]);
+    
+
+/*    multiFeature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Collection([
+                    new OpenLayers.Geometry.LineString([
+                        new OpenLayers.Geometry.Point( Lon2Merc(12.916),Lat2Merc(50.833)),
+                        new OpenLayers.Geometry.Point( Lon2Merc(12.1),Lat2Merc(50.8)),
+                        new OpenLayers.Geometry.Point( Lon2Merc(12.92), Lat2Merc(50.7))
+                    ]),
+                    new OpenLayers.Geometry.Point( Lon2Merc(12.92), Lat2Merc(50.7))
+                ]),
+                {
+                    name: "ball-and-chain",
+                    age: 30,
+                    favColor: 'black',
+                    align: 'rt'
+                });
+      layerTrack.addFeatures([multiFeature]);*/
+                
+     jumpTo(lon, lat, zoom);
+ 
+    // Position des Markers
+//      addMarker(layer_markers, 6.641389, 49.756667, popuptext);
+    
+
+}
+    </script>
+
+  </head>
+  <body onload=drawmap();>
+
+  <div id="header">
+<!--  <div id="osm">Mit freundlicher Unterst&uuml;tzung von <a href="http://www.openstreetmap.org" 
+title="www.openstreetmap.org">openstreetmap.org</a></div>-->
+  </div>
+  
+  <div id="map">
+  </div>
+  
+</body>
+</html>

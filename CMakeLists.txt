@@ -51,6 +51,7 @@ SET(CMAKE_CXX_FLAGS "-g -fno-exceptions -Wall ${CMAKE_CXX_FLAGS}")
 SET(rucktrack_SOURCES src/main.cpp
 			src/RTMainWindow.cpp
 			src/GoogleMapsProvider.cpp
+			src/OpenStreetMapProvider.cpp
 			src/GpxFile.cpp
 			src/MapProvider.cpp
 			src/MapView.cpp
@@ -78,6 +79,7 @@ SET(rucktrack_SOURCES src/main.cpp
 SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/AboutDialog.h
 			src/GoogleMapsProvider.h
+			src/OpenStreetMapProvider.h
 			src/GpxFile.h
 			src/MapProvider.h
 			src/MapView.h
