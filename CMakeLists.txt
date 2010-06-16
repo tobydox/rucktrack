@@ -38,7 +38,6 @@ IF (DOXYGEN_FOUND STREQUAL "YES")
 	ADD_CUSTOM_TARGET(doxygen 
 		DEPENDS ${rucktrack_SOURCES} ${rucktrack_INCLUDES}
 		COMMAND cd ${CMAKE_SOURCE_DIR}/src \; echo -e \"PROJECT_NUMBER=${VERSION}\" | cat Doxyfile - | ${DOXYGEN_EXECUTABLE} - 
-#		COMMAND echo -e "PROJECT_NUMBER=${VERSION}" | cat ${CMAKE_SOURCE_DIR}/Doxyfile - | ${DOXYGEN_EXECUTABLE} - 
 		)
 ENDIF()
 
