@@ -27,8 +27,6 @@
 #include "MapProvider.h"
 #include "MapView.h"
 
-#define evalJS(x) page()->mainFrame()->evaluateJavaScript(x)
-
 
 MapView::MapView( QWidget * _parent ) :
 	QWebView( _parent ),
