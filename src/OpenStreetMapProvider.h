@@ -24,7 +24,9 @@
 
 #include "MapProvider.h"
 
-
+/**
+ * MapProvider for OpenStreetMap, “The free wiki world map”, http://www.openstreetmap.de/ .
+ */
 class OpenStreetMapProvider : public MapProvider
 {
 public:

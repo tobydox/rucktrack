@@ -31,6 +31,7 @@ PROJECT_NAME           = RuckTrack
 # This could be handy for archiving the generated documentation or
 # if some version control system is used.
 
+# The project number is set by cmake automatically.
 PROJECT_NUMBER         =
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)

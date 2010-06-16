@@ -29,6 +29,11 @@
 #define evalJS(x) webFrame()->evaluateJavaScript(x)
 
 
+
+/**
+ * Constructor for OpenStreetMapProvider.
+ * \param _parent pointer to parent window.
+ */
 OpenStreetMapProvider::OpenStreetMapProvider( QWebFrame * _parent ) :
 	MapProvider( _parent )
 {
@@ -36,7 +41,9 @@ OpenStreetMapProvider::OpenStreetMapProvider( QWebFrame * _parent ) :
 
 
 
-
+/**
+ * Destructor for OpenStreetMapProvider.
+ */
 OpenStreetMapProvider::~OpenStreetMapProvider()
 {
 }
@@ -44,6 +51,11 @@ OpenStreetMapProvider::~OpenStreetMapProvider()
 
 
 
+/**
+ * Visualise a route on the map.
+ * Draw the given route on the map and pan the map to the route. Show all markers.
+ * \param _route route to visualise.
+ */
 void OpenStreetMapProvider::showRoute( const Route & _route )
 {
 	webFrame()->addToJavaScriptWindowObject( "mapProvider", this );
@@ -116,6 +128,9 @@ void OpenStreetMapProvider::showRoute( const Route & _route )
 
 
 
+/**
+ * Set a marker. Set a marker at the track position that is nearest to the given position.
+ */
 void OpenStreetMapProvider::highlightPoint( double _lat, double _lon )
 {
 	evalJS( "layerMarkers.removeMarker( highlightMarker );" );
@@ -127,6 +142,9 @@ void OpenStreetMapProvider::highlightPoint( double _lat, double _lon )
 
 
 
+/**
+ * The URL of the map to display in the map widget.
+ */
 QUrl OpenStreetMapProvider::mapUrl() const
 {
 	return QUrl( "qrc:/resources/openstreetmap.html" );
