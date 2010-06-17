@@ -70,14 +70,14 @@ bool GpxFile::loadRoute( Route & route ) const
 					time = QDateTime::fromString(
 							timeNode.at( 0 ).toElement().text(),
 								Qt::ISODate );
-				}
-				// fix gaps between track segments
-				if( seg > 0 && point == 0 && lastPoint.isValid() )
-				{
-					timeOffset += qMax<int>( 0, lastPoint.secsTo( TrackPoint( 0, 0, 0, time.addSecs( -timeOffset ) ) ) - 3 );
+					// fix gaps between track segments
+					if( seg > 0 && point == 0 && lastPoint.isValid() )
+					{
+						timeOffset += qMax<int>( 0, lastPoint.secsTo( TrackPoint( 0, 0, 0, time.addSecs( -timeOffset ) ) ) - 3 );
+					}
 				}
 
-				if( lastPoint.time() < time )
+				if( lastPoint.time() < time || time.isNull() )
 				{
 					TrackPoint t(
 						e.attribute( "lat" ).toDouble(),
