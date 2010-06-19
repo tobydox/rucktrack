@@ -26,7 +26,6 @@
 
 #include "OpenStreetMapProvider.h"
 
-// Evaluate a JavaScript snippet. Seems to be executed asynchronically.
 #define evalJS(x) webFrame()->evaluateJavaScript(x)
 
 
@@ -92,12 +91,12 @@ void OpenStreetMapProvider::showRoute( const Route & _route )
 			QString pointStr = QString(
 					"new OpenLayers.Geometry.Point( Lon2Merc( %1 ),Lat2Merc( %2 ))").
 					arg( pt.longitude() ).arg( pt.latitude() );
-			if( !markers.isEmpty() )
-			{
-				markers += ",";
-			}
 			if( first )
 			{
+				if( !markers.isEmpty() )
+				{
+					markers += ",";
+				}
 				markers += pointStr;
 				first = false;
 			}
@@ -109,14 +108,6 @@ void OpenStreetMapProvider::showRoute( const Route & _route )
 		}
 	}
 
-	evalJS(
-		QString( "multiFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Collection([" +
-			"new OpenLayers.Geometry.LineString([%1]), %2]));" ).arg( polyline ).arg(markers) +
-		"layerTrack.addFeatures( [ multiFeature ] );" +
-		"GEvent.addListener(map, \"click\", function(overlay,latlng) { mapProvider.selectPoint(latlng.lat(),latlng.lng()); });" +
-		"GEvent.addListener(polyline, \"click\", function(latlng) { mapProvider.selectPoint(latlng.lat(),latlng.lng()); });" 
-		);
-
 	if( minLat > invalidVal && minLon > invalidVal &&
 		maxLat > invalidVal && maxLat > invalidVal )
 	{
@@ -125,11 +116,21 @@ void OpenStreetMapProvider::showRoute( const Route & _route )
 			QString( "var maxLon = Lon2Merc(%1);" ).arg( maxLon ) +
 			QString( "var minLat = Lat2Merc(%1);" ).arg( minLat ) +
 			QString( "var maxLat = Lat2Merc(%1);" ).arg( maxLat ) +
-			"var bounds = new OpenLayers.Bounds( minLon, minLat, maxLon, maxLat )" +
+			"var bounds = new OpenLayers.Bounds( minLon, minLat, maxLon, maxLat );" +
 			"var zoom = map.getZoomForExtent( bounds );" +
-			"map.setCenter( bounds.getCenterLonLat(), zoom, true, true); "
+			"map.setCenter( bounds.getCenterLonLat(), zoom, true, true);"
 			);
 	}
+
+	evalJS(
+		QString( "multiFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Collection(["
+			"new OpenLayers.Geometry.LineString([%1]), %2]));" ).arg( polyline ).arg( markers ) +  // create a track with all markers
+		"layerTrack.destroyFeatures();" +                                                        // clear all previous tracks
+		"layerTrack.addFeatures( [ multiFeature ] );" +                                          // draw tracks
+		"layerTrack.redraw();" +                                                                 // redraw layer (otherwise displayed wrong)
+		"GEvent.addListener(map, \"click\", function(overlay,latlng) { mapProvider.selectPoint(latlng.lat(),latlng.lng()); });" +
+		"GEvent.addListener(polyline, \"click\", function(latlng) { mapProvider.selectPoint(latlng.lat(),latlng.lng()); });"
+		);
 }
 
 
