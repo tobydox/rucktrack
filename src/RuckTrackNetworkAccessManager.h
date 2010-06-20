@@ -37,7 +37,16 @@ class RuckTrackNetworkAccessManager : public QNetworkAccessManager
 {
     Q_OBJECT
 public:
-    RuckTrackNetworkAccessManager( QObject * _parent );
+	enum CachingPolicies
+	{
+		DiskCaching,
+		NoCaching,
+		NumCachingPolicies
+	} ;
+	typedef CachingPolicies CachingPolicy;
+
+    RuckTrackNetworkAccessManager( QObject * _parent,
+									CachingPolicy cachingPolicy = DiskCaching );
 
     virtual QNetworkReply * createRequest( Operation op,
                                             const QNetworkRequest & req,

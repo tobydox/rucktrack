@@ -31,11 +31,14 @@
 #include <QtNetwork/QNetworkReply>
 
 
-RuckTrackNetworkAccessManager::RuckTrackNetworkAccessManager( QObject * _parent ) :
+RuckTrackNetworkAccessManager::RuckTrackNetworkAccessManager(
+							QObject * _parent,
+							CachingPolicy cachingPolicy ) :
 	QNetworkAccessManager( _parent )
 {
 	QSettings s;
-	if( s.value( "Maps/EnableCaching", true ).toBool() )
+	if( cachingPolicy != NoCaching &&
+			s.value( "Maps/EnableCaching", true ).toBool() )
 	{
 		QNetworkDiskCache * diskCache = new QNetworkDiskCache( this );
 		diskCache->setMaximumCacheSize(
