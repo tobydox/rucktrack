@@ -52,6 +52,8 @@ public:
                                             const QNetworkRequest & req,
                                             QIODevice * outgoingData = 0 );
 
+	QString cachePath() const;
+
 
 public slots:
     void updateProgress( qint64 done, qint64 total );

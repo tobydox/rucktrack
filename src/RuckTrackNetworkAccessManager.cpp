@@ -25,8 +25,8 @@
 
 #include "RuckTrackNetworkAccessManager.h"
 
+#include <QtCore/QDir>
 #include <QtCore/QSettings>
-#include <QtGui/QDesktopServices>
 #include <QtNetwork/QNetworkDiskCache>
 #include <QtNetwork/QNetworkReply>
 
@@ -43,8 +43,7 @@ RuckTrackNetworkAccessManager::RuckTrackNetworkAccessManager(
 		QNetworkDiskCache * diskCache = new QNetworkDiskCache( this );
 		diskCache->setMaximumCacheSize(
 			QSettings().value( "Maps/CacheSize", 50 ).toInt() * 1024*1024 );
-		diskCache->setCacheDirectory( QDesktopServices::storageLocation(
-											QDesktopServices::CacheLocation ) );
+		diskCache->setCacheDirectory( cachePath() );
 		setCache( diskCache );
 	}
 }
@@ -65,6 +64,20 @@ QNetworkReply * RuckTrackNetworkAccessManager::createRequest(
 					this, SLOT( updateProgress( qint64, qint64 ) ) );
 	}
 	return reply;
+}
+
+
+
+
+QString RuckTrackNetworkAccessManager::cachePath() const
+{
+	QString path = QDir::homePath() + QDir::separator() + ".rucktrack" +
+				QDir::separator() + "MapTileCache" + QDir::separator();
+	if( !QFileInfo( path ).isDir() )
+	{
+		QDir().mkpath( path );
+	}
+	return path;
 }
 
 
