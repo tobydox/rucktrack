@@ -60,7 +60,7 @@ void OpenStreetMapProvider::showRoute( const Route & _route )
 {
 	webFrame()->addToJavaScriptWindowObject( "mapProvider", this );
 	QString polyline;
-	QStringList markers;
+	QString markers;
 	const double invalidVal = -1000;
 	double minLat = invalidVal;
 	double minLon = invalidVal;
@@ -93,6 +93,10 @@ void OpenStreetMapProvider::showRoute( const Route & _route )
 					arg( pt.longitude() ).arg( pt.latitude() );
 			if( first )
 			{
+				if( !markers.isEmpty() )
+				{
+					markers += ",";
+				}
 				markers += pointStr;
 				first = false;
 			}
@@ -104,27 +108,30 @@ void OpenStreetMapProvider::showRoute( const Route & _route )
 		}
 	}
 
-	evalJS( QString( "multiFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Collection([new OpenLayers.Geometry.LineString([%1]), %2]));" ).arg( polyline ).arg(markers[0]) );
-	evalJS( "layerTrack.addFeatures( [ multiFeature ] );" );
-	evalJS( "GEvent.addListener(map, \"click\", function(overlay,latlng) { mapProvider.selectPoint(latlng.lat(),latlng.lng()); });" );
-	evalJS( "GEvent.addListener(polyline, \"click\", function(latlng) { mapProvider.selectPoint(latlng.lat(),latlng.lng()); });" );
-	foreach( const QString & marker, markers )
-	{
-// 		evalJS( QString( "map.addOverlay(new GMarker(%1))" ).arg( marker ) );
-	}
 	if( minLat > invalidVal && minLon > invalidVal &&
 		maxLat > invalidVal && maxLat > invalidVal )
 	{
-		evalJS( QString( "var minLon = Lon2Merc(%1);" ).arg( minLon ) );
-		evalJS( QString( "var maxLon = Lon2Merc(%1);" ).arg( maxLon ) );
-		evalJS( QString( "var minLat = Lat2Merc(%1);" ).arg( minLat ) );
-		evalJS( QString( "var maxLat = Lat2Merc(%1);" ).arg( maxLat ) );
-		evalJS( "var bounds = new OpenLayers.Bounds( minLon, minLat, maxLon, maxLat )" );
-		evalJS( "var zoom = map.getZoomForExtent( bounds );" );
-		evalJS( "map.setCenter( bounds.getCenterLonLat(), zoom, true, true); " );
+		evalJS(
+			QString( "var minLon = Lon2Merc(%1);" ).arg( minLon ) +
+			QString( "var maxLon = Lon2Merc(%1);" ).arg( maxLon ) +
+			QString( "var minLat = Lat2Merc(%1);" ).arg( minLat ) +
+			QString( "var maxLat = Lat2Merc(%1);" ).arg( maxLat ) +
+			"var bounds = new OpenLayers.Bounds( minLon, minLat, maxLon, maxLat );" +
+			"var zoom = map.getZoomForExtent( bounds );" +
+			"map.setCenter( bounds.getCenterLonLat(), zoom, true, true);"
+			);
 	}
-}
 
+	evalJS(
+		QString( "multiFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Collection(["
+			"new OpenLayers.Geometry.LineString([%1]), %2]));" ).arg( polyline ).arg( markers ) +  // create a track with all markers
+		"layerTrack.destroyFeatures();" +                                                        // clear all previous tracks
+		"layerTrack.addFeatures( [ multiFeature ] );" +                                          // draw tracks
+		"layerTrack.redraw();" +                                                                 // redraw layer (otherwise displayed wrong)
+		"GEvent.addListener(map, \"click\", function(overlay,latlng) { mapProvider.selectPoint(latlng.lat(),latlng.lng()); });" +
+		"GEvent.addListener(polyline, \"click\", function(latlng) { mapProvider.selectPoint(latlng.lat(),latlng.lng()); });"
+		);
+}
 
 
 
@@ -133,11 +140,12 @@ void OpenStreetMapProvider::showRoute( const Route & _route )
  */
 void OpenStreetMapProvider::highlightPoint( double _lat, double _lon )
 {
-	evalJS( "layerMarkers.removeMarker( highlightMarker );" );
-	evalJS( QString( "var markerLonLat = new OpenLayers.LonLat( Lon2Merc( %1 ), Lat2Merc( %2 ) );" ).arg( _lon ).arg( _lat ) );
-	evalJS( "var highlightMarker1 = new OpenLayers.Marker( markerLonLat );" );
-	evalJS( "layerMarkers.addMarker( highlightMarker1 );" );
-	evalJS( "highlightMarker =  highlightMarker1;" );
+	evalJS(
+		"if ( !( typeof highlightMarker == 'undefined' ) ) layerMarkers.removeMarker( highlightMarker );" +
+		QString( "var markerLonLat = new OpenLayers.LonLat( Lon2Merc( %1 ), Lat2Merc( %2 ) );" ).arg( _lon ).arg( _lat ) +
+		"var highlightMarker = new OpenLayers.Marker( markerLonLat );" +
+		"layerMarkers.addMarker( highlightMarker );"
+		);
 }
 
 
