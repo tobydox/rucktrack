@@ -31,6 +31,8 @@
 #include "GoogleMapsProvider.h"
 #include "GpxFile.h"
 #include "RTMainWindow.h"
+#include "OpenStreetMapProvider.h"
+#include "PreferencesDialog.h"
 #include "ProgressTrackingNetworkAccessManager.h"
 #include "RouteTableModel.h"
 #include "SrtmLayer.h"
@@ -51,7 +53,7 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 {
 	_this = this;
 
-	ui->setupUi(this);
+	ui->setupUi( this );
 
 	// the whole app is DockWidget-based, therefore hide centralWidget
 	ui->centralWidget->hide();
@@ -61,23 +63,38 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 	tabifyDockWidget( ui->graphsDock, ui->trackDetailsDock );
 	ui->graphsDock->raise();
 
-	QProgressBar * webPageProgress = new QProgressBar;
-	webPageProgress->setFixedHeight( 16 );
-	webPageProgress->setTextVisible( false );
-	ui->statusBar->addWidget( webPageProgress );
-	//connect( ui->mapView, SIGNAL(loadStarted()), webPageProgress, SLOT(show()));
-	//connect( ui->mapView->page(), SIGNAL(loadFinished(bool)), webPageProgress, SLOT(hide()));
-	connect( ui->mapView, SIGNAL( loadProgress( int ) ), webPageProgress, SLOT( setValue( int ) ) );
+	QSettings settings;
+	if( settings.value( "UI/ShowProgressBar" ).toBool() )
+	{
+		QProgressBar * webPageProgress = new QProgressBar;
+		webPageProgress->setFixedHeight( 16 );
+		webPageProgress->setTextVisible( false );
+		ui->statusBar->addWidget( webPageProgress );
+		connect( ui->mapView, SIGNAL( loadProgress( int ) ),
+					webPageProgress, SLOT( setValue( int ) ) );
 
-	ProgressTrackingNetworkAccessManager * nam =
-			new ProgressTrackingNetworkAccessManager( this );
-	ui->mapView->page()->setNetworkAccessManager( nam );
-	connect( nam, SIGNAL( progressChanged( int ) ),
-				webPageProgress, SLOT( setValue( int ) ) );
+		ProgressTrackingNetworkAccessManager * nam =
+				new ProgressTrackingNetworkAccessManager( this );
+		ui->mapView->page()->setNetworkAccessManager( nam );
+		connect( nam, SIGNAL( progressChanged( int ) ),
+					webPageProgress, SLOT( setValue( int ) ) );
+	}
 
-	// install GoogleMapsProvider
-	MapProvider * mapProvider =  new GoogleMapsProvider(
+	// TODO: dynamic plugin-based concept
+	MapProvider * mapProvider;
+	if( settings.value( "Maps/MapProvider" ).toString() ==
+			OpenStreetMapProvider::publicName() )
+	{
+		// install OpenStreetMapProvider
+		mapProvider =  new OpenStreetMapProvider(
 										ui->mapView->page()->mainFrame() );
+	}
+	else
+	{
+		// install GoogleMapsProvider
+		mapProvider =  new GoogleMapsProvider(
+										ui->mapView->page()->mainFrame() );
+	}
 	ui->mapView->setMapProvider( mapProvider );
 
 	// setup TrackPointsView
@@ -91,8 +108,9 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 				this, SLOT( selectTrackPoint( double, double ) ) );
 
 	// connect actions
-	connect( ui->actionAbout, SIGNAL( triggered(bool) ), this, SLOT( about() ) );
 	connect( ui->actionOpen, SIGNAL( triggered(bool) ), this, SLOT( openFile() ) );
+	connect( ui->actionPreferences, SIGNAL( triggered(bool) ), this, SLOT( preferences() ) );
+	connect( ui->actionAbout, SIGNAL( triggered(bool) ), this, SLOT( about() ) );
 	connect( ui->actionFixElevations, SIGNAL(triggered(bool)),
 				this, SLOT( fixElevations() ) );
 
@@ -109,6 +127,17 @@ RTMainWindow::~RTMainWindow()
 {
 	delete ui;
 	SrtmLayer::cleanup();
+}
+
+
+
+
+/**
+ *  Show the “Preferences” dialog.
+ */
+void RTMainWindow::preferences()
+{
+	PreferencesDialog().exec();
 }
 
 

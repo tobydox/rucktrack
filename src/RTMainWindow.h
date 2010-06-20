@@ -1,7 +1,7 @@
 /*
  * RTMainWindow.h - header file for RTMainWindow class
  *
- * Copyright (c) 2009 Tobias Doerffel <tobydox/at/users.sourceforge.net>
+ * Copyright (c) 2009-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
  * This file is part of RuckTrack - http://rucktrack.sourceforge.net
  *
@@ -41,14 +41,13 @@ namespace Ui
 
 
 /**
- *  Main window of Rucktrack.
+ *  Main window of RuckTrack.
  */
 class RTMainWindow : public QMainWindow
 {
 	Q_OBJECT
-
 public:
-	RTMainWindow(QWidget *parent = 0);
+	RTMainWindow( QWidget *parent = 0 );
 	~RTMainWindow();
 
 	static RTMainWindow * instance()
@@ -58,6 +57,7 @@ public:
 
 
 private slots:
+	void preferences();
 	void about();
 	void openFile();
 	void fixElevations();

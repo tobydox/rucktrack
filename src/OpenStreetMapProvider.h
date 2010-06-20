@@ -38,6 +38,11 @@ public:
 
 	virtual QUrl mapUrl() const;
 
+	static QString publicName()
+	{
+		return "OpenStreetMap";
+	}
+
 } ;
 
 

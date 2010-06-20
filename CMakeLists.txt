@@ -49,6 +49,7 @@ SET(CMAKE_CXX_FLAGS "-g -fno-exceptions -Wall ${CMAKE_CXX_FLAGS}")
 
 SET(rucktrack_SOURCES src/main.cpp
 			src/RTMainWindow.cpp
+			src/PreferencesDialog.cpp
 			src/GoogleMapsProvider.cpp
 			src/OpenStreetMapProvider.cpp
 			src/GpxFile.cpp
@@ -77,6 +78,7 @@ SET(rucktrack_SOURCES src/main.cpp
 
 SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/AboutDialog.h
+			src/PreferencesDialog.h
 			src/GoogleMapsProvider.h
 			src/OpenStreetMapProvider.h
 			src/GpxFile.h
@@ -109,7 +111,11 @@ IF(WIN32)
 			DEPENDS ${CMAKE_BINARY_DIR}/rucktrack.rc)
 ENDIF(WIN32)
 
-SET(rucktrack_UI forms/rtmainwindow.ui forms/AboutDialog.ui)
+SET(rucktrack_UI
+					forms/rtmainwindow.ui
+					forms/AboutDialog.ui
+					forms/PreferencesDialog.ui
+					)
 
 QT4_WRAP_CPP(rucktrack_MOC_out ${rucktrack_INCLUDES})
 QT4_WRAP_UI(rucktrack_UIC_out ${rucktrack_UI})

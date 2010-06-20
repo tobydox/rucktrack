@@ -1,5 +1,5 @@
 /*
- * GoogleMapsProvider.h - a MapProvider for GoogleMaps
+ * PreferencesDialog.h - declaration of class PreferencesDialog
  *
  * Copyright (c) 2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
@@ -22,30 +22,28 @@
  *
  */
 
-#ifndef _GOOGLE_MAPS_PROVIDER_H
-#define _GOOGLE_MAPS_PROVIDER_H
+#ifndef _PREFERENCES_DIALOG_H
+#define _PREFERENCES_DIALOG_H
 
-#include "MapProvider.h"
+#include <QtGui/QDialog>
 
+namespace Ui { class PreferencesDialog; }
 
-class GoogleMapsProvider : public MapProvider
+/**
+ *  Preferences dialog for RuckTrack.
+ */
+class PreferencesDialog : public QDialog
 {
 public:
-	GoogleMapsProvider( QWebFrame * _parent );
-	virtual ~GoogleMapsProvider();
+	PreferencesDialog();
 
-	virtual void showRoute( const Route & _route );
-	virtual void highlightPoint( double _lat, double _lon );
+	virtual void accept();
 
-	virtual QUrl mapUrl() const;
 
-	static QString publicName()
-	{
-		return "GoogleMaps";
-	}
-
+private:
+	Ui::PreferencesDialog * ui;
 
 } ;
 
+#endif
 
-#endif // _GOOGLE_MAPS_PROVIDER_H

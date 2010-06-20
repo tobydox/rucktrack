@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>843</width>
-     <height>26</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -51,7 +51,16 @@
     <addaction name="actionShowStatistics"/>
     <addaction name="actionShowGraphs"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionFixElevations"/>
+    <addaction name="separator"/>
+    <addaction name="actionPreferences"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
    <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -151,6 +160,9 @@
        <attribute name="verticalHeaderDefaultSectionSize">
         <number>22</number>
        </attribute>
+       <attribute name="verticalHeaderDefaultSectionSize">
+        <number>22</number>
+       </attribute>
       </widget>
      </item>
     </layout>
@@ -232,6 +244,24 @@
        </attribute>
        <attribute name="verticalHeaderDefaultSectionSize">
         <number>22</number>
+       </attribute>
+       <attribute name="verticalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="verticalHeaderDefaultSectionSize">
+        <number>22</number>
+       </attribute>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>true</bool>
+       </attribute>
+       <attribute name="horizontalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="horizontalHeaderMinimumSectionSize">
+        <number>120</number>
+       </attribute>
+       <attribute name="horizontalHeaderDefaultSectionSize">
+        <number>120</number>
        </attribute>
       </widget>
      </item>
@@ -592,6 +622,15 @@
    </property>
    <property name="toolTip">
     <string>Calculate precise elevation values from SRTM data</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="icon">
+    <iconset resource="../resources/rucktrack.qrc">
+     <normaloff>:/resources/setup-general.png</normaloff>:/resources/setup-general.png</iconset>
+   </property>
+   <property name="text">
+    <string>Preferences</string>
    </property>
   </action>
  </widget>
