@@ -33,7 +33,7 @@
 #include "RTMainWindow.h"
 #include "OpenStreetMapProvider.h"
 #include "PreferencesDialog.h"
-#include "ProgressTrackingNetworkAccessManager.h"
+#include "RuckTrackNetworkAccessManager.h"
 #include "RouteTableModel.h"
 #include "SrtmLayer.h"
 
@@ -63,6 +63,10 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 	tabifyDockWidget( ui->graphsDock, ui->trackDetailsDock );
 	ui->graphsDock->raise();
 
+	RuckTrackNetworkAccessManager * nam =
+									new RuckTrackNetworkAccessManager( this );
+	ui->mapView->page()->setNetworkAccessManager( nam );
+
 	QSettings settings;
 	if( settings.value( "UI/ShowProgressBar" ).toBool() )
 	{
@@ -73,9 +77,6 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 		connect( ui->mapView, SIGNAL( loadProgress( int ) ),
 					webPageProgress, SLOT( setValue( int ) ) );
 
-		ProgressTrackingNetworkAccessManager * nam =
-				new ProgressTrackingNetworkAccessManager( this );
-		ui->mapView->page()->setNetworkAccessManager( nam );
 		connect( nam, SIGNAL( progressChanged( int ) ),
 					webPageProgress, SLOT( setValue( int ) ) );
 	}

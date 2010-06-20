@@ -1,5 +1,6 @@
 /*
- * SrtmLayer.h - header file for SrtmLayer class
+ * RuckTrackNetworkAccessManager.h - header file for
+ *                       RuckTrackNetworkAccessManager class
  *
  * Copyright (c) 2009-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
@@ -22,49 +23,35 @@
  *
  */
 
-#ifndef _SRTM_LAYER_H
-#define _SRTM_LAYER_H
+#ifndef _RUCKTRACK_NETWORK_ACCESS_MANAGER_H
+#define _RUCKTRACK_NETWORK_ACCESS_MANAGER_H
 
-#include <QtCore/QMap>
-#include <QtCore/QString>
-
-#include "RuckTrackNetworkAccessManager.h"
-
-class QFile;
-class QNetworkReply;
-class SrtmTiff;
+#include <QtNetwork/QNetworkAccessManager>
 
 
-class SrtmLayer : public QObject
+/**
+ *  A QNetworkAccessManager subclass that tracks the progress of GET operations
+ *  and manages disk caching.
+ */
+class RuckTrackNetworkAccessManager : public QNetworkAccessManager
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	SrtmLayer();
+    RuckTrackNetworkAccessManager( QObject * _parent );
 
-	static void cleanup();
-
-	bool getElevation( float lat, float lon, float & elev );
-
-	QString cachePath() const;
-	QString fastCachePath() const;
+    virtual QNetworkReply * createRequest( Operation op,
+                                            const QNetworkRequest & req,
+                                            QIODevice * outgoingData = 0 );
 
 
-private slots:
-	void putDownloadData();
-	void finishDownload();
+public slots:
+    void updateProgress( qint64 done, qint64 total );
 
 
-private:
-	bool downloadSrtmTiff( const QString & filename );
-	QString getSrtmFilename( float lat, float lon );
-
-	RuckTrackNetworkAccessManager m_netAccMgr;
-	QNetworkReply * m_activeDownload;
-	QFile * m_targetFile;
-
-	typedef QMap<QString, SrtmTiff *> Cache;
-	static Cache s_cache;
+signals:
+    void progressChanged( int );
 
 } ;
 
-#endif // _SRTM_LAYER_H
+
+#endif // _RUCKTRACK_NETWORK_ACCESS_MANAGER_H

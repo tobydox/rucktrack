@@ -1,7 +1,7 @@
 /*
  * SrtmLayer.cpp - implementation of SrtmLayer class
  *
- * Copyright (c) 2009 Tobias Doerffel <tobydox/at/users.sourceforge.net>
+ * Copyright (c) 2009-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
  * Parts of this code are based on Python code found in gpxtools
  * by Wojciech Lichota (http://lichota.pl/blog/topics/gpxtools)
@@ -30,6 +30,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #include <QtGui/QProgressDialog>
+#include <QtNetwork/QNetworkReply>
 
 #include "RTMainWindow.h"
 #include "SrtmLayer.h"

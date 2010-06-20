@@ -57,6 +57,7 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/MapView.cpp
 			src/PlotView.cpp
 			src/RouteTableModel.cpp
+			src/RuckTrackNetworkAccessManager.cpp
 			src/StatisticsTable.cpp
 			src/SrtmLayer.cpp
 			src/SrtmTiff.cpp
@@ -85,7 +86,7 @@ SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/MapProvider.h
 			src/MapView.h
 			src/PlotView.h
-			src/ProgressTrackingNetworkAccessManager.h
+			src/RuckTrackNetworkAccessManager.h
 			src/RouteTableModel.h
 			src/TrackPoint.h
 			src/SrtmLayer.h
