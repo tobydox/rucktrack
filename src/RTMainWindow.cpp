@@ -67,8 +67,8 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 									new RuckTrackNetworkAccessManager( this );
 	ui->mapView->page()->setNetworkAccessManager( nam );
 
-	QSettings settings;
-	if( settings.value( "UI/ShowProgressBar" ).toBool() )
+	QSettings s;
+	if( s.value( "UI/ShowProgressBar", true ).toBool() )
 	{
 		QProgressBar * webPageProgress = new QProgressBar;
 		webPageProgress->setFixedHeight( 16 );
@@ -83,7 +83,7 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 
 	// TODO: dynamic plugin-based concept
 	MapProvider * mapProvider;
-	if( settings.value( "Maps/MapProvider" ).toString() ==
+	if( s.value( "Maps/MapProvider" ).toString() ==
 			OpenStreetMapProvider::publicName() )
 	{
 		// install OpenStreetMapProvider
@@ -160,19 +160,19 @@ void RTMainWindow::about()
  */
 void RTMainWindow::openFile()
 {
-	QSettings settings;
+	QSettings s;
 
 	QString fileName =
 		QFileDialog::getOpenFileName(
 			this, tr( "Open File" ),
-			settings.value( "Misc/LastDirectory" ).toString(),
+			s.value( "Misc/LastDirectory" ).toString(),
 			tr("GPX files (*.gpx)") );
 	if( fileName.isEmpty() )
 	{
 		return;
 	}
 
-	settings.setValue( "Misc/LastDirectory",
+	s.setValue( "Misc/LastDirectory",
 						QFileInfo( fileName ).absoluteDir().absolutePath() );
 
   loadRoute( fileName );

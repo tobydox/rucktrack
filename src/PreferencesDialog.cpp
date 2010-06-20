@@ -47,10 +47,11 @@ PreferencesDialog::PreferencesDialog() :
 	ui->mapProviderComboBox->addItem( OpenStreetMapProvider::publicName() );
 
 	QSettings s;
-	ui->showProgressBar->setChecked( s.value( "UI/ShowProgressBar" ).toBool() );
+	ui->showProgressBar->setChecked( s.value( "UI/ShowProgressBar", true ).toBool() );
 	ui->mapProviderComboBox->setCurrentIndex(
 							ui->mapProviderComboBox->findText(
-								s.value( "Maps/MapProvider" ).toString() ) );
+								s.value( "Maps/MapProvider",
+									GoogleMapsProvider::publicName() ).toString() ) );
 	ui->enableCaching->setChecked(
 							s.value( "Maps/EnableCaching", true ).toBool() );
 	ui->cacheSizeSpinBox->setValue(
