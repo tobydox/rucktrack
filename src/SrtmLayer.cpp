@@ -46,7 +46,7 @@ SrtmLayer::Cache SrtmLayer::s_cache;
 
 
 SrtmLayer::SrtmLayer() :
-	m_netAccMgr( this ),
+	m_netAccMgr( this, RuckTrackNetworkAccessManager::NoCaching ),
 	m_activeDownload( NULL )
 {
 }
