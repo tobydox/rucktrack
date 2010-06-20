@@ -25,6 +25,7 @@
 
 #include "RuckTrackNetworkAccessManager.h"
 
+#include <QtCore/QSettings>
 #include <QtGui/QDesktopServices>
 #include <QtNetwork/QNetworkDiskCache>
 #include <QtNetwork/QNetworkReply>
@@ -33,10 +34,16 @@
 RuckTrackNetworkAccessManager::RuckTrackNetworkAccessManager( QObject * _parent ) :
 	QNetworkAccessManager( _parent )
 {
-	QNetworkDiskCache * diskCache = new QNetworkDiskCache( this );
-	diskCache->setCacheDirectory( QDesktopServices::storageLocation(
+	QSettings s;
+	if( s.value( "Maps/EnableCaching", true ).toBool() )
+	{
+		QNetworkDiskCache * diskCache = new QNetworkDiskCache( this );
+		diskCache->setMaximumCacheSize(
+			QSettings().value( "Maps/CacheSize", 50 ).toInt() * 1024*1024 );
+		diskCache->setCacheDirectory( QDesktopServices::storageLocation(
 											QDesktopServices::CacheLocation ) );
-	setCache( diskCache );
+		setCache( diskCache );
+	}
 }
 
 

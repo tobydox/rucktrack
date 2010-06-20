@@ -51,6 +51,10 @@ PreferencesDialog::PreferencesDialog() :
 	ui->mapProviderComboBox->setCurrentIndex(
 							ui->mapProviderComboBox->findText(
 								s.value( "Maps/MapProvider" ).toString() ) );
+	ui->enableCaching->setChecked(
+							s.value( "Maps/EnableCaching", true ).toBool() );
+	ui->cacheSizeSpinBox->setValue(
+							s.value( "Maps/CacheSize", 50 ).toInt() );
 }
 
 
@@ -65,6 +69,8 @@ void PreferencesDialog::accept()
 	QSettings s;
 	s.setValue( "UI/ShowProgressBar", ui->showProgressBar->isChecked() );
 	s.setValue( "Maps/MapProvider", ui->mapProviderComboBox->currentText() );
+	s.setValue( "Maps/EnableCaching", ui->enableCaching->isChecked() );
+	s.setValue( "Maps/CacheSize", ui->cacheSizeSpinBox->value() );
 
 	QDialog::accept();
 }
