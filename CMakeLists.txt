@@ -30,7 +30,11 @@ SET(QT_USE_QTXML 1)
 INCLUDE(${QT_USE_FILE})
 
 # check for GDAL
-FIND_PACKAGE(GDAL REQUIRED)
+IF(NOT NO_GDAL_SUPPORT)
+	FIND_PACKAGE(GDAL REQUIRED)
+	SET(HAVE_GDAL_SUPPORT 1)
+	ADD_DEFINITIONS(-DHAVE_GDAL_SUPPORT)
+ENDIF(NOT NO_GDAL_SUPPORT)
 
 # if Doxygen is present, add a custom target to build the documentation
 FIND_PACKAGE(Doxygen)
@@ -47,6 +51,11 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/rucktrack.rc.in ${CMAKE_BINARY_DIR}/rucktrack
 SET(CMAKE_C_FLAGS "-g -Wall ${CMAKE_C_FLAGS}")
 SET(CMAKE_CXX_FLAGS "-g -fno-exceptions -Wall ${CMAKE_CXX_FLAGS}")
 
+IF(HAVE_GDAL_SUPPORT)
+	SET(rucktrack_gdal_SOURCES
+			src/SrtmTiff.cpp)
+ENDIF(HAVE_GDAL_SUPPORT)
+
 SET(rucktrack_SOURCES src/main.cpp
 			src/RTMainWindow.cpp
 			src/PreferencesDialog.cpp
@@ -60,8 +69,8 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/RuckTrackNetworkAccessManager.cpp
 			src/StatisticsTable.cpp
 			src/SrtmLayer.cpp
-			src/SrtmTiff.cpp
 			src/QtBzip2File.cpp
+			${rucktrack_gdal_SOURCES}
 			src/3rdparty/quazip/quazip/zip.c
 			src/3rdparty/quazip/quazip/unzip.c
 			src/3rdparty/quazip/quazip/quazipnewinfo.cpp

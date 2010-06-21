@@ -56,11 +56,13 @@ SrtmLayer::SrtmLayer() :
 
 void SrtmLayer::cleanup()
 {
+#ifdef HAVE_GDAL_SUPPORT
 	for( Cache::Iterator it = s_cache.begin(); it != s_cache.end(); ++it )
 	{
 		delete it.value();
 	}
 	s_cache.clear();
+#endif
 }
 
 
@@ -68,6 +70,7 @@ void SrtmLayer::cleanup()
 
 bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 {
+#ifdef HAVE_GDAL_SUPPORT
 	QString fileName = getSrtmFilename( lat, lon );
 	if( !s_cache.contains( fileName ) )
 	{
@@ -162,6 +165,7 @@ bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 
 	delete s_cache[fileName];
 	s_cache.remove( fileName );
+#endif
 
 	return false;
 }
