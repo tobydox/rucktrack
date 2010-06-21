@@ -69,10 +69,13 @@ QNetworkReply * RuckTrackNetworkAccessManager::createRequest(
 
 
 
-QString RuckTrackNetworkAccessManager::cachePath() const
+QString RuckTrackNetworkAccessManager::cachePath()
 {
-	QString path = QDir::homePath() + QDir::separator() + ".rucktrack" +
-				QDir::separator() + "MapTileCache" + QDir::separator();
+	const QString path =
+		QSettings().value( "General/CacheDirectory",
+			QDir::homePath() + QDir::separator() + ".rucktrack" ).toString() +
+						QDir::separator() + "MapTileCache" + QDir::separator();
+
 	if( !QFileInfo( path ).isDir() )
 	{
 		QDir().mkpath( path );

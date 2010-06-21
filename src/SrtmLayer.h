@@ -45,8 +45,8 @@ public:
 
 	bool getElevation( float lat, float lon, float & elev );
 
-	QString cachePath() const;
-	QString fastCachePath() const;
+	static QString cachePath();
+	static QString fastCachePath();
 
 
 private slots:

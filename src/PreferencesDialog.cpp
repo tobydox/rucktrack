@@ -24,6 +24,9 @@
 
 #include <QtCore/QSettings>
 #include <QtGui/QApplication>
+#include <QtGui/QCompleter>
+#include <QtGui/QDirModel>
+#include <QtGui/QFileDialog>
 
 #include "PreferencesDialog.h"
 #include "GoogleMapsProvider.h"
@@ -43,11 +46,19 @@ PreferencesDialog::PreferencesDialog() :
 {
 	ui->setupUi( this );
 
+	QCompleter * completer = new QCompleter( this );
+	completer->setModel( new QDirModel( completer ) );
+	ui->cacheDirectory->setCompleter( completer );
+	connect( ui->cacheDirectoryBtn, SIGNAL( clicked() ),
+				this, SLOT( browseCacheDirectory() ) );
+
 	ui->mapProviderComboBox->addItem( GoogleMapsProvider::publicName() );
 	ui->mapProviderComboBox->addItem( OpenStreetMapProvider::publicName() );
 
 	QSettings s;
 	ui->showProgressBar->setChecked( s.value( "UI/ShowProgressBar", true ).toBool() );
+	ui->cacheDirectory->setText( s.value( "General/CacheDirectory",
+			QDir::homePath() + QDir::separator() + ".rucktrack" ).toString() );
 	ui->mapProviderComboBox->setCurrentIndex(
 							ui->mapProviderComboBox->findText(
 								s.value( "Maps/MapProvider",
@@ -69,6 +80,7 @@ void PreferencesDialog::accept()
 {
 	QSettings s;
 	s.setValue( "UI/ShowProgressBar", ui->showProgressBar->isChecked() );
+	s.setValue( "General/CacheDirectory", ui->cacheDirectory->text() );
 	s.setValue( "Maps/MapProvider", ui->mapProviderComboBox->currentText() );
 	s.setValue( "Maps/EnableCaching", ui->enableCaching->isChecked() );
 	s.setValue( "Maps/CacheSize", ui->cacheSizeSpinBox->value() );
@@ -76,3 +88,21 @@ void PreferencesDialog::accept()
 	QDialog::accept();
 }
 
+
+
+/**
+ *  Called when clicking the "browse cache directory" button in the preferences
+ *  dialog and opens a QFileDialog.
+ *  \param
+ */
+void PreferencesDialog::browseCacheDirectory()
+{
+	QString d = QFileDialog::getExistingDirectory( this,
+					tr( "Select cache directory" ),
+					ui->cacheDirectory->text(),
+					QFileDialog::ShowDirsOnly );
+	if( !d.isEmpty() )
+	{
+		ui->cacheDirectory->setText( d );
+	}
+}

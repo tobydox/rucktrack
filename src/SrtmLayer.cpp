@@ -29,6 +29,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
+#include <QtCore/QSettings>
 #include <QtGui/QProgressDialog>
 #include <QtNetwork/QNetworkReply>
 
@@ -173,10 +174,13 @@ bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 
 
 
-QString SrtmLayer::cachePath() const
+QString SrtmLayer::cachePath()
 {
-	QString path = QDir::homePath() + QDir::separator() + ".rucktrack" +
-				QDir::separator() + "SrtmCache" + QDir::separator();
+	const QString path =
+		QSettings().value( "General/CacheDirectory",
+			QDir::homePath() + QDir::separator() + ".rucktrack" ).toString() +
+						QDir::separator() + "SrtmCache" + QDir::separator();
+
 	if( !QFileInfo( path ).isDir() )
 	{
 		QDir().mkpath( path );
@@ -187,7 +191,7 @@ QString SrtmLayer::cachePath() const
 
 
 
-QString SrtmLayer::fastCachePath() const
+QString SrtmLayer::fastCachePath()
 {
 	return QDir::tempPath() + QDir::separator();
 }

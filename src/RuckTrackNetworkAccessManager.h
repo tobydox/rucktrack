@@ -52,7 +52,7 @@ public:
                                             const QNetworkRequest & req,
                                             QIODevice * outgoingData = 0 );
 
-	QString cachePath() const;
+	static QString cachePath();
 
 
 public slots:

@@ -34,10 +34,15 @@ namespace Ui { class PreferencesDialog; }
  */
 class PreferencesDialog : public QDialog
 {
+	Q_OBJECT
 public:
 	PreferencesDialog();
 
 	virtual void accept();
+
+
+public slots:
+	void browseCacheDirectory();
 
 
 private:
