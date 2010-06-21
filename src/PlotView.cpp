@@ -175,11 +175,10 @@ void PlotView::showRoute( const Route & _route )
 				{
 					slope = slope*0.6 + dElev / ( dist * 10 ) * 0.4;
 				}
-				// smooth speed a bit
-				speed = speed*0.6 + 0.4*(dist*1000 / secs);
 				m_xData[pointCount] = length;
 				m_trackPoints[pointCount] = &pt;
 				m_curves[Elevation].data()[pointCount] = pt.elevation();
+				speed = (dist*1000 / secs);
 				m_curves[Speed].data()[pointCount] =
 											qRound( speed*3.6 * 100 ) / 100.0;
 				++pointCount;
@@ -187,6 +186,8 @@ void PlotView::showRoute( const Route & _route )
 			lastPoint = pt;
 		}
 	}
+
+	smoothSpeed( 1.2 );
 
 	for( CurveMap::Iterator it = m_curves.begin(); it != m_curves.end(); ++it )
 	{
@@ -198,6 +199,51 @@ void PlotView::showRoute( const Route & _route )
 
 	setAxisScale( xBottom, 0, length );
 	replot();
+}
+
+
+
+/**
+ *  Smooth the speed curve.
+ * The speed curve is smoothed by calculating a weighted arithmetic mean from each track point's surrounding
+ * points with the bell curve as weights.
+ * \param sigma standard deviation of the bell curve.
+ */
+void PlotView::smoothSpeed(double sigma)
+{
+	// smooth it after the bell curve: f(x) = 1∕(σ * √(2π)) * exp(-½((x - µ)∕σ)²); µ: mean, σ: standard deviation
+
+	double c_[5];        // we want to smooth with 5 values
+	double* c = &c_[2];  // we want the array to run -2...+2
+	double c_sum = 0;
+
+	for (int x = -2; x <= 2; x++)
+	{
+		c[x] = 1 / ( sigma * sqrt( 2 * M_PI ) ) * exp( -0.5 * pow( x / sigma, 2));
+		c_sum += c[x];
+	}
+
+	// sum of all coefficients shall be one
+	for (int x = -2; x <= 2; x++)
+	{
+		c[x] /= c_sum;
+	}
+
+	size_t last = m_numPoints;
+	double * data = m_curves[Speed].data();
+
+	// TODO: the first and the last two points are not smoothed
+	// do the actual bell curve smoothing
+	for ( int i = 2; i < last - 2; i++ )
+	{
+		double speed_i = 0;
+		for ( int x = -2; x <= 2; x++ )
+		{
+			speed_i += c[x] * data[i+x];
+		}
+
+		data[i] = speed_i;
+	}
 }
 
 

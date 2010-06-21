@@ -85,6 +85,7 @@ public:
 
 private:
 	typedef QMap<Curves, PlotCurve> CurveMap;
+	void smoothSpeed(double sigma);
 	CurveMap m_curves;
 	int m_numPoints;
 	double * m_xData;
