@@ -51,11 +51,6 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/rucktrack.rc.in ${CMAKE_BINARY_DIR}/rucktrack
 SET(CMAKE_C_FLAGS "-g -Wall ${CMAKE_C_FLAGS}")
 SET(CMAKE_CXX_FLAGS "-g -fno-exceptions -Wall ${CMAKE_CXX_FLAGS}")
 
-IF(HAVE_GDAL_SUPPORT)
-	SET(rucktrack_gdal_SOURCES
-			src/SrtmTiff.cpp)
-ENDIF(HAVE_GDAL_SUPPORT)
-
 SET(rucktrack_SOURCES src/main.cpp
 			src/RTMainWindow.cpp
 			src/PreferencesDialog.cpp
@@ -69,8 +64,8 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/RuckTrackNetworkAccessManager.cpp
 			src/StatisticsTable.cpp
 			src/SrtmLayer.cpp
+			src/SrtmTiff.cpp
 			src/QtBzip2File.cpp
-			${rucktrack_gdal_SOURCES}
 			src/3rdparty/quazip/quazip/zip.c
 			src/3rdparty/quazip/quazip/unzip.c
 			src/3rdparty/quazip/quazip/quazipnewinfo.cpp

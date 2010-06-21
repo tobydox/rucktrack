@@ -1,6 +1,3 @@
-# -------------------------------------------------
-# Project created by QtCreator 2009-07-23T23:49:12
-# -------------------------------------------------
 QT += webkit \
     network \
     xml
@@ -9,10 +6,15 @@ TARGET = rucktrack
 TEMPLATE = app
 SOURCES += src/main.cpp \
     src/RTMainWindow.cpp \
+	src/PreferencesDialog.cpp		\
+	src/GoogleMapsProvider.cpp		\
+	src/OpenStreetMapProvider.cpp	\
     src/GpxFile.cpp \
+	src/MapProvider.cpp				\
     src/MapView.cpp \
     src/PlotView.cpp \
     src/RouteTableModel.cpp \
+	src/RuckTrackNetworkAccessManager.cpp	\
     src/StatisticsTable.cpp \
     src/SrtmLayer.cpp \
     src/SrtmTiff.cpp \
@@ -34,10 +36,14 @@ SOURCES += src/main.cpp \
 
 HEADERS += src/RTMainWindow.h \
     src/AboutDialog.h \
+	src/PreferencesDialog.h		\
+	src/GoogleMapsProvider.h	\
+	src/OpenStreetMapProvider.h	\
     src/GpxFile.h \
+    src/MapProvider.h \
     src/MapView.h \
     src/PlotView.h \
-    src/ProgressTrackingNetworkAccessManager.h \
+    src/RuckTrackNetworkAccessManager.h \
     src/RouteTableModel.h \
     src/TrackPoint.h \
     src/SrtmLayer.h \
@@ -56,9 +62,12 @@ INCLUDEPATH += src \
     src/3rdparty/quazip/quazip \
 	src/3rdparty/bzip2/ \
 	src/3rdparty/qwt/
-unix:LIBS += -lgdal1.5.0
-win32:LIBS += -L. -lgdal -lwsock32
-FORMS += forms/rtmainwindow.ui forms/AboutDialog.ui
+DEFINES += NO_GDAL_SUPPORT
+unix:LIBS += -lz
+win32:LIBS += -lwsock32
+FORMS += forms/rtmainwindow.ui		\
+			forms/AboutDialog.ui	\
+			forms/PreferencesDialog.ui
 RESOURCES += resources/rucktrack.qrc
 OTHER_FILES += src/3rdparty/quazip/quazip/quazip.pro
 OBJECTS_DIR = obj
