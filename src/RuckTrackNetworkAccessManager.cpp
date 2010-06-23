@@ -27,6 +27,7 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
+#include <QtGui/QDesktopServices>
 #include <QtNetwork/QNetworkDiskCache>
 #include <QtNetwork/QNetworkReply>
 
@@ -71,10 +72,20 @@ QNetworkReply * RuckTrackNetworkAccessManager::createRequest(
 
 QString RuckTrackNetworkAccessManager::cachePath()
 {
-	const QString path =
-		QSettings().value( "General/CacheDirectory",
+	QString path;
+	const bool useSystemCacheDirectory =
+		QSettings().value( "General/UseSystemCacheDirectory", false ).toBool();
+
+	if ( useSystemCacheDirectory )
+	{
+		path = QDesktopServices::storageLocation( QDesktopServices::CacheLocation );
+	}
+	else
+	{
+		path = QSettings().value( "General/CacheDirectory",
 			QDir::homePath() + QDir::separator() + ".rucktrack" ).toString() +
 						QDir::separator() + "MapTileCache" + QDir::separator();
+	}
 
 	if( !QFileInfo( path ).isDir() )
 	{
