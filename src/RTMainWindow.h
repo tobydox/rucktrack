@@ -28,6 +28,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QModelIndex>
 #include <QtGui/QMainWindow>
+#include <QtGui/QProgressBar>
 
 #include "TrackPoint.h"
 
@@ -69,13 +70,16 @@ private slots:
 
 private:
 	void loadRoute( const QString & fileName );
+	void setPreferences();
+	void setPreferenceMapProvider();
+	void setPreferenceShowProgressBar();
 
 	static RTMainWindow * _this;
 
 	Ui::RTMainWindow *ui;
 	Route m_currentRoute;
 	RouteTableModel * m_routeTableModel;
-
+	QProgressBar * m_webPageProgressBar;
 } ;
 
 

@@ -27,8 +27,9 @@
 #include "MapProvider.h"
 
 
-MapProvider::MapProvider( QWebFrame * _parent ) :
+MapProvider::MapProvider( QWebFrame * _parent, QString name ) :
 	QObject( _parent ),
+	m_name( name ),
 	m_webFrame( _parent )
 {
 }
@@ -38,6 +39,17 @@ MapProvider::MapProvider( QWebFrame * _parent ) :
 
 MapProvider::~MapProvider()
 {
+}
+
+
+
+
+/**
+ *  Return the internal name of the MapProvider class.
+ */
+QString MapProvider::name()
+{
+	return m_name;
 }
 
 

@@ -25,7 +25,6 @@
 #include <QtCore/QSettings>
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
-#include <QtGui/QProgressBar>
 
 #include "AboutDialog.h"
 #include "GoogleMapsProvider.h"
@@ -49,7 +48,8 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 	QMainWindow( parent ),
 	ui( new Ui::RTMainWindow ),
 	m_currentRoute(),
-	m_routeTableModel( new RouteTableModel( m_currentRoute, this ) )
+	m_routeTableModel( new RouteTableModel( m_currentRoute, this ) ),
+	m_webPageProgressBar( new QProgressBar )
 {
 	_this = this;
 
@@ -67,43 +67,23 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 									new RuckTrackNetworkAccessManager( this );
 	ui->mapView->page()->setNetworkAccessManager( nam );
 
-	QSettings s;
-	if( s.value( "UI/ShowProgressBar", true ).toBool() )
-	{
-		QProgressBar * webPageProgress = new QProgressBar;
-		webPageProgress->setFixedHeight( 16 );
-		webPageProgress->setTextVisible( false );
-		ui->statusBar->addWidget( webPageProgress );
-		connect( ui->mapView, SIGNAL( loadProgress( int ) ),
-					webPageProgress, SLOT( setValue( int ) ) );
+	// setup progress bar for MapView
+	m_webPageProgressBar->setFixedHeight( 16 );
+	m_webPageProgressBar->setTextVisible( false );
+	ui->statusBar->addWidget( m_webPageProgressBar );
+	connect( ui->mapView, SIGNAL( loadProgress( int ) ),
+				m_webPageProgressBar, SLOT( setValue( int ) ) );
+	connect( nam, SIGNAL( progressChanged( int ) ),
+				m_webPageProgressBar, SLOT( setValue( int ) ) );
 
-		connect( nam, SIGNAL( progressChanged( int ) ),
-					webPageProgress, SLOT( setValue( int ) ) );
-	}
-
-	// TODO: dynamic plugin-based concept
-	MapProvider * mapProvider;
-	if( s.value( "Maps/MapProvider" ).toString() ==
-			OpenStreetMapProvider::publicName() )
-	{
-		// install OpenStreetMapProvider
-		mapProvider =  new OpenStreetMapProvider(
-										ui->mapView->page()->mainFrame() );
-	}
-	else
-	{
-		// install GoogleMapsProvider
-		mapProvider =  new GoogleMapsProvider(
-										ui->mapView->page()->mainFrame() );
-	}
-	ui->mapView->setMapProvider( mapProvider );
+	setPreferences();
 
 	// setup TrackPointsView
 	ui->trackPointsView->setModel( m_routeTableModel );
 	connect( ui->trackPointsView->selectionModel(),
 				SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
 				this, SLOT( highlightSelectedTrackPoint( const QModelIndex &, const QModelIndex & ) ) );
-	connect( mapProvider, SIGNAL( clickedPoint( double, double ) ),
+	connect( ui->mapView->mapProvider(), SIGNAL( clickedPoint( double, double ) ),
 				this, SLOT( selectTrackPoint( double, double ) ) );
 	connect( ui->plotView, SIGNAL( clickedPoint( double, double ) ),
 				this, SLOT( selectTrackPoint( double, double ) ) );
@@ -139,6 +119,8 @@ RTMainWindow::~RTMainWindow()
 void RTMainWindow::preferences()
 {
 	PreferencesDialog().exec();
+
+	setPreferences();
 }
 
 
@@ -316,4 +298,62 @@ void RTMainWindow::parseCommandLineParameters()
 
 		loadRoute( filename );
 	}
+}
+
+
+
+/**
+ *  Synchronize preference settings with currently active settings.
+ */
+void RTMainWindow::setPreferences()
+{
+	setPreferenceShowProgressBar();
+	setPreferenceMapProvider();
+}
+
+
+
+
+/**
+ *  Set the map provider to the value saved in the settings.
+ */
+void RTMainWindow::setPreferenceMapProvider()
+{
+	QSettings s;
+	QString preferredMapProvider =  s.value( "Maps/MapProvider" ).toString();
+
+	// only act if MapProvider changed
+	if (ui->mapView->mapProvider() == NULL ||
+		ui->mapView->mapProvider()->name() != preferredMapProvider)
+	{
+		// TODO: dynamic plugin-based concept
+		MapProvider * mapProvider;
+		if( preferredMapProvider ==
+				OpenStreetMapProvider::publicName() )
+		{
+			// install OpenStreetMapProvider
+			mapProvider =  new OpenStreetMapProvider(
+											ui->mapView->page()->mainFrame() );
+		}
+		else
+		{
+			// install GoogleMapsProvider
+			mapProvider =  new GoogleMapsProvider(
+											ui->mapView->page()->mainFrame() );
+		}
+		ui->mapView->setMapProvider( mapProvider );
+	}
+}
+
+
+
+/**
+ *  Set the visibility of the MapView progress bar to the value saved in the settings.
+ */
+void RTMainWindow::setPreferenceShowProgressBar()
+{
+	QSettings s;
+	bool showProgressBar = s.value( "UI/ShowProgressBar", true ).toBool();
+
+	m_webPageProgressBar->setVisible( showProgressBar );
 }
