@@ -132,8 +132,8 @@ void PlotView::showRoute( const Route & _route )
 	m_trackPoints = new const TrackPoint *[m_numPoints];
 	m_xData = new double[m_numPoints];
 
-	m_curves[Elevation] = PlotCurve( m_numPoints, "Elevation", Qt::blue );
-	m_curves[Speed] = PlotCurve( m_numPoints, "Speed", QColor( 0, 160, 0 ) );
+	m_curves[Elevation] = PlotCurve( m_numPoints, tr( "Elevation" ), Qt::blue );
+	m_curves[Speed] = PlotCurve( m_numPoints, tr( "Speed" ), QColor( 0, 160, 0 ) );
 
 
 	double length = 0;
@@ -269,7 +269,7 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 					emit clickedPoint( m_trackPoints[i]->latitude(),
 										m_trackPoints[i]->longitude() );
 					QToolTip::showText( QCursor::pos(),
-						QString( "at %1 km\nspeed: %2 km/h\nelevation: %3 m" ).
+						QString( tr( "at %1 km\nspeed: %2 km/h\nelevation: %3 m" ) ).
 									arg( qRound( x*100 ) / 100.0 ).
 									arg( m_curves[Speed].y( i ) ).
 									arg( m_curves[Elevation].y( i ) ),
