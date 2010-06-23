@@ -122,13 +122,24 @@ SET(rucktrack_UI
 					forms/PreferencesDialog.ui
 					)
 
+SET(LANGUAGES de)
+SET(LANGUAGE_TS_FILES)
+FOREACH(LANGUAGE ${LANGUAGES})
+	SET(TS_FILE "${CMAKE_CURRENT_SOURCE_DIR}/resources/${LANGUAGE}.ts")
+	SET(LANGUAGE_TS_FILES ${LANGUAGE_TS_FILES} ${TS_FILE})
+ENDFOREACH(LANGUAGE ${LANGUAGES})
+IF(LANGUAGE_TS_FILES)
+	QT4_CREATE_TRANSLATION(qm_files ${rucktrack_SOURCES} ${rucktrack_UI} ${LANGUAGE_TS_FILES} OPTIONS -locations none -no-ui-lines -no-obsolete)
+ENDIF(LANGUAGE_TS_FILES)
+
+
 QT4_WRAP_CPP(rucktrack_MOC_out ${rucktrack_INCLUDES})
 QT4_WRAP_UI(rucktrack_UIC_out ${rucktrack_UI})
 QT4_ADD_RESOURCES(rucktrack_RCC_out resources/rucktrack.qrc)
 
 INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/3rdparty/quazip/quazip ${CMAKE_SOURCE_DIR}/src/3rdparty/bzip2 ${CMAKE_SOURCE_DIR}/src/3rdparty/qwt ${CMAKE_BINARY_DIR})
 LINK_LIBRARIES(${QT_LIBRARIES} ${GDAL_LIBRARY} -lz)
-ADD_EXECUTABLE(rucktrack ${rucktrack_SOURCES} ${rucktrack_UIC_out} ${rucktrack_MOC_out} ${rucktrack_RCC_out} ${WINRC})
+ADD_EXECUTABLE(rucktrack ${rucktrack_SOURCES} ${rucktrack_UIC_out} ${rucktrack_MOC_out} ${rucktrack_RCC_out} ${WINRC} ${qm_files})
 
 IF(WIN32)
 	SET_TARGET_PROPERTIES(rucktrack PROPERTIES LINK_FLAGS "${LINK_FLAGS} -mwindows")

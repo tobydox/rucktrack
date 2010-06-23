@@ -23,9 +23,25 @@
  */
 
 #include <QtCore/QDebug>
+#include <QtCore/QLocale>
+#include <QtCore/QTranslator>
 #include <QtGui/QApplication>
+
 #include "RTMainWindow.h"
 #include "SrtmLayer.h"
+
+
+static inline void loadTranslation( const QString & _tname )
+{
+	QTranslator * t = new QTranslator( QCoreApplication::instance() );
+
+	t->load( QString( ":/resources/%1.qm" ).arg( _tname ) );
+
+	QCoreApplication::instance()->installTranslator( t );
+}
+
+
+
 
 
 int main(int argc, char *argv[])
@@ -34,6 +50,8 @@ int main(int argc, char *argv[])
 
 	QCoreApplication::setOrganizationName( "RuckTrack Developers" );
 	QCoreApplication::setApplicationName( "RuckTrack" );
+
+	loadTranslation( QLocale::system().name().left( 2 ) );
 
 	RTMainWindow w;
 	w.show();

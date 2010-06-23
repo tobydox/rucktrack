@@ -31,6 +31,7 @@
 
 class StatisticsTable : public QTableWidget
 {
+	Q_OBJECT
 public:
 	enum Properties
 	{

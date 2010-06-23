@@ -14,5 +14,6 @@
     <file>table.png</file>
     <file>blue-dot.png</file>
     <file>openstreetmap.html</file>
+    <file>de.qm</file>
   </qresource>
 </RCC>

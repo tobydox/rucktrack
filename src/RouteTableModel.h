@@ -31,6 +31,7 @@
 
 class RouteTableModel : public QAbstractTableModel
 {
+	Q_OBJECT
 public:
 	enum Columns
 	{
