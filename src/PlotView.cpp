@@ -37,7 +37,9 @@ PlotCurve::PlotCurve( int _numPoints, const QString & _title,
 										const QColor & _color ) :
 	QwtPlotCurve( _title ),
 	m_numPoints( _numPoints ),
-	m_yData( new double[m_numPoints] )
+	m_yData( new double[m_numPoints] ),
+	m_xAxisMin( 0 ),
+	m_xAxisMax( 0 )
 {
 	QColor c = _color;
 	c.setAlpha( 176 );
@@ -62,6 +64,9 @@ PlotCurve & PlotCurve::operator=( const PlotCurve & _other )
 
 	setPen( _other.pen() );
 	setBrush( _other.brush() );
+
+	m_xAxisMin = _other.m_xAxisMin;
+	m_xAxisMax = _other.m_xAxisMax;
 
 	return * this;
 }
@@ -90,8 +95,50 @@ void PlotCurve::attachData( PlotView * _plotView, double * _xData )
 	QPalette pal = w->palette();
 	pal.setColor( QPalette::Text, pen().color() );
 	w->setPalette( pal );
+
+	// save min and max values for x axis
+	m_xAxisMin = _xData[0];
+	m_xAxisMax = _xData[m_numPoints-1];
 }
 
+
+
+void PlotCurve::xAxisZoomBy(double factor, double centre)
+{
+	// calculate new width of the plot
+	double distance = ( m_xAxisMax - m_xAxisMin ) * factor;
+
+	if ( distance >  x( m_numPoints - 1 ) -  x( 0 ) )
+	{
+		m_xAxisMin = x( 0 );
+		m_xAxisMax = x( m_numPoints - 1 );
+		return;
+	}
+
+	m_xAxisMin = centre - distance / 2;
+	m_xAxisMax = centre + distance / 2;
+
+	if ( m_xAxisMax > x( m_numPoints - 1 ) )
+	{
+		xAxisPanBy( x( m_numPoints - 1 ) - m_xAxisMax);
+		return;
+	}
+
+	if ( m_xAxisMin < 0 )
+	{
+		xAxisPanBy( -m_xAxisMin );
+		return;
+	}
+}
+
+
+
+
+void PlotCurve::xAxisPanBy(double s)
+{
+	m_xAxisMin += s;
+	m_xAxisMax += s;
+}
 
 
 
@@ -114,6 +161,10 @@ PlotView::PlotView( QWidget * _parent ) :
 	legend->setStyleSheet( "font-weight:bold;" );
 	legend->setFrameStyle( QFrame::NoFrame );
 	insertLegend( legend, QwtPlot::RightLegend );
+
+// 	m_zoomer =  new RuckPlotZoomer( canvas(), true );
+
+	connect( this, SIGNAL( turnedWheel( double, double ) ), this, SLOT( zoom( double, double ) ) );
 }
 
 
@@ -279,6 +330,17 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 			}
 			return true;
 		}
+		case QEvent::Wheel:
+		{
+			QWheelEvent * e = (QWheelEvent *) _event;
+
+			// 15° normally is one step
+			// positive: forwads/away from the user, negative: backwards/towards the user
+			const double rotated = e->delta() / 360.0;
+			const double x = invTransform( xBottom, e->x() );
+
+			emit turnedWheel( rotated, x );
+		}
 		default:
 			break;
 	}
@@ -287,3 +349,17 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 }
 
 
+
+
+void PlotView::zoom(double amount, double x)
+{
+	double zoomFactor = amount > 0 ? 0.5 : 2;
+	for( CurveMap::Iterator it = m_curves.begin(); it != m_curves.end(); ++it )
+	{
+		PlotCurve& curve = it.value();
+		curve.xAxisZoomBy( zoomFactor, x );
+		setAxisScale( curve.xAxis(), curve.xAxisMin(), curve.xAxisMax() );
+	}
+
+	replot();
+}

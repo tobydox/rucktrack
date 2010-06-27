@@ -43,23 +43,37 @@ public:
 		QwtPlotCurve()
 	{
 		*this = _other;
-   		setRenderHint( QwtPlotItem::RenderAntialiased );
+		setRenderHint( QwtPlotItem::RenderAntialiased );
 	}
 	PlotCurve & operator=( const PlotCurve & _other );
 	~PlotCurve();
 
 	void attachData( PlotView * _plotView, double * _xData );
 
+	void xAxisZoomBy( double factor, double centre );
+	void xAxisPanBy( double s );
+
 	inline double * data()
 	{
 		return m_yData;
 	}
 
+	inline double xAxisMin()
+	{
+		return m_xAxisMin;
+	}
+	inline double xAxisMax()
+	{
+		return m_xAxisMax;
+	}
+
 private:
 	int m_numPoints;
 	double * m_yData;
-
+	double m_xAxisMin;
+	double m_xAxisMax;
 } ;
+
 
 
 
@@ -94,8 +108,10 @@ private:
 
 signals:
 	void clickedPoint( double, double );
+	void turnedWheel( double, double );
 
+public slots:
+	void zoom( double amount, double x );
 } ;
-
 
 #endif // _PLOT_VIEW_H
