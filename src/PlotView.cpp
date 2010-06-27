@@ -28,9 +28,9 @@
 
 #include "PlotView.h"
 
-#include "qwt_legend.h"
-#include "qwt_legend_item.h"
-#include "qwt_plot_canvas.h"
+#include <qwt_legend.h>
+#include <qwt_legend_item.h>
+#include <qwt_plot_canvas.h>
 
 
 PlotCurve::PlotCurve( int _numPoints, const QString & _title,
