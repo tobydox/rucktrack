@@ -280,7 +280,7 @@ void PlotView::smoothSpeed(double sigma)
 		c[x] /= c_sum;
 	}
 
-	size_t last = m_numPoints;
+	int last = m_numPoints;
 	double * data = m_curves[Speed].data();
 
 	// TODO: the first and the last two points are not smoothed
