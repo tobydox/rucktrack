@@ -103,6 +103,11 @@ void PlotCurve::attachData( PlotView * _plotView, double * _xData )
 
 
 
+/**
+ *  Set \b xAxisMin and \b xAxis max to the values after zooming.
+ *  \param factor zoom factor
+ *  \param centre centre of the zoom
+ */
 void PlotCurve::xAxisZoomBy(double factor, double centre)
 {
 	// calculate new width of the plot
@@ -134,6 +139,10 @@ void PlotCurve::xAxisZoomBy(double factor, double centre)
 
 
 
+/**
+ *  Set \b xAxisMin and \b xAxis max to the values after moving the presented section.
+ *  \param s distance to pan the plot
+ */
 void PlotCurve::xAxisPanBy(double s)
 {
 	m_xAxisMin += s;
@@ -351,13 +360,18 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 
 
 
-void PlotView::zoom(double amount, double x)
+/**
+ *  Zoom into speed/elevation plot.
+ *  \param amount zoom factor
+ *  \param centre centre of zoom
+ */
+void PlotView::zoom(double amount, double centre)
 {
 	double zoomFactor = amount > 0 ? 0.5 : 2;
 	for( CurveMap::Iterator it = m_curves.begin(); it != m_curves.end(); ++it )
 	{
 		PlotCurve& curve = it.value();
-		curve.xAxisZoomBy( zoomFactor, x );
+		curve.xAxisZoomBy( zoomFactor, centre );
 		setAxisScale( curve.xAxis(), curve.xAxisMin(), curve.xAxisMax() );
 	}
 
