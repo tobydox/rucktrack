@@ -31,7 +31,7 @@
 class GoogleMapsProvider : public MapProvider
 {
 public:
-	GoogleMapsProvider( QWebFrame * _parent );
+	GoogleMapsProvider( QWebFrame * _parent, QString name = GoogleMapsProvider::publicName() );
 	virtual ~GoogleMapsProvider();
 
 	virtual void showRoute( const Route & _route );

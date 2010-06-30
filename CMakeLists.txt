@@ -2,6 +2,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0)
 
 PROJECT(RuckTrack)
 
+SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+
 IF(COMMAND CMAKE_POLICY)
 	CMAKE_POLICY(SET CMP0005 NEW)
 	CMAKE_POLICY(SET CMP0003 NEW)
@@ -45,6 +47,25 @@ IF (DOXYGEN_FOUND STREQUAL "YES")
 		)
 ENDIF()
 
+# check for Qwt; if not present, take from 3rdparty directory
+FIND_PACKAGE(Qwt)
+IF (QWT_FOUND)
+	SET(QWT_SOURCES "")
+	SET(QWT_HEADERS "")
+ELSE (QWT_FOUND)
+	SET(QWT_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src/3rdparty/qwt)
+	SET(QWT_LIBRARY "")
+	SET(QWT_SOURCES src/3rdparty/qwt/qwt-all.cpp)
+	SET(QWT_HEADERS src/3rdparty/quazip/quazip/quazipfile.h
+		src/3rdparty/qwt/qwt_dyngrid_layout.h
+		src/3rdparty/qwt/qwt_legend.h
+		src/3rdparty/qwt/qwt_legend_item.h
+		src/3rdparty/qwt/qwt_plot_canvas.h
+		src/3rdparty/qwt/qwt_plot.h
+		src/3rdparty/qwt/qwt_text_label.h
+		src/3rdparty/qwt/qwt_scale_widget.h)
+ENDIF (QWT_FOUND)
+
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/rucktrack.rc.in ${CMAKE_BINARY_DIR}/rucktrack.rc)
 
 # set compiler flags
@@ -79,7 +100,7 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/3rdparty/bzip2/randtable.c
 			src/3rdparty/bzip2/decompress.c
 			src/3rdparty/bzip2/blocksort.c
-			src/3rdparty/qwt/qwt-all.cpp)
+			${QWT_SOURCES})
 
 SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/AboutDialog.h
@@ -97,13 +118,7 @@ SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/StatisticsTable.h
 			src/QtBzip2File.h
 			src/3rdparty/quazip/quazip/quazipfile.h
-			src/3rdparty/qwt/qwt_dyngrid_layout.h
-			src/3rdparty/qwt/qwt_legend.h
-			src/3rdparty/qwt/qwt_legend_item.h
-			src/3rdparty/qwt/qwt_plot_canvas.h
-			src/3rdparty/qwt/qwt_plot.h
-			src/3rdparty/qwt/qwt_text_label.h
-			src/3rdparty/qwt/qwt_scale_widget.h)
+			${QWT_HEADERS})
 
 IF(WIN32)
 	INSTALL(FILES ${QT_BINARY_DIR}/QtCore4.dll ${QT_BINARY_DIR}/QtGui4.dll ${QT_BINARY_DIR}/QtXml4.dll ${QT_BINARY_DIR}/QtNetwork4.dll ${QT_BINARY_DIR}/QtWebKit4.dll ${QT_BINARY_DIR}/phonon4.dll ${QT_BINARY_DIR}/libgdal-1.dll ${QT_BINARY_DIR}/libz.dll DESTINATION .)
@@ -137,8 +152,8 @@ QT4_WRAP_CPP(rucktrack_MOC_out ${rucktrack_INCLUDES})
 QT4_WRAP_UI(rucktrack_UIC_out ${rucktrack_UI})
 QT4_ADD_RESOURCES(rucktrack_RCC_out resources/rucktrack.qrc)
 
-INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/3rdparty/quazip/quazip ${CMAKE_SOURCE_DIR}/src/3rdparty/bzip2 ${CMAKE_SOURCE_DIR}/src/3rdparty/qwt ${CMAKE_BINARY_DIR})
-LINK_LIBRARIES(${QT_LIBRARIES} ${GDAL_LIBRARY} -lz)
+INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR} ${QWT_INCLUDE_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/3rdparty/quazip/quazip ${CMAKE_SOURCE_DIR}/src/3rdparty/bzip2 ${CMAKE_BINARY_DIR})
+LINK_LIBRARIES(${QT_LIBRARIES} ${GDAL_LIBRARY} ${QWT_LIBRARY} -lz)
 ADD_EXECUTABLE(rucktrack ${rucktrack_SOURCES} ${rucktrack_UIC_out} ${rucktrack_MOC_out} ${rucktrack_RCC_out} ${WINRC} ${qm_files})
 
 IF(WIN32)

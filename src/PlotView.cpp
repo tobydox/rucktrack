@@ -28,16 +28,18 @@
 
 #include "PlotView.h"
 
-#include "qwt_legend.h"
-#include "qwt_legend_item.h"
-#include "qwt_plot_canvas.h"
+#include <qwt_legend.h>
+#include <qwt_legend_item.h>
+#include <qwt_plot_canvas.h>
 
 
 PlotCurve::PlotCurve( int _numPoints, const QString & _title,
 										const QColor & _color ) :
 	QwtPlotCurve( _title ),
 	m_numPoints( _numPoints ),
-	m_yData( new double[m_numPoints] )
+	m_yData( new double[m_numPoints] ),
+	m_xAxisMin( 0 ),
+	m_xAxisMax( 0 )
 {
 	QColor c = _color;
 	c.setAlpha( 176 );
@@ -62,6 +64,9 @@ PlotCurve & PlotCurve::operator=( const PlotCurve & _other )
 
 	setPen( _other.pen() );
 	setBrush( _other.brush() );
+
+	m_xAxisMin = _other.m_xAxisMin;
+	m_xAxisMax = _other.m_xAxisMax;
 
 	return * this;
 }
@@ -90,8 +95,59 @@ void PlotCurve::attachData( PlotView * _plotView, double * _xData )
 	QPalette pal = w->palette();
 	pal.setColor( QPalette::Text, pen().color() );
 	w->setPalette( pal );
+
+	// save min and max values for x axis
+	m_xAxisMin = _xData[0];
+	m_xAxisMax = _xData[m_numPoints-1];
 }
 
+
+
+/**
+ *  Set \b xAxisMin and \b xAxis max to the values after zooming.
+ *  \param factor zoom factor
+ *  \param centre centre of the zoom
+ */
+void PlotCurve::xAxisZoomBy(double factor, double centre)
+{
+	// calculate new width of the plot
+	double distance = ( m_xAxisMax - m_xAxisMin ) * factor;
+
+	if ( distance >  x( m_numPoints - 1 ) -  x( 0 ) )
+	{
+		m_xAxisMin = x( 0 );
+		m_xAxisMax = x( m_numPoints - 1 );
+		return;
+	}
+
+	m_xAxisMin = centre - distance / 2;
+	m_xAxisMax = centre + distance / 2;
+
+	if ( m_xAxisMax > x( m_numPoints - 1 ) )
+	{
+		xAxisPanBy( x( m_numPoints - 1 ) - m_xAxisMax);
+		return;
+	}
+
+	if ( m_xAxisMin < 0 )
+	{
+		xAxisPanBy( -m_xAxisMin );
+		return;
+	}
+}
+
+
+
+
+/**
+ *  Set \b xAxisMin and \b xAxis max to the values after moving the presented section.
+ *  \param s distance to pan the plot
+ */
+void PlotCurve::xAxisPanBy(double s)
+{
+	m_xAxisMin += s;
+	m_xAxisMax += s;
+}
 
 
 
@@ -114,6 +170,10 @@ PlotView::PlotView( QWidget * _parent ) :
 	legend->setStyleSheet( "font-weight:bold;" );
 	legend->setFrameStyle( QFrame::NoFrame );
 	insertLegend( legend, QwtPlot::RightLegend );
+
+// 	m_zoomer =  new RuckPlotZoomer( canvas(), true );
+
+	connect( this, SIGNAL( turnedWheel( double, double ) ), this, SLOT( zoom( double, double ) ) );
 }
 
 
@@ -132,8 +192,8 @@ void PlotView::showRoute( const Route & _route )
 	m_trackPoints = new const TrackPoint *[m_numPoints];
 	m_xData = new double[m_numPoints];
 
-	m_curves[Elevation] = PlotCurve( m_numPoints, "Elevation", Qt::blue );
-	m_curves[Speed] = PlotCurve( m_numPoints, "Speed", QColor( 0, 160, 0 ) );
+	m_curves[Elevation] = PlotCurve( m_numPoints, tr( "Elevation" ), Qt::blue );
+	m_curves[Speed] = PlotCurve( m_numPoints, tr( "Speed" ), QColor( 0, 160, 0 ) );
 
 
 	double length = 0;
@@ -175,11 +235,10 @@ void PlotView::showRoute( const Route & _route )
 				{
 					slope = slope*0.6 + dElev / ( dist * 10 ) * 0.4;
 				}
-				// smooth speed a bit
-				speed = speed*0.6 + 0.4*(dist*1000 / secs);
 				m_xData[pointCount] = length;
 				m_trackPoints[pointCount] = &pt;
 				m_curves[Elevation].data()[pointCount] = pt.elevation();
+				speed = (dist*1000 / secs);
 				m_curves[Speed].data()[pointCount] =
 											qRound( speed*3.6 * 100 ) / 100.0;
 				++pointCount;
@@ -187,6 +246,8 @@ void PlotView::showRoute( const Route & _route )
 			lastPoint = pt;
 		}
 	}
+
+	smoothSpeed( 1.2 );
 
 	for( CurveMap::Iterator it = m_curves.begin(); it != m_curves.end(); ++it )
 	{
@@ -198,6 +259,51 @@ void PlotView::showRoute( const Route & _route )
 
 	setAxisScale( xBottom, 0, length );
 	replot();
+}
+
+
+
+/**
+ *  Smooth the speed curve.
+ * The speed curve is smoothed by calculating a weighted arithmetic mean from each track point's surrounding
+ * points with the bell curve as weights.
+ * \param sigma standard deviation of the bell curve.
+ */
+void PlotView::smoothSpeed(double sigma)
+{
+	// smooth it after the bell curve: f(x) = 1∕(σ * √(2π)) * exp(-½((x - µ)∕σ)²); µ: mean, σ: standard deviation
+
+	double c_[5];        // we want to smooth with 5 values
+	double* c = &c_[2];  // we want the array to run -2...+2
+	double c_sum = 0;
+
+	for (int x = -2; x <= 2; x++)
+	{
+		c[x] = 1 / ( sigma * sqrt( 2 * M_PI ) ) * exp( -0.5 * pow( x / sigma, 2));
+		c_sum += c[x];
+	}
+
+	// sum of all coefficients shall be one
+	for (int x = -2; x <= 2; x++)
+	{
+		c[x] /= c_sum;
+	}
+
+	int last = m_numPoints;
+	double * data = m_curves[Speed].data();
+
+	// TODO: the first and the last two points are not smoothed
+	// do the actual bell curve smoothing
+	for ( int i = 2; i < last - 2; i++ )
+	{
+		double speed_i = 0;
+		for ( int x = -2; x <= 2; x++ )
+		{
+			speed_i += c[x] * data[i+x];
+		}
+
+		data[i] = speed_i;
+	}
 }
 
 
@@ -223,7 +329,7 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 					emit clickedPoint( m_trackPoints[i]->latitude(),
 										m_trackPoints[i]->longitude() );
 					QToolTip::showText( QCursor::pos(),
-						QString( "at %1 km\nspeed: %2 km/h\nelevation: %3 m" ).
+						QString( tr( "at %1 km\nspeed: %2 km/h\nelevation: %3 m" ) ).
 									arg( qRound( x*100 ) / 100.0 ).
 									arg( m_curves[Speed].y( i ) ).
 									arg( m_curves[Elevation].y( i ) ),
@@ -233,6 +339,17 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 			}
 			return true;
 		}
+		case QEvent::Wheel:
+		{
+			QWheelEvent * e = (QWheelEvent *) _event;
+
+			// 15° normally is one step
+			// positive: forwads/away from the user, negative: backwards/towards the user
+			const double rotated = e->delta() / 360.0;
+			const double x = invTransform( xBottom, e->x() );
+
+			emit turnedWheel( rotated, x );
+		}
 		default:
 			break;
 	}
@@ -241,3 +358,22 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 }
 
 
+
+
+/**
+ *  Zoom into speed/elevation plot.
+ *  \param amount zoom factor
+ *  \param centre centre of zoom
+ */
+void PlotView::zoom(double amount, double centre)
+{
+	double zoomFactor = amount > 0 ? 0.5 : 2;
+	for( CurveMap::Iterator it = m_curves.begin(); it != m_curves.end(); ++it )
+	{
+		PlotCurve& curve = it.value();
+		curve.xAxisZoomBy( zoomFactor, centre );
+		setAxisScale( curve.xAxis(), curve.xAxisMin(), curve.xAxisMax() );
+	}
+
+	replot();
+}

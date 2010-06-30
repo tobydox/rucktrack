@@ -23,6 +23,7 @@
  */
 
 #include <QtCore/QFile>
+#include <QtCore/QSettings>
 #include <QtXml/QDomDocument>
 
 #include "GpxFile.h"
@@ -43,6 +44,8 @@ bool GpxFile::loadRoute( Route & route ) const
 	{
 		return false;
 	}
+
+	bool wrongTimestampFix = QSettings().value( "GPX/WrongTimestampFix", true).toBool();
 
 	route.clear();
 
@@ -77,7 +80,9 @@ bool GpxFile::loadRoute( Route & route ) const
 					}
 				}
 
-				if( lastPoint.time() < time || time.isNull() )
+				// if timestamp of last point is not before current time stamp → leave out track point
+				// can be switched off by setting wrongTimestampFix to false
+				if( !wrongTimestampFix || lastPoint.time() < time || time.isNull() )
 				{
 					TrackPoint t(
 						e.attribute( "lat" ).toDouble(),
@@ -87,7 +92,6 @@ bool GpxFile::loadRoute( Route & route ) const
 						time.addSecs( -timeOffset ) );
 					trackSeg << t;
 					lastPoint = t;
-					//qDebug() << t.latitude() << t.longitude() << t.elevation() << t.time();
 				}
 				else
 				{

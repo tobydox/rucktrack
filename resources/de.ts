@@ -28,6 +28,25 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>PlotView</name>
+    <message>
+        <source>Elevation</source>
+        <translation>Höhe</translation>
+    </message>
+    <message>
+        <source>Speed</source>
+        <translation>Geschwindigkeit</translation>
+    </message>
+    <message>
+        <source>at %1 km
+speed: %2 km/h
+elevation: %3 m</source>
+        <translation type="unfinished">Strecke: %1 km
+Geschwindigkeit: %2km
+Höhe: %3 m</translation>
+    </message>
+</context>
+<context>
     <name>PreferencesDialog</name>
     <message>
         <source>Preferences</source>
@@ -43,7 +62,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>General settings</source>
-        <translation>Generelle Einstellungen</translation>
+        <translation type="unfinished">Allgemeine Einstellungen</translation>
     </message>
     <message>
         <source>User interface</source>
@@ -59,7 +78,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cache directory:</source>
-        <translation>Cacheverzeichnis:</translation>
+        <translation type="unfinished">Verzeichnis für Zwischenspeicher:</translation>
     </message>
     <message>
         <source>...</source>
@@ -67,11 +86,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Map provider</source>
-        <translation>Kartenanbieter</translation>
+        <translation type="unfinished">Kartenquelle</translation>
     </message>
     <message>
         <source>Caching</source>
-        <translation>Caching</translation>
+        <translation type="unfinished">Zwischenspeicher</translation>
     </message>
     <message>
         <source>Enable on-disk caching of map tiles</source>
@@ -79,7 +98,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Maximum cache size:</source>
-        <translation>Maximale Cachegröße:</translation>
+        <translation type="unfinished">Maximale Zwischenspeichergröße:</translation>
     </message>
     <message>
         <source>MB</source>
@@ -87,21 +106,21 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Select cache directory</source>
-        <translation>Cacheverzeichnis auswählen</translation>
+        <translation type="unfinished">Zwischenspeicherverzeichnis auswählen</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <source>Track point %1 dropped because its time is not later than previous one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Streckenpunkt %1 wurde ignoriert, da er keinen späteren Zeitstempel als der vorherige hat.</translation>
     </message>
 </context>
 <context>
     <name>QuaZipFile</name>
     <message>
         <source>ZIP/UNZIP API error %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Interner Fehler der ZIP-Bibliothek: %1</translation>
     </message>
 </context>
 <context>
@@ -322,7 +341,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Initially downloading required SRTM data.</source>
-        <translation>Lade benötigte SRTM-Daten initial herunter.</translation>
+        <translation>Lade benötigte SRTM-Daten erstmalig herunter.</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -345,15 +364,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Max speed</source>
-        <translation>Max. Geschwindigkeit</translation>
+        <translation>Höchstgeschwindigkeit</translation>
     </message>
     <message>
         <source>Elevation gain</source>
-        <translation>Höhenmetergewinn</translation>
+        <translation>Gewonnene Höhe</translation>
     </message>
     <message>
         <source>Elevation loss</source>
-        <translation>Höhenmeterverlust</translation>
+        <translation>Verlorene Höhe</translation>
     </message>
     <message>
         <source>Min slope</source>
