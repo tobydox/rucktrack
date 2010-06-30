@@ -56,8 +56,7 @@ ELSE (QWT_FOUND)
 	SET(QWT_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src/3rdparty/qwt)
 	SET(QWT_LIBRARY "")
 	SET(QWT_SOURCES src/3rdparty/qwt/qwt-all.cpp)
-	SET(QWT_HEADERS src/3rdparty/quazip/quazip/quazipfile.h
-		src/3rdparty/qwt/qwt_dyngrid_layout.h
+	SET(QWT_HEADERS src/3rdparty/qwt/qwt_dyngrid_layout.h
 		src/3rdparty/qwt/qwt_legend.h
 		src/3rdparty/qwt/qwt_legend_item.h
 		src/3rdparty/qwt/qwt_plot_canvas.h
