@@ -45,7 +45,7 @@ bool GpxFile::loadRoute( Route & route ) const
 		return false;
 	}
 
-	bool wrongTimestampFix = QSettings().value( "GPX/WrongTimestampFix", true).toBool();
+	bool wrongTimestampFix = QSettings().value( "GPX/DropFaultyTrackPoints", true ).toBool();
 
 	route.clear();
 

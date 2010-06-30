@@ -108,6 +108,14 @@ Höhe: %3 m</translation>
         <source>Select cache directory</source>
         <translation type="unfinished">Zwischenspeicherverzeichnis auswählen</translation>
     </message>
+    <message>
+        <source>Drop track points with wrong timestamps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use system cache directory</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>

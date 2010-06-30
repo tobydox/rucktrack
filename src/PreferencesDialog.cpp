@@ -57,6 +57,8 @@ PreferencesDialog::PreferencesDialog() :
 
 	QSettings s;
 	ui->showProgressBar->setChecked( s.value( "UI/ShowProgressBar", true ).toBool() );
+	ui->dropFaultyTrackPoints->setChecked( s.value( "GPX/DropFaultyTrackPoints", true ).toBool() );
+	ui->useSystemCacheDirectory->setChecked( s.value( "General/UseSystemCacheDirectory", true ).toBool() );
 	ui->cacheDirectory->setText( s.value( "General/CacheDirectory",
 			QDir::homePath() + QDir::separator() + ".rucktrack" ).toString() );
 	ui->mapProviderComboBox->setCurrentIndex(
@@ -80,6 +82,8 @@ void PreferencesDialog::accept()
 {
 	QSettings s;
 	s.setValue( "UI/ShowProgressBar", ui->showProgressBar->isChecked() );
+	s.setValue( "GPX/DropFaultyTrackPoints", ui->dropFaultyTrackPoints->isChecked() );
+	s.setValue( "General/UseSystemCacheDirectory", ui->useSystemCacheDirectory->isChecked() );
 	s.setValue( "General/CacheDirectory", ui->cacheDirectory->text() );
 	s.setValue( "Maps/MapProvider", ui->mapProviderComboBox->currentText() );
 	s.setValue( "Maps/EnableCaching", ui->enableCaching->isChecked() );
