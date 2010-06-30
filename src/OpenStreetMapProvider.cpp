@@ -34,7 +34,7 @@
  * Constructor for OpenStreetMapProvider.
  * \param _parent pointer to parent window.
  */
-OpenStreetMapProvider::OpenStreetMapProvider( QWebFrame * _parent, QString name ) :
+OpenStreetMapProvider::OpenStreetMapProvider( QWebFrame * _parent ) :
 	MapProvider( _parent, publicName() )
 {
 	

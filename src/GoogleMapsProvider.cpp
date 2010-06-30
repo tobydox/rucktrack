@@ -30,10 +30,9 @@
 #define evalJS(x) webFrame()->evaluateJavaScript(x)
 
 
-GoogleMapsProvider::GoogleMapsProvider( QWebFrame * _parent, QString name ) :
+GoogleMapsProvider::GoogleMapsProvider( QWebFrame * _parent ) :
 	MapProvider( _parent, publicName() )
 {
-	this->m_name = name;
 }
 
 

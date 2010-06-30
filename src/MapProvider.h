@@ -36,7 +36,7 @@ class MapProvider : public QObject
 {
 	Q_OBJECT
 public:
-	MapProvider( QWebFrame * _parent, QString name );
+	MapProvider( QWebFrame * _parent, const QString & name );
 	virtual ~MapProvider();
 
 	// pure virtual functions to be implemented by subclasses
@@ -45,7 +45,7 @@ public:
 
 	virtual QUrl mapUrl() const = 0;
 
-	QString name();
+	const QString & name() const;
 	static QString publicName()
 	{
 		return "Invalid";
@@ -61,10 +61,10 @@ protected:
 	{
 		return m_webFrame;
 	}
-	QString m_name;
 
 
 private:
+	QString m_name;
 	QWebFrame * m_webFrame;
 
 
