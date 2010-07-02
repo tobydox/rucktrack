@@ -41,8 +41,8 @@ p, li { white-space: pre-wrap; }
         <source>at %1 km
 speed: %2 km/h
 elevation: %3 m</source>
-        <translation type="unfinished">Strecke: %1 km
-Geschwindigkeit: %2km
+        <translation>Strecke: %1 km
+Geschwindigkeit: %2 km/h
 Höhe: %3 m</translation>
     </message>
 </context>
@@ -62,7 +62,7 @@ Höhe: %3 m</translation>
     </message>
     <message>
         <source>General settings</source>
-        <translation type="unfinished">Allgemeine Einstellungen</translation>
+        <translation>Allgemeine Einstellungen</translation>
     </message>
     <message>
         <source>User interface</source>
@@ -78,7 +78,7 @@ Höhe: %3 m</translation>
     </message>
     <message>
         <source>Cache directory:</source>
-        <translation type="unfinished">Verzeichnis für Zwischenspeicher:</translation>
+        <translation>Verzeichnis für Zwischenspeicher:</translation>
     </message>
     <message>
         <source>...</source>
@@ -86,11 +86,11 @@ Höhe: %3 m</translation>
     </message>
     <message>
         <source>Map provider</source>
-        <translation type="unfinished">Kartenquelle</translation>
+        <translation>Kartenquelle</translation>
     </message>
     <message>
         <source>Caching</source>
-        <translation type="unfinished">Zwischenspeicher</translation>
+        <translation>Zwischenspeicher</translation>
     </message>
     <message>
         <source>Enable on-disk caching of map tiles</source>
@@ -98,7 +98,7 @@ Höhe: %3 m</translation>
     </message>
     <message>
         <source>Maximum cache size:</source>
-        <translation type="unfinished">Maximale Zwischenspeichergröße:</translation>
+        <translation>Maximale Zwischenspeichergröße:</translation>
     </message>
     <message>
         <source>MB</source>
@@ -106,15 +106,15 @@ Höhe: %3 m</translation>
     </message>
     <message>
         <source>Select cache directory</source>
-        <translation type="unfinished">Zwischenspeicherverzeichnis auswählen</translation>
+        <translation>Zwischenspeicherverzeichnis auswählen</translation>
     </message>
     <message>
         <source>Drop track points with wrong timestamps</source>
-        <translation type="unfinished"></translation>
+        <translation>Streckenpunkte mit fehlerhaften Zeitstempeln ignorieren</translation>
     </message>
     <message>
         <source>Use system cache directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard-Zwischenspeicherverzeichnis nutzen</translation>
     </message>
 </context>
 <context>
@@ -235,7 +235,7 @@ Höhe: %3 m</translation>
     </message>
     <message>
         <source>Ctrl+O</source>
-        <translation type="unfinished"></translation>
+        <translation>Strg+O</translation>
     </message>
     <message>
         <source>Quit</source>
@@ -243,7 +243,7 @@ Höhe: %3 m</translation>
     </message>
     <message>
         <source>Ctrl+Q</source>
-        <translation type="unfinished"></translation>
+        <translation>Strg+Q</translation>
     </message>
     <message>
         <source>About</source>
@@ -251,7 +251,7 @@ Höhe: %3 m</translation>
     </message>
     <message>
         <source>Ctrl+M</source>
-        <translation type="unfinished"></translation>
+        <translation>Strg+M</translation>
     </message>
     <message>
         <source>Details</source>
@@ -263,7 +263,7 @@ Höhe: %3 m</translation>
     </message>
     <message>
         <source>Ctrl+T</source>
-        <translation type="unfinished"></translation>
+        <translation>Strg+T</translation>
     </message>
     <message>
         <source>Save</source>
@@ -275,7 +275,7 @@ Höhe: %3 m</translation>
     </message>
     <message>
         <source>Ctrl+S</source>
-        <translation type="unfinished"></translation>
+        <translation>Strg+S</translation>
     </message>
     <message>
         <source>Show graphs</source>
@@ -283,7 +283,7 @@ Höhe: %3 m</translation>
     </message>
     <message>
         <source>Ctrl+G</source>
-        <translation type="unfinished"></translation>
+        <translation>Strg+G</translation>
     </message>
     <message>
         <source>Fix elevations</source>
