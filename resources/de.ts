@@ -390,5 +390,25 @@ Höhe: %3 m</translation>
         <source>Max slope</source>
         <translation>Max. Anstieg</translation>
     </message>
+    <message>
+        <source>hh:mm:ss</source>
+        <translation>hh:mm:ss</translation>
+    </message>
+    <message>
+        <source>%1 km</source>
+        <translation>%1 km</translation>
+    </message>
+    <message>
+        <source>%1 km/h</source>
+        <translation>%1 km/h</translation>
+    </message>
+    <message>
+        <source>%1 m</source>
+        <translation>%1 m</translation>
+    </message>
+    <message>
+        <source>%1 %</source>
+        <translation>%1 %</translation>
+    </message>
 </context>
 </TS>
