@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de-de">
+<head>
+  <title>RuckTrack Sachsenatlas MapProvider</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+  <meta http-equiv="content-script-type" content="text/javascript"/>
+  <meta http-equiv="content-style-type" content="text/css"/>
+  <style type="text/css">
+#map {
+	width: 100%;
+	height: 100%;
+	border: 0px;
+	padding: 0px;
+	position: absolute;
+}
+
+body {
+	border: 0px;
+	margin: 0px;
+	padding: 0px;
+	height: 100%;
+}
+
+a {
+	color: black;
+	text-decoration: none;
+}
+
+#credits {
+	background: white;
+	padding: 2px;
+	z-index:1000;
+	border-style: none;
+	font-size: 0.7em;
+	text-align: center;
+	position:absolute;
+	right:6px;
+	bottom:6px;
+	opacity:0.5;
+}
+  </style>
+  <script type="text/javascript" src="openlayers/OpenLayers.js"/>
+  <script type="text/javascript" src="http://www.galf-dresden.de/geo/proj4js/lib/proj4js-combined.js"/>
+  <script type="text/javascript" src="http://www.galf-dresden.de/geo/proj4js/lib/defs/EPSG4326.js"/>
+  <script type="text/javascript" src="http://www.galf-dresden.de/geo/proj4js/lib/defs/EPSG31466.js"/>
+  <script type="text/javascript" src="http://www.galf-dresden.de/geo/proj4js/lib/defs/EPSG31467.js"/>
+  <script type="text/javascript" src="http://www.galf-dresden.de/geo/proj4js/lib/defs/EPSG31468.js"/>
+  <script type="text/javascript" src="http://www.galf-dresden.de/geo/proj4js/lib/defs/EPSG31469.js"/>
+  <script type="text/javascript" src="http://www.galf-dresden.de/geo/proj4js/lib/defs/EPSG900913.js"/>
+  <script type="text/javascript" src="http://www.galf-dresden.de/geo/proj4js/lib/defs/GOOGLE.js"/>
+  <script type="text/javascript">
+
+// initial position and zoom level of the map
+var lon = 12.916;
+var lat = 50.833;
+var zoom = 10;
+
+var map;
+var layerMarkers;
+var layerTrack;
+var layerWms;
+var layerWmsExample;
+var highlightMarker;
+
+function Lon2Merc(lon)
+{
+  return 20037508.34 * lon / 180;
+}
+
+function Lat2Merc(lat)
+{
+  lat = Math.log(Math.tan( (90 + lat) * Math.PI / 360)) / (Math.PI / 180);
+  return 20037508.34 * lat / 180;
+}
+
+function drawmap()
+{
+	OpenLayers.Lang.setCode('de');
+
+	map = new OpenLayers.Map('map', {
+		projection: new OpenLayers.Projection("EPSG:900913"),
+		controls: [
+			new OpenLayers.Control.MouseDefaults(),
+			new OpenLayers.Control.PanZoomBar()],
+		maxExtent:
+			new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
+		numZoomLevels: 18,
+		maxResolution: 156543,
+		units: 'meters'
+		});
+
+	layerMarkers = new OpenLayers.Layer.Markers("Highlight Marker", { projection: new OpenLayers.Projection("EPSG:4326"), visibility: true, displayInLayerSwitcher: false });
+
+	layerTrack = new OpenLayers.Layer.Vector("Simple Geometry", {
+		styleMap: new OpenLayers.StyleMap({'default':{
+			strokeColor: "#00FF99",
+			strokeOpacity: 1,
+			strokeWidth: 3,
+			fillColor: "#FF5500",
+			fillOpacity: 0.5,
+			pointRadius: 6,
+			pointerEvents: "visiblePainted",
+			fontColor: "${favColor}",
+			fontSize: "12px",
+			fontFamily: "Courier New, monospace",
+			fontWeight: "bold",
+			labelAlign: "${align}",
+			labelXOffset: "${xOffset}",
+			labelYOffset: "${yOffset}"
+			}}),
+		projection: new OpenLayers.Projection("EPSG:4326"), visibility: true, displayInLayerSwitcher: false
+		});
+
+	layerWmsExample = new OpenLayers.Layer.WMS(
+		"OpenLayers WMS Example",
+		"http://labs.metacarta.com/wms/vmap0",
+		{ layers: 'basic' },
+		{ projection: new OpenLayers.Projection("EPSG:900913") }
+		);
+}
+    </script>
+
+  </head>
+  <body onload=drawmap();>
+
+  <div id="map">
+  </div>
+
+  <div id="credits">
+    Web Map Service
+  </div>
+
+</body>
+</html>

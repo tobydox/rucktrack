@@ -28,9 +28,10 @@
 
 #include "AboutDialog.h"
 #include "GoogleMapsProvider.h"
+#include "OpenStreetMapProvider.h"
+#include "WmsMapProvider.h"
 #include "GpxFile.h"
 #include "RTMainWindow.h"
-#include "OpenStreetMapProvider.h"
 #include "PreferencesDialog.h"
 #include "RuckTrackNetworkAccessManager.h"
 #include "RouteTableModel.h"
@@ -333,6 +334,13 @@ void RTMainWindow::setPreferenceMapProvider()
 		{
 			// install OpenStreetMapProvider
 			mapProvider =  new OpenStreetMapProvider(
+											ui->mapView->page()->mainFrame() );
+		}
+		else if( preferredMapProvider ==
+				WmsMapProvider::publicName() )
+		{
+			// install WmsMapProvider
+			mapProvider =  new WmsMapProvider(
 											ui->mapView->page()->mainFrame() );
 		}
 		else

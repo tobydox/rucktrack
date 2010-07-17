@@ -31,6 +31,7 @@
 #include "PreferencesDialog.h"
 #include "GoogleMapsProvider.h"
 #include "OpenStreetMapProvider.h"
+#include "WmsMapProvider.h"
 
 #include "ui_PreferencesDialog.h"
 
@@ -54,6 +55,7 @@ PreferencesDialog::PreferencesDialog() :
 
 	ui->mapProviderComboBox->addItem( GoogleMapsProvider::publicName() );
 	ui->mapProviderComboBox->addItem( OpenStreetMapProvider::publicName() );
+	ui->mapProviderComboBox->addItem( WmsMapProvider::publicName() );
 
 	QSettings s;
 	ui->showProgressBar->setChecked( s.value( "UI/ShowProgressBar", true ).toBool() );

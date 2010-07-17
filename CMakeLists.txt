@@ -76,6 +76,7 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/PreferencesDialog.cpp
 			src/GoogleMapsProvider.cpp
 			src/OpenStreetMapProvider.cpp
+			src/WmsMapProvider.cpp
 			src/GpxFile.cpp
 			src/MapProvider.cpp
 			src/MapView.cpp
@@ -106,6 +107,7 @@ SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/PreferencesDialog.h
 			src/GoogleMapsProvider.h
 			src/OpenStreetMapProvider.h
+			src/WmsMapProvider.h
 			src/GpxFile.h
 			src/MapProvider.h
 			src/MapView.h
