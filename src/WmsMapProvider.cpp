@@ -27,8 +27,6 @@
 
 #include "WmsMapProvider.h"
 
-#define evalJS(x) webFrame()->evaluateJavaScript(x)
-
 
 
 /**

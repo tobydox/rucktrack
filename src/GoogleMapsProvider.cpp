@@ -27,8 +27,6 @@
 
 #include "GoogleMapsProvider.h"
 
-#define evalJS(x) webFrame()->evaluateJavaScript(x)
-
 
 GoogleMapsProvider::GoogleMapsProvider( QWebFrame * _parent ) :
 	MapProvider( _parent, publicName() )

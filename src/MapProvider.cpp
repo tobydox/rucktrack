@@ -22,8 +22,6 @@
  *
  */
 
-#include <QtWebKit/QWebFrame>
-
 #include "MapProvider.h"
 
 

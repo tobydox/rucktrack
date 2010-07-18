@@ -27,6 +27,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QUrl>
+#include <QtWebKit/QWebFrame>
 
 #include "Route.h"
 
@@ -50,13 +51,18 @@ public:
 	{
 		return "Invalid";
 	}
-	
+
 
 public slots:
 	virtual void selectPoint( double _lat, double _lon );
 
 
 protected:
+	inline QVariant evalJS( const QString & scriptSource )
+	{
+		return webFrame()->evaluateJavaScript( scriptSource );
+	}
+
 	QWebFrame * webFrame()
 	{
 		return m_webFrame;
