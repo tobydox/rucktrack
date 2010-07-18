@@ -110,13 +110,13 @@ void StatisticsTable::update( const Route & _route )
 	}
 
 	setPropertyValue( Time, QTime().addSecs( timeSecs ).toString( tr( "hh:mm:ss" ) ) );
-	setPropertyValue( Distance, QString( tr( "%1 km" ) ).arg( length, 0, 'f', 1 ) );
-	setPropertyValue( AverageSpeed, QString( tr( "%1 km/h" ) ).arg( 3600 * length / timeSecs, 0, 'f', 1 ) );
-	setPropertyValue( MaxSpeed, QString( tr( "%1 km/h" ) ).arg( maxSpeed * 3.6, 0, 'f', 1 ) );
-	setPropertyValue( ElevationGain, QString( tr( "%1 m" ) ).arg( elevGain, 0, 'f', 1 ) );
-	setPropertyValue( ElevationLoss, QString( tr( "%1 m" ) ).arg( elevLoss, 0, 'f', 1 ) );
-	setPropertyValue( MinSlope, QString( tr( "%1 %" ) ).arg( minSlope, 0, 'f', 1 ) );
-	setPropertyValue( MaxSlope, QString( tr( "%1 %" ) ).arg( maxSlope, 0, 'f', 1 ) );
+	setPropertyValue( Distance, tr( "%1 km" ).arg( length, 0, 'f', 1 ) );
+	setPropertyValue( AverageSpeed, tr( "%1 km/h" ).arg( 3600 * length / timeSecs, 0, 'f', 1 ) );
+	setPropertyValue( MaxSpeed, tr( "%1 km/h" ).arg( maxSpeed * 3.6, 0, 'f', 1 ) );
+	setPropertyValue( ElevationGain, tr( "%1 m" ).arg( elevGain, 0, 'f', 1 ) );
+	setPropertyValue( ElevationLoss, tr( "%1 m" ).arg( elevLoss, 0, 'f', 1 ) );
+	setPropertyValue( MinSlope, tr( "%1 %" ).arg( minSlope, 0, 'f', 1 ) );
+	setPropertyValue( MaxSlope, tr( "%1 %" ).arg( maxSlope, 0, 'f', 1 ) );
 }
 
 
