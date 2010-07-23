@@ -59,6 +59,14 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 	// the whole app is DockWidget-based, therefore hide centralWidget
 	ui->centralWidget->hide();
 
+	// hide combo boxes as they are without function
+	ui->graphXCombo->hide();
+	ui->graphY1Combo->hide();
+	ui->graphY2Combo->hide();
+	ui->graphXLabel->hide();
+	ui->graphY1Label->hide();
+	ui->graphY2Label->hide();
+
 	// graphsDock and trackDetailsDock should be tabified per default - designer doesn't
 	// allow to configure this, so do this manually and make sure, graphsDock still is on top
 	tabifyDockWidget( ui->graphsDock, ui->trackDetailsDock );
