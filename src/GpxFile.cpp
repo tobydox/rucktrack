@@ -23,7 +23,10 @@
  */
 
 #include <QtCore/QFile>
+#include <QtCore/QFileInfo>
 #include <QtCore/QSettings>
+#include <QtCore/QProcess>
+#include <QtCore/QDebug>
 #include <QtXml/QDomDocument>
 
 #include "GpxFile.h"
@@ -40,7 +43,36 @@ bool GpxFile::loadRoute( Route & route ) const
 {
 	QDomDocument doc;
 	QFile f( m_fileName );
-	if( !f.open( QFile::ReadOnly ) || !doc.setContent( &f ) )
+	QByteArray ba;
+
+	QFileInfo fi( m_fileName.toLower() );
+	QString fileSuffix =  fi.suffix();
+	if ( fileSuffix == "gpx" )
+	{
+		if( !f.open( QFile::ReadOnly ) || !doc.setContent( &f ) )
+		{
+			return false;
+		}
+	}
+	else if ( fileSuffix == "kml" )
+	{
+		QProcess process;
+		process.start( QString( "gpsbabel -i kml -f %1 -o gpx -F -" ).arg( m_fileName ) );
+		if ( process.waitForFinished() )
+		{
+			ba = process.readAllStandardOutput();
+			QByteArray error = process.readAllStandardError();
+			if ( error.isEmpty() || !doc.setContent( ba ) )
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
 	{
 		return false;
 	}
