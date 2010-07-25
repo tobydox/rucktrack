@@ -36,6 +36,8 @@ public:
 
 private:
 	const QString & m_fileName;
+
+	QByteArray convertToGpx() const;
 } ;
 
 #endif // _GPX_FILE_H
