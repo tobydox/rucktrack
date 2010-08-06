@@ -49,6 +49,7 @@ public:
 	~PlotCurve();
 
 	void attachData( PlotView * _plotView, double * _xData );
+	void attachData( PlotView * _plotView, double * _xData, double * _yData );
 
 	void xAxisZoomBy( double factor, double centre );
 	void xAxisPanBy( double s );
@@ -87,6 +88,7 @@ public:
 		Speed,
 		Time,
 		Climb,
+		SegmentedElevation,
 		NumCurves
 	} ;
 
@@ -96,6 +98,7 @@ public:
 
 	virtual bool eventFilter( QObject * _obj, QEvent * _event );
 
+	enum DisplayType {DISPLAY_CONTINUOUS, DISPLAY_SEGMENTED};
 
 private:
 	typedef QMap<Curves, PlotCurve> CurveMap;
@@ -105,6 +108,8 @@ private:
 	double * m_xData;
 	const TrackPoint * * m_trackPoints;
 
+	void createSegmentedCurve( int );
+
 
 signals:
 	void clickedPoint( double, double );
@@ -112,6 +117,7 @@ signals:
 
 public slots:
 	void zoom( double amount, double x );
+// 	void changeDisplay( DisplayType );
 } ;
 
 #endif // _PLOT_VIEW_H

@@ -32,6 +32,7 @@
 #include <qwt_legend_item.h>
 #include <qwt_plot_canvas.h>
 
+#include "Segmentiser.h"
 
 PlotCurve::PlotCurve( int _numPoints, const QString & _title,
 										const QColor & _color ) :
@@ -77,6 +78,17 @@ PlotCurve & PlotCurve::operator=( const PlotCurve & _other )
 PlotCurve::~PlotCurve()
 {
 	delete[] m_yData;
+}
+
+
+
+
+void PlotCurve::attachData(PlotView* _plotView, double* _xData, double* _yData)
+{
+	delete [] m_yData;
+	m_yData = _yData;
+
+	attachData( _plotView, _xData );
 }
 
 
@@ -192,9 +204,9 @@ void PlotView::showRoute( const Route & _route )
 	m_trackPoints = new const TrackPoint *[m_numPoints];
 	m_xData = new double[m_numPoints];
 
-	m_curves[Elevation] = PlotCurve( m_numPoints, tr( "Elevation" ), Qt::blue );
+	// TODO: check if we might have to delete the previous contents
+	m_curves[Elevation] = PlotCurve( m_numPoints, tr( "Elevation" ), Qt::red );
 	m_curves[Speed] = PlotCurve( m_numPoints, tr( "Speed" ), QColor( 0, 160, 0 ) );
-
 
 	double length = 0;
 	double elevGain = 0;
@@ -249,17 +261,37 @@ void PlotView::showRoute( const Route & _route )
 
 	smoothSpeed( 1.2 );
 
-	for( CurveMap::Iterator it = m_curves.begin(); it != m_curves.end(); ++it )
-	{
-		it.value().attachData( this, m_xData );
-	}
+	createSegmentedCurve( 20 );
 
+	m_curves[Elevation].attachData( this, m_xData );
+	m_curves[Speed].attachData( this, m_xData );
+// 	for( CurveMap::Iterator it = m_curves.begin(); it != m_curves.end(); ++it )
+// 	{
+// 		it.value().attachData( this, m_xData );
+// 	}
+
+	m_curves[SegmentedElevation].setYAxis( 0 );
 	m_curves[Elevation].setYAxis( 0 );
 	m_curves[Speed].setYAxis( 1 );
 
 	setAxisScale( xBottom, 0, length );
 	replot();
 }
+
+
+
+void PlotView::createSegmentedCurve(int segments)
+{
+	m_curves[SegmentedElevation] = PlotCurve( segments, tr( "Elevation" ), Qt::darkBlue );
+	double* x_data = m_xData;
+	double* y_data = m_curves[Elevation].data();
+
+	Segmentiser segmentiser( x_data, y_data, m_numPoints );
+	segmentiser.segmentise( segments );
+
+	m_curves[SegmentedElevation].attachData( this, segmentiser.segmentsX(), segmentiser.segmentsY() );
+}
+
 
 
 
