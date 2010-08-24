@@ -25,6 +25,7 @@
 #include <QtCore/QDebug>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QToolTip>
+#include <QtGui/QApplication>
 
 #include "PlotView.h"
 
@@ -169,7 +170,8 @@ PlotView::PlotView( QWidget * _parent ) :
 	m_curves(),
 	m_numPoints( 0 ),
 	m_xData( NULL ),
-	m_trackPoints( NULL )
+	m_trackPoints( NULL ),
+	m_curveViewMode( CurveViewModeContinuous )
 {
 	enableAxis( yRight );
 	canvas()->setLineWidth( 0 );
@@ -182,8 +184,6 @@ PlotView::PlotView( QWidget * _parent ) :
 	legend->setStyleSheet( "font-weight:bold;" );
 	legend->setFrameStyle( QFrame::NoFrame );
 	insertLegend( legend, QwtPlot::RightLegend );
-
-// 	m_zoomer =  new RuckPlotZoomer( canvas(), true );
 
 	connect( this, SIGNAL( turnedWheel( double, double ) ), this, SLOT( zoom( double, double ) ) );
 }
@@ -205,7 +205,7 @@ void PlotView::showRoute( const Route & _route )
 	m_xData = new double[m_numPoints];
 
 	// TODO: check if we might have to delete the previous contents
-	m_curves[Elevation] = PlotCurve( m_numPoints, tr( "Elevation" ), Qt::red );
+	m_curves[Elevation] = PlotCurve( m_numPoints, tr( "Elevation" ), Qt::darkBlue );
 	m_curves[Speed] = PlotCurve( m_numPoints, tr( "Speed" ), QColor( 0, 160, 0 ) );
 
 	double length = 0;
@@ -260,26 +260,25 @@ void PlotView::showRoute( const Route & _route )
 	}
 
 	smoothSpeed( 1.2 );
-
 	createSegmentedCurve( 20 );
 
 	m_curves[Elevation].attachData( this, m_xData );
 	m_curves[Speed].attachData( this, m_xData );
-// 	for( CurveMap::Iterator it = m_curves.begin(); it != m_curves.end(); ++it )
-// 	{
-// 		it.value().attachData( this, m_xData );
-// 	}
 
 	m_curves[SegmentedElevation].setYAxis( 0 );
 	m_curves[Elevation].setYAxis( 0 );
 	m_curves[Speed].setYAxis( 1 );
 
 	setAxisScale( xBottom, 0, length );
+	hideUnneededCurves();
 	replot();
 }
 
 
 
+/**
+ *  Create the segmented elevation curve.
+ */
 void PlotView::createSegmentedCurve(int segments)
 {
 	m_curves[SegmentedElevation] = PlotCurve( segments, tr( "Elevation" ), Qt::darkBlue );
@@ -407,5 +406,38 @@ void PlotView::zoom(double amount, double centre)
 		setAxisScale( curve.xAxis(), curve.xAxisMin(), curve.xAxisMax() );
 	}
 
+	replot();
+}
+
+
+
+/**
+ *  Set the mode in which the elevation curve is drawn (continuous/segmented).
+ *  \param mode desired mode (corresponds to \b CurveViewMode enum).
+ */
+void PlotView::changeCurveViewMode( int mode )
+{
+	Q_ASSERT( mode >= 0 && mode < (int) CurveViewModesNumberOf );
+	m_curveViewMode = (CurveViewMode) mode;
+	hideUnneededCurves();
+}
+
+
+
+void PlotView::hideUnneededCurves()
+{
+	switch ( m_curveViewMode )
+	{
+		case CurveViewModeContinuous:
+			m_curves[SegmentedElevation].setStyle( QwtPlotCurve::NoCurve );
+			m_curves[Elevation].setStyle( QwtPlotCurve::Lines );
+			break;
+		case CurveViewModeSegmented:
+			m_curves[Elevation].setStyle( QwtPlotCurve::NoCurve );
+			m_curves[SegmentedElevation].setStyle( QwtPlotCurve::Lines );
+			break;
+		default:
+			Q_ASSERT( false );
+	}
 	replot();
 }

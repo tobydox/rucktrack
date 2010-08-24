@@ -104,6 +104,9 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 	connect( ui->actionFixElevations, SIGNAL(triggered(bool)),
 				this, SLOT( fixElevations() ) );
 
+	// PlotView
+	connect ( ui->graphDisplayCombo, SIGNAL( currentIndexChanged(int) ), ui->plotView, SLOT( changeCurveViewMode( int ) ) );
+
 	// parse command line parameters after map is loaded (would not work if we did it immediately)
 	connect( ui->mapView, SIGNAL( loadFinished(bool) ), this, SLOT( parseCommandLineParameters() ) );
 }

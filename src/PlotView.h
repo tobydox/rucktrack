@@ -30,6 +30,7 @@
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 
+#include "RTMainWindow.h"
 #include "Route.h"
 
 class PlotView;
@@ -98,7 +99,9 @@ public:
 
 	virtual bool eventFilter( QObject * _obj, QEvent * _event );
 
-	enum DisplayType {DISPLAY_CONTINUOUS, DISPLAY_SEGMENTED};
+// 	enum DisplayType {DISPLAY_CONTINUOUS, DISPLAY_SEGMENTED};
+	enum CurveViewModes { CurveViewModeContinuous, CurveViewModeSegmented, CurveViewModesNumberOf };
+	typedef CurveViewModes CurveViewMode;
 
 private:
 	typedef QMap<Curves, PlotCurve> CurveMap;
@@ -107,9 +110,10 @@ private:
 	int m_numPoints;
 	double * m_xData;
 	const TrackPoint * * m_trackPoints;
+	CurveViewMode m_curveViewMode;
 
 	void createSegmentedCurve( int );
-
+	void hideUnneededCurves();
 
 signals:
 	void clickedPoint( double, double );
@@ -117,7 +121,7 @@ signals:
 
 public slots:
 	void zoom( double amount, double x );
-// 	void changeDisplay( DisplayType );
+	void changeCurveViewMode( int mode );
 } ;
 
 #endif // _PLOT_VIEW_H
