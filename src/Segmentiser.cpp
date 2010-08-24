@@ -151,13 +151,6 @@ void Segmentiser::segmentise( int segments )
 		segments_y[i] = distance2height( p[i], x, y, n_points );
 	}
 
-	for ( int i = 0; i < segments - 1; i++ )
-	{
-		printf("set arrow from %.5f,%.5f to %.5f,%.5f nohead lw 2\n",
-			p[i], distance2height(p[i], x, y, n_points),
-			p[i+1], distance2height(p[i+1], x, y, n_points));
-	}
-
 	delete [] p;
 }
 
@@ -178,9 +171,5 @@ int Segmentiser::segmentsCount()
 
 Segmentiser::~Segmentiser()
 {
-	// TODO: think about correct behaviour
-// 	delete segments_y;
-// 	delete segments_x;
-
 	delete [] data;
 }

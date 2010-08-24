@@ -25,7 +25,6 @@
 #include <QtCore/QDebug>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QToolTip>
-#include <QtGui/QApplication>
 
 #include "PlotView.h"
 
@@ -424,6 +423,9 @@ void PlotView::changeCurveViewMode( int mode )
 
 
 
+/**
+ *  Hides all curves that are not needed currently. Shows all other curves.
+ */
 void PlotView::hideUnneededCurves()
 {
 	switch ( m_curveViewMode )
