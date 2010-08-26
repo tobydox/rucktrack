@@ -58,6 +58,11 @@ public slots:
 
 
 protected:
+	/**
+	 *  Evaluate a JavaScript statement in the map frame.
+	 *  Attention: The function may return before the execution of the JavaScript statement is finished.
+	 *  \param scriptSource JavaScript code to be executed.
+	 */
 	inline QVariant evalJS( const QString & scriptSource )
 	{
 		return webFrame()->evaluateJavaScript( scriptSource );
