@@ -81,10 +81,7 @@ public:
 
 	void setElevation( double _elevation )
 	{
-		if( _elevation >= 0 && _elevation < 20000 )
-		{
-			m_elevation = _elevation;
-		}
+		m_elevation = _elevation;
 	}
 
 	const QDateTime & time() const
