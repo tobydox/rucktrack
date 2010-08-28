@@ -20,12 +20,8 @@
  */
 
 #include <cassert>
-#include <cstdlib>
 #include <cstring>
-#include <cstdio>
-
 #include "3rdparty/levmar/levmar.h"
-
 #include "Segmentiser.h"
 
 double Segmentiser::distance2height( double x, double* x_data, double* y_data, int n_data )
@@ -137,9 +133,7 @@ void Segmentiser::segmentise( int segments )
 		p[i] = ( i + 1 ) * furthest / segments;
 	}
 
-	int it = dlevmar_dif( fit, p, y, segments, n_points, 1000, NULL, NULL, NULL, NULL, data );
-
-	printf("%d iterations\n", it);
+	dlevmar_dif( fit, p, y, segments, n_points, 1000, NULL, NULL, NULL, NULL, data );
 
 	delete [] segments_y;
 	delete [] segments_x;
