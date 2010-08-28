@@ -85,6 +85,7 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/RuckTrackNetworkAccessManager.cpp
 			src/StatisticsTable.cpp
 			src/Segmentiser.cpp
+			src/SegmentiserThread.cpp
 			src/SrtmLayer.cpp
 			src/SrtmTiff.cpp
 			src/QtBzip2File.cpp
@@ -126,6 +127,7 @@ SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/SrtmLayer.h
 			src/StatisticsTable.h
 			src/Segmentiser.h
+			src/SegmentiserThread.h
 			src/QtBzip2File.h
 			src/3rdparty/quazip/quazip/quazipfile.h
 			src/3rdparty/levmar/levmar.h

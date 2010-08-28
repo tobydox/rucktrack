@@ -32,6 +32,7 @@
 
 #include "RTMainWindow.h"
 #include "Route.h"
+#include "SegmentiserThread.h"
 
 class PlotView;
 
@@ -111,6 +112,7 @@ private:
 	double * m_xData;
 	const TrackPoint * * m_trackPoints;
 	CurveViewMode m_curveViewMode;
+	SegmentiserThread m_segmentiserThread;
 
 	void createSegmentedCurve( int );
 	void hideUnneededCurves();
@@ -122,6 +124,7 @@ signals:
 public slots:
 	void zoom( double amount, double x );
 	void changeCurveViewMode( int mode );
+	void attachSegmentedPlotData();
 } ;
 
 #endif // _PLOT_VIEW_H

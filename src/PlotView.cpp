@@ -51,7 +51,6 @@ PlotCurve::PlotCurve( int _numPoints, const QString & _title,
 
 
 
-
 PlotCurve & PlotCurve::operator=( const PlotCurve & _other )
 {
 	setTitle( _other.title() );
@@ -74,12 +73,10 @@ PlotCurve & PlotCurve::operator=( const PlotCurve & _other )
 
 
 
-
 PlotCurve::~PlotCurve()
 {
 	delete[] m_yData;
 }
-
 
 
 
@@ -90,7 +87,6 @@ void PlotCurve::attachData(PlotView* _plotView, double* _xData, double* _yData)
 
 	attachData( _plotView, _xData );
 }
-
 
 
 
@@ -150,7 +146,6 @@ void PlotCurve::xAxisZoomBy(double factor, double centre)
 
 
 
-
 /**
  *  Set \b xAxisMin and \b xAxis max to the values after moving the presented section.
  *  \param s distance to pan the plot
@@ -163,14 +158,14 @@ void PlotCurve::xAxisPanBy(double s)
 
 
 
-
 PlotView::PlotView( QWidget * _parent ) :
 	QwtPlot( _parent ),
 	m_curves(),
 	m_numPoints( 0 ),
 	m_xData( NULL ),
 	m_trackPoints( NULL ),
-	m_curveViewMode( CurveViewModeContinuous )
+	m_curveViewMode( CurveViewModeContinuous ),
+	m_segmentiserThread( this )
 {
 	enableAxis( yRight );
 	canvas()->setLineWidth( 0 );
@@ -185,8 +180,8 @@ PlotView::PlotView( QWidget * _parent ) :
 	insertLegend( legend, QwtPlot::RightLegend );
 
 	connect( this, SIGNAL( turnedWheel( double, double ) ), this, SLOT( zoom( double, double ) ) );
+	connect( &m_segmentiserThread, SIGNAL( finished() ), this, SLOT( attachSegmentedPlotData() ) );
 }
-
 
 
 
@@ -195,7 +190,7 @@ void PlotView::showRoute( const Route & _route )
 	m_numPoints = 0;
 	foreach( const TrackSegment & seg, _route )
 	{
-		m_numPoints += seg.size()-1;
+		m_numPoints += seg.size() - 1;
 	}
 
 	delete[] m_trackPoints;
@@ -251,7 +246,7 @@ void PlotView::showRoute( const Route & _route )
 				m_curves[Elevation].data()[pointCount] = pt.elevation();
 				speed = (dist*1000 / secs);
 				m_curves[Speed].data()[pointCount] =
-											qRound( speed*3.6 * 100 ) / 100.0;
+											qRound( speed *3.6 * 100 ) / 100.0;
 				++pointCount;
 			}
 			lastPoint = pt;
@@ -262,6 +257,7 @@ void PlotView::showRoute( const Route & _route )
 	createSegmentedCurve( 20 );
 
 	m_curves[Elevation].attachData( this, m_xData );
+	m_curves[SegmentedElevation].attachData( this, m_xData );
 	m_curves[Speed].attachData( this, m_xData );
 
 	m_curves[SegmentedElevation].setYAxis( 0 );
@@ -284,12 +280,17 @@ void PlotView::createSegmentedCurve(int segments)
 	double* x_data = m_xData;
 	double* y_data = m_curves[Elevation].data();
 
-	Segmentiser segmentiser( x_data, y_data, m_numPoints );
-	segmentiser.segmentise( segments );
-
-	m_curves[SegmentedElevation].attachData( this, segmentiser.segmentsX(), segmentiser.segmentsY() );
+	m_segmentiserThread.setData( x_data, y_data, m_numPoints, segments );
+	m_segmentiserThread.start();
 }
 
+
+
+void PlotView::attachSegmentedPlotData()
+{
+	m_curves[SegmentedElevation].attachData( this, m_segmentiserThread.segmentsX(), m_segmentiserThread.segmentsY() );
+	replot();
+}
 
 
 
@@ -335,7 +336,6 @@ void PlotView::smoothSpeed(double sigma)
 		data[i] = speed_i;
 	}
 }
-
 
 
 
@@ -386,7 +386,6 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 
 	return QObject::eventFilter( _obj, _event );
 }
-
 
 
 
