@@ -84,6 +84,8 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/RouteTableModel.cpp
 			src/RuckTrackNetworkAccessManager.cpp
 			src/StatisticsTable.cpp
+			src/Segmentiser.cpp
+			src/SegmentiserThread.cpp
 			src/SrtmLayer.cpp
 			src/SrtmTiff.cpp
 			src/QtBzip2File.cpp
@@ -100,6 +102,13 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/3rdparty/bzip2/randtable.c
 			src/3rdparty/bzip2/decompress.c
 			src/3rdparty/bzip2/blocksort.c
+			src/3rdparty/levmar/lm.c
+			src/3rdparty/levmar/Axb.c
+			src/3rdparty/levmar/misc.c
+			src/3rdparty/levmar/lmlec.c
+			src/3rdparty/levmar/lmbc.c
+			src/3rdparty/levmar/lmblec.c
+			src/3rdparty/levmar/lmbleic.c
 			${QWT_SOURCES})
 
 SET(rucktrack_INCLUDES src/RTMainWindow.h
@@ -117,8 +126,11 @@ SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/TrackPoint.h
 			src/SrtmLayer.h
 			src/StatisticsTable.h
+			src/Segmentiser.h
+			src/SegmentiserThread.h
 			src/QtBzip2File.h
 			src/3rdparty/quazip/quazip/quazipfile.h
+			src/3rdparty/levmar/levmar.h
 			${QWT_HEADERS})
 
 IF(WIN32)

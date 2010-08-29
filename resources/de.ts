@@ -116,6 +116,30 @@ Höhe: %3 m</translation>
         <source>Use system cache directory</source>
         <translation>Standard-Zwischenspeicherverzeichnis nutzen</translation>
     </message>
+    <message>
+        <source>Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use GPSBabel for file import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPSBabel executable:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select GPSBabel executable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>

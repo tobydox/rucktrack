@@ -32,6 +32,7 @@
 #include <qwt_legend_item.h>
 #include <qwt_plot_canvas.h>
 
+#include "Segmentiser.h"
 
 PlotCurve::PlotCurve( int _numPoints, const QString & _title,
 										const QColor & _color ) :
@@ -47,7 +48,6 @@ PlotCurve::PlotCurve( int _numPoints, const QString & _title,
 	setPen( c );
 	setBrush( c );
 }
-
 
 
 
@@ -73,12 +73,20 @@ PlotCurve & PlotCurve::operator=( const PlotCurve & _other )
 
 
 
-
 PlotCurve::~PlotCurve()
 {
 	delete[] m_yData;
 }
 
+
+
+void PlotCurve::attachData(PlotView* _plotView, double* _xData, double* _yData)
+{
+	delete [] m_yData;
+	m_yData = _yData;
+
+	attachData( _plotView, _xData );
+}
 
 
 
@@ -138,7 +146,6 @@ void PlotCurve::xAxisZoomBy(double factor, double centre)
 
 
 
-
 /**
  *  Set \b xAxisMin and \b xAxis max to the values after moving the presented section.
  *  \param s distance to pan the plot
@@ -151,13 +158,14 @@ void PlotCurve::xAxisPanBy(double s)
 
 
 
-
 PlotView::PlotView( QWidget * _parent ) :
 	QwtPlot( _parent ),
 	m_curves(),
 	m_numPoints( 0 ),
 	m_xData( NULL ),
-	m_trackPoints( NULL )
+	m_trackPoints( NULL ),
+	m_curveViewMode( CurveViewModeContinuous ),
+	m_segmentiserThread( this )
 {
 	enableAxis( yRight );
 	canvas()->setLineWidth( 0 );
@@ -171,11 +179,9 @@ PlotView::PlotView( QWidget * _parent ) :
 	legend->setFrameStyle( QFrame::NoFrame );
 	insertLegend( legend, QwtPlot::RightLegend );
 
-// 	m_zoomer =  new RuckPlotZoomer( canvas(), true );
-
 	connect( this, SIGNAL( turnedWheel( double, double ) ), this, SLOT( zoom( double, double ) ) );
+	connect( &m_segmentiserThread, SIGNAL( finished() ), this, SLOT( attachSegmentedPlotData() ) );
 }
-
 
 
 
@@ -184,7 +190,7 @@ void PlotView::showRoute( const Route & _route )
 	m_numPoints = 0;
 	foreach( const TrackSegment & seg, _route )
 	{
-		m_numPoints += seg.size()-1;
+		m_numPoints += seg.size() - 1;
 	}
 
 	delete[] m_trackPoints;
@@ -192,9 +198,9 @@ void PlotView::showRoute( const Route & _route )
 	m_trackPoints = new const TrackPoint *[m_numPoints];
 	m_xData = new double[m_numPoints];
 
-	m_curves[Elevation] = PlotCurve( m_numPoints, tr( "Elevation" ), Qt::blue );
+	// TODO: check if we might have to delete the previous contents
+	m_curves[Elevation] = PlotCurve( m_numPoints, tr( "Elevation" ), Qt::darkBlue );
 	m_curves[Speed] = PlotCurve( m_numPoints, tr( "Speed" ), QColor( 0, 160, 0 ) );
-
 
 	double length = 0;
 	double elevGain = 0;
@@ -240,7 +246,7 @@ void PlotView::showRoute( const Route & _route )
 				m_curves[Elevation].data()[pointCount] = pt.elevation();
 				speed = (dist*1000 / secs);
 				m_curves[Speed].data()[pointCount] =
-											qRound( speed*3.6 * 100 ) / 100.0;
+											qRound( speed *3.6 * 100 ) / 100.0;
 				++pointCount;
 			}
 			lastPoint = pt;
@@ -248,16 +254,41 @@ void PlotView::showRoute( const Route & _route )
 	}
 
 	smoothSpeed( 1.2 );
+	createSegmentedCurve( 20 );
 
-	for( CurveMap::Iterator it = m_curves.begin(); it != m_curves.end(); ++it )
-	{
-		it.value().attachData( this, m_xData );
-	}
+	m_curves[Elevation].attachData( this, m_xData );
+	m_curves[SegmentedElevation].attachData( this, m_xData );
+	m_curves[Speed].attachData( this, m_xData );
 
+	m_curves[SegmentedElevation].setYAxis( 0 );
 	m_curves[Elevation].setYAxis( 0 );
 	m_curves[Speed].setYAxis( 1 );
 
 	setAxisScale( xBottom, 0, length );
+	hideUnneededCurves();
+	replot();
+}
+
+
+
+/**
+ *  Create the segmented elevation curve.
+ */
+void PlotView::createSegmentedCurve(int segments)
+{
+	m_curves[SegmentedElevation] = PlotCurve( segments, tr( "Elevation" ), Qt::darkBlue );
+	double* x_data = m_xData;
+	double* y_data = m_curves[Elevation].data();
+
+	m_segmentiserThread.setData( x_data, y_data, m_numPoints, segments );
+	m_segmentiserThread.start();
+}
+
+
+
+void PlotView::attachSegmentedPlotData()
+{
+	m_curves[SegmentedElevation].attachData( this, m_segmentiserThread.segmentsX(), m_segmentiserThread.segmentsY() );
 	replot();
 }
 
@@ -305,7 +336,6 @@ void PlotView::smoothSpeed(double sigma)
 		data[i] = speed_i;
 	}
 }
-
 
 
 
@@ -359,7 +389,6 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 
 
 
-
 /**
  *  Zoom into speed/elevation plot.
  *  \param amount zoom factor
@@ -375,5 +404,41 @@ void PlotView::zoom(double amount, double centre)
 		setAxisScale( curve.xAxis(), curve.xAxisMin(), curve.xAxisMax() );
 	}
 
+	replot();
+}
+
+
+
+/**
+ *  Set the mode in which the elevation curve is drawn (continuous/segmented).
+ *  \param mode desired mode (corresponds to \b CurveViewMode enum).
+ */
+void PlotView::changeCurveViewMode( int mode )
+{
+	Q_ASSERT( mode >= 0 && mode < (int) CurveViewModesNumberOf );
+	m_curveViewMode = (CurveViewMode) mode;
+	hideUnneededCurves();
+}
+
+
+
+/**
+ *  Hides all curves that are not needed currently. Shows all other curves.
+ */
+void PlotView::hideUnneededCurves()
+{
+	switch ( m_curveViewMode )
+	{
+		case CurveViewModeContinuous:
+			m_curves[SegmentedElevation].setStyle( QwtPlotCurve::NoCurve );
+			m_curves[Elevation].setStyle( QwtPlotCurve::Lines );
+			break;
+		case CurveViewModeSegmented:
+			m_curves[Elevation].setStyle( QwtPlotCurve::NoCurve );
+			m_curves[SegmentedElevation].setStyle( QwtPlotCurve::Lines );
+			break;
+		default:
+			Q_ASSERT( false );
+	}
 	replot();
 }

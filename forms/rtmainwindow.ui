@@ -456,12 +456,12 @@
         <widget class="QComboBox" name="graphDisplayCombo">
          <item>
           <property name="text">
-           <string>Segmented</string>
+           <string>Continuous</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Continuous</string>
+           <string>Segmented</string>
           </property>
          </item>
         </widget>

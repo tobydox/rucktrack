@@ -39,6 +39,81 @@ GpxFile::GpxFile( const QString & fileName ) :
 
 
 
+/**
+ *  Convert the file to GPX format.
+ *  \return QByteArray containing data in GPX format.
+ *  \remarks
+ *  We have the following config settings:
+ *  <TABLE>
+ *   <TR><TH>Name</TH><TH>Type</TH><TH>Description</TH></TR>
+ *   <TR><TD><TT>GPX/UseGpsBabel</TT></TD><TD>QBool</TD><TD>allow import of foreign formats via GpsBabel</TD></TR>
+ *   <TR><TD><TT>GPX/GpsBabelExecutable</TT></TD><TD>QString</TD><TD>command to execute GpsBabel</TD></TR>
+ *   <TR><TD><TT>GPX/GpsBabelImportFormats</TT></TD><TD>QStringList</TD><TD>List of supported import formats:
+ *     <TT>"format1,suffix1,description1","format2,suffix2,description2",...</TT> where <TT>format</TT> the format string as needed by
+ *     GpsBabel, <TT>suffix</TT> is the file extension and <TT>description</TT> is a human-readable description for the file format
+ *     used in the “Open File” dialog.
+ *     </TD></TR>
+ *  </TABLE>
+ */
+QByteArray GpxFile::convertToGpx() const
+{
+	QByteArray ba;
+
+	bool useGpsBabel = QSettings().value( "GPX/UseGpsBabel", false ).toBool();
+	if ( !useGpsBabel )
+	{
+		return "";
+	}
+
+	QString gpsBabelExecutable = QSettings().value( "GPX/GpsBabelExecutable", "gpsbabel").toString();
+	QStringList conversionFormats = QSettings().value( "GPX/GpsBabelImportFormats", "" ).toStringList();
+	QStringListIterator formatsIterator( conversionFormats );
+	while ( formatsIterator.hasNext() )
+	{
+		QStringList formatList = formatsIterator.next().split( "," );
+		QString format = formatList.at( 0 ); // first is format (as needed by GpsBabel)
+		QString suffix = formatList.at( 1 ); // second is suffix
+
+		QFileInfo fi( m_fileName.toLower() );
+		QString fileSuffix =  fi.suffix();
+		if ( fileSuffix == suffix )
+		{
+			// start GpsBabel process to read the foreign file and read the GPX output from stdout
+			QProcess process;
+			process.start( QString( "%1 -i %2 -f \"%3\" -o gpx -F -" ).arg( gpsBabelExecutable ).arg( format ).arg( m_fileName ) );
+			if ( process.waitForFinished() )
+			{
+				ba = process.readAllStandardOutput();
+				QByteArray error = process.readAllStandardError();
+				if ( error.isEmpty() )
+				{
+					// conversion successful
+					return ba;
+				}
+				else
+				{
+					qDebug() << "Error when executing GpsBabel: " << QString( error );
+					return "";
+				}
+			}
+			else
+			{
+				return "";
+			}
+		}
+	}
+
+	// we did not find a matching suffix
+	return "";
+}
+
+
+
+/**
+ * Loads the route from the file indicated in the constructor.
+ * \param route reference to the route where the data is to be stored
+ * \return whether loading the file was successful or not
+ */
 bool GpxFile::loadRoute( Route & route ) const
 {
 	QDomDocument doc;
@@ -54,27 +129,13 @@ bool GpxFile::loadRoute( Route & route ) const
 			return false;
 		}
 	}
-	else if ( fileSuffix == "kml" )
+	else
 	{
-		QProcess process;
-		process.start( QString( "gpsbabel -i kml -f %1 -o gpx -F -" ).arg( m_fileName ) );
-		if ( process.waitForFinished() )
-		{
-			ba = process.readAllStandardOutput();
-			QByteArray error = process.readAllStandardError();
-			if ( error.isEmpty() || !doc.setContent( ba ) )
-			{
-				return false;
-			}
-		}
-		else
+		ba = convertToGpx();
+		if ( ba.isEmpty() || !doc.setContent( ba ) )
 		{
 			return false;
 		}
-	}
-	else
-	{
-		return false;
 	}
 
 	bool wrongTimestampFix = QSettings().value( "GPX/DropFaultyTrackPoints", true ).toBool();

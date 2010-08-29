@@ -30,7 +30,9 @@
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 
+#include "RTMainWindow.h"
 #include "Route.h"
+#include "SegmentiserThread.h"
 
 class PlotView;
 
@@ -49,6 +51,7 @@ public:
 	~PlotCurve();
 
 	void attachData( PlotView * _plotView, double * _xData );
+	void attachData( PlotView * _plotView, double * _xData, double * _yData );
 
 	void xAxisZoomBy( double factor, double centre );
 	void xAxisPanBy( double s );
@@ -87,6 +90,7 @@ public:
 		Speed,
 		Time,
 		Climb,
+		SegmentedElevation,
 		NumCurves
 	} ;
 
@@ -96,6 +100,9 @@ public:
 
 	virtual bool eventFilter( QObject * _obj, QEvent * _event );
 
+// 	enum DisplayType {DISPLAY_CONTINUOUS, DISPLAY_SEGMENTED};
+	enum CurveViewModes { CurveViewModeContinuous, CurveViewModeSegmented, CurveViewModesNumberOf };
+	typedef CurveViewModes CurveViewMode;
 
 private:
 	typedef QMap<Curves, PlotCurve> CurveMap;
@@ -104,7 +111,11 @@ private:
 	int m_numPoints;
 	double * m_xData;
 	const TrackPoint * * m_trackPoints;
+	CurveViewMode m_curveViewMode;
+	SegmentiserThread m_segmentiserThread;
 
+	void createSegmentedCurve( int );
+	void hideUnneededCurves();
 
 signals:
 	void clickedPoint( double, double );
@@ -112,6 +123,8 @@ signals:
 
 public slots:
 	void zoom( double amount, double x );
+	void changeCurveViewMode( int mode );
+	void attachSegmentedPlotData();
 } ;
 
 #endif // _PLOT_VIEW_H

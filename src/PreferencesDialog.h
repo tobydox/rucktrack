@@ -43,6 +43,7 @@ public:
 
 public slots:
 	void browseCacheDirectory();
+	void browseGpsBabelExecutable();
 
 
 private:

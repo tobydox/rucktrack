@@ -27,6 +27,7 @@
 #include <QtGui/QCompleter>
 #include <QtGui/QDirModel>
 #include <QtGui/QFileDialog>
+#include <QtCore/QFileInfo>
 
 #include "PreferencesDialog.h"
 #include "GoogleMapsProvider.h"
@@ -52,6 +53,7 @@ PreferencesDialog::PreferencesDialog() :
 	ui->cacheDirectory->setCompleter( completer );
 	connect( ui->cacheDirectoryBtn, SIGNAL( clicked() ),
 				this, SLOT( browseCacheDirectory() ) );
+	connect( ui->gpsBabelExecutableBtn, SIGNAL( clicked() ), this, SLOT( browseGpsBabelExecutable() ) );
 
 	ui->mapProviderComboBox->addItem( GoogleMapsProvider::publicName() );
 	ui->mapProviderComboBox->addItem( OpenStreetMapProvider::publicName() );
@@ -71,6 +73,8 @@ PreferencesDialog::PreferencesDialog() :
 							s.value( "Maps/EnableCaching", true ).toBool() );
 	ui->cacheSizeSpinBox->setValue(
 							s.value( "Maps/CacheSize", 50 ).toInt() );
+	ui->gpsBabelExecutable->setText( s.value( "GPX/GpsBabelExecutable" ).toString() );
+	ui->gpsBabelFileImport->setChecked( s.value( "GPX/UseGpsBabel" ).toBool() );
 }
 
 
@@ -90,6 +94,8 @@ void PreferencesDialog::accept()
 	s.setValue( "Maps/MapProvider", ui->mapProviderComboBox->currentText() );
 	s.setValue( "Maps/EnableCaching", ui->enableCaching->isChecked() );
 	s.setValue( "Maps/CacheSize", ui->cacheSizeSpinBox->value() );
+	s.setValue( "GPX/UseGpsBabel", ui->gpsBabelFileImport->isChecked() );
+	s.setValue( "GPX/GpsBabelExecutable", ui->gpsBabelExecutable->text() );
 
 	QDialog::accept();
 }
@@ -110,5 +116,21 @@ void PreferencesDialog::browseCacheDirectory()
 	if( !d.isEmpty() )
 	{
 		ui->cacheDirectory->setText( d );
+	}
+}
+
+/**
+ *  Called when clicking the "Browse GPSBabel executable" button in the preferences
+ *  dialog and opens a QFileDialog.
+ */
+void PreferencesDialog::browseGpsBabelExecutable()
+{
+	QString d = QFileDialog::getOpenFileName( this,
+					tr( "Select GPSBabel executable" ),
+					QFileInfo( ui->gpsBabelExecutable->text() ).path(),
+					tr( "All Files (*)" ) );
+	if( !d.isEmpty() )
+	{
+		ui->gpsBabelExecutable->setText( d );
 	}
 }
