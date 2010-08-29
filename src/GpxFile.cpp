@@ -49,8 +49,9 @@ GpxFile::GpxFile( const QString & fileName ) :
  *   <TR><TD><TT>GPX/UseGpsBabel</TT></TD><TD>QBool</TD><TD>allow import of foreign formats via GpsBabel</TD></TR>
  *   <TR><TD><TT>GPX/GpsBabelExecutable</TT></TD><TD>QString</TD><TD>command to execute GpsBabel</TD></TR>
  *   <TR><TD><TT>GPX/GpsBabelImportFormats</TT></TD><TD>QStringList</TD><TD>List of supported import formats:
- *     <TT>"format1,suffix1","format2,suffix2",...</TT> where <TT>format</TT> the format string as needed by
- *     GpsBabel and <TT>suffix</TT> is the file extension
+ *     <TT>"format1,suffix1,description1","format2,suffix2,description2",...</TT> where <TT>format</TT> the format string as needed by
+ *     GpsBabel, <TT>suffix</TT> is the file extension and <TT>description</TT> is a human-readable description for the file format
+ *     used in the “Open File” dialog.
  *     </TD></TR>
  *  </TABLE>
  */
@@ -59,12 +60,12 @@ QByteArray GpxFile::convertToGpx() const
 	QByteArray ba;
 
 	bool useGpsBabel = QSettings().value( "GPX/UseGpsBabel", false ).toBool();
-	QString gpsBabelExecutable = QSettings().value( "GPX/GpsBabelExecutable", "gpsbabel").toString();
 	if ( !useGpsBabel )
 	{
 		return "";
 	}
 
+	QString gpsBabelExecutable = QSettings().value( "GPX/GpsBabelExecutable", "gpsbabel").toString();
 	QStringList conversionFormats = QSettings().value( "GPX/GpsBabelImportFormats", "" ).toStringList();
 	QStringListIterator formatsIterator( conversionFormats );
 	while ( formatsIterator.hasNext() )

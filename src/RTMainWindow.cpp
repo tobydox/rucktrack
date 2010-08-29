@@ -156,11 +156,25 @@ void RTMainWindow::openFile()
 {
 	QSettings s;
 
+	QString filter = tr("GPX files (*.gpx)"); // file name filter
+	bool useGpsBabel = QSettings().value( "GPX/UseGpsBabel", false ).toBool();
+	QStringList conversionFormats = QSettings().value( "GPX/GpsBabelImportFormats", "" ).toStringList();
+	QStringListIterator formatsIterator( conversionFormats );
+	while ( useGpsBabel && formatsIterator.hasNext() )
+	{
+		QStringList formatList = formatsIterator.next().split( "," );
+		QString suffix = formatList.at( 1 );      // second is the file name suffix
+		QString description = formatList.at( 2 ); // third is a human-readable description
+
+		// add import formats to the file name filter
+		filter += ";;" + description + " (*." + suffix + ")";
+	}
+
 	QString fileName =
 		QFileDialog::getOpenFileName(
 			this, tr( "Open File" ),
 			s.value( "Misc/LastDirectory" ).toString(),
-			tr("GPX files (*.gpx)") );
+			filter );
 	if( fileName.isEmpty() )
 	{
 		return;
