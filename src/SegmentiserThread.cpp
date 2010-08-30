@@ -25,41 +25,41 @@
 
 SegmentiserThread::SegmentiserThread( QObject* parent ): QThread( parent )
 {
-	Q_ASSERT( !(data_set = false) );
+	Q_ASSERT( !(m_dataSet = false) );
 }
 
 
 
 void SegmentiserThread::run()
 {
-	Q_ASSERT( data_set );
-	Segmentiser segmentiser( x_data, y_data, data_size );
-	segmentiser.segmentise( segments );
-	segments_x = segmentiser.segmentsX();
-	segments_y = segmentiser.segmentsY();
+	Q_ASSERT( m_dataSet );
+	Segmentiser segmentiser( m_xData, m_yData, m_dataSize );
+	segmentiser.segmentise( m_segments );
+	m_xSegments = segmentiser.segmentsX();
+	m_ySegments = segmentiser.segmentsY();
 }
 
 
 
 void SegmentiserThread::setData( double* x_data_, double* y_data_, double data_size_, double segments_ )
 {
-	x_data = x_data_;
-	y_data = y_data_;
-	data_size = data_size_;
-	segments = segments_;
-	Q_ASSERT( data_set = true );
+	m_xData = x_data_;
+	m_yData = y_data_;
+	m_dataSize = data_size_;
+	m_segments = segments_;
+	Q_ASSERT( m_dataSet = true );
 }
 
 
 
 double* SegmentiserThread::segmentsX()
 {
-	return segments_x;
+	return m_xSegments;
 }
 
 
 
 double* SegmentiserThread::segmentsY()
 {
-	return segments_y;
+	return m_ySegments;
 }

@@ -20,6 +20,7 @@
  */
 
 #ifndef SEGMENTISER_THREAD_H_
+#define SEGMENTISER_THREAD_H_
 
 #include <QtCore/QThread>
 
@@ -34,14 +35,13 @@ public:
 	double* segmentsY();
 
 private:
-	double* x_data;
-	double* y_data;
-	double data_size;
-	double segments;
-	bool data_set;
-	double* segments_x;
-	double* segments_y;
+	double* m_xData;
+	double* m_yData;
+	double m_dataSize;
+	double m_segments;
+	bool m_dataSet;
+	double* m_xSegments;
+	double* m_ySegments;
 };
 
-#define SEGMENTISER_THREAD_H_
 #endif
