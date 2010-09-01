@@ -2,6 +2,7 @@
  * Segmentiser.h - implementation of Segmentiser class
  *
  * Copyright © 2010 Jens Lang <jenslang/at/users.sourceforge.net>
+ * Algorithm and GAP implementation by Stefan Vogel
  *
  * This file is part of RuckTrack - http://rucktrack.sourceforge.net
  *
@@ -21,98 +22,146 @@
 
 #include <cassert>
 #include <cstring>
-#include "3rdparty/levmar/levmar.h"
+#include <cmath>
 #include "Segmentiser.h"
 
-double Segmentiser::distance2height( double x, double* x_data, double* y_data, int n_data )
+/**
+ *  A number of points from index \b i1 to index \b i2
+ *  is being approximated by a line and the deviation is
+ *  calculated.
+ *  \param i1 index of first point.
+ *  \param i2 index of last point.
+ */
+double Segmentiser::lineDist( int i1, int i2 )
 {
-	if ( x < x_data[0] )
-	{
-		return y_data[0];
-	}
-	if ( x > x_data[n_data-1] )
-	{
-		return y_data[n_data-1];
-	}
-	
-	assert( n_data >= 2 );
-	assert( x >= x_data[0] && x <= x_data[n_data-1] );
+	double x1 = x[i1];
+	double x2 = x[i2];
+	double y1 = y[i1];
+	double y2 = y[i2];
+	double d = 0;
 
-	int first = 0;
-	int last = n_data - 1;
-	while ( last - first > 1 )
+	if (x1 != x2)  // there might be multiple points
 	{
-		int centre = ( last - first ) / 2 + first;
-		if ( x_data[centre] > x )
+		// calculate a,b of an approximation line y = a*x+b
+		// several variants possible, we do it like this at the moment:
+		double a = (y1 - y2) / (x1 - x2);
+		double b = (x1 * y2 - x2 * y1) / (x1 - x2);
+		// now summation of the squared distances
+// 		// again, several methods possible
+		for (int k = i1; k <= i2; k++)
 		{
-			last = centre;
-		}
-		else
-		{
-			first = centre;
+			d += pow(y[k] - (a * x[k] + b), 2);
 		}
 	}
-	assert( first + 1 == last );
-	assert( x_data[first] <= x && x_data[last] >= x );
 
-	double x1 = x_data[first];
-	double x2 = x_data[first+1];
-	double y1 = y_data[first];
-	double y2 = y_data[first+1];
-	double a = (y1 - y2) / (x1 - x2);
-	double b = y1 - a * x1;
-
-	return a * x + b;
+	return d;
 }
 
-void Segmentiser::fit( double *p, double *new_height, int m, int n, void *adata )
+/**
+ *  The decomposition of the whole curve in these line segments
+ *  is done with a vector \b ind which determines the indices of
+ *  the decomposition points. Hence, at the beginning, we have
+ *  <tt>ind=[1..9]</tt>, at the end, let's say, <tt>ind=[1,3,6,9]</tt>.
+ *  This function calculates how the overall deviation would change
+ *  if we took out the position <tt>ind[i]</tt> out and thereby
+ *  reduced the number of lines by one.
+ */
+double Segmentiser::diffDist( const QVector<int>& ind, int i )
 {
-	int segments = m;
-	double* distance = ( double* ) adata;
-	double* height = ( ( double* ) adata ) + n;
-	int n_points = n;
+	double i1;
+	double i2;
+	double d;
 
-	p[0] = 0;
-	p[m-1] = distance[n_points-1];
+	i1 = ind[i-1];
+	i2 = ind[i+1];
+	d = lineDist( i1, i2 );
 
-	int i = 0;
-	for ( int segment = 0; segment < segments - 1; segment++ )
+	i1 = ind[i-1];
+	i2 = ind[i];
+	d = d - lineDist( i1, i2 );
+
+	i1 = ind[i];
+	i2 = ind[i+1];
+	d = d - lineDist( i1, i2 );
+
+	return d;
+}
+
+/**
+ *  In ind[i], the indices are stored,
+ *  in inddiffdist, the deviation calculated by
+ *  diffDist() is stored.
+ *  The search for the point to be deleted therefore
+ *  is only finding the minimum in the inddiffdist
+ *  vector.
+ */
+QVector<int> Segmentiser::letsStart()
+{
+	QVector<int> ind( n );
+	QVector<int> result;
+	QVector<double> inddiffdist( n );
+
+	for ( int k = 0; k < n; k++ )
 	{
-		double x1 = p[segment];
-		double x2 = p[segment+1];
-		double y1 = distance2height( x1, distance, height, n_points );
-		double y2 = distance2height( x2, distance, height, n_points );
-		double a = ( y1 - y2 ) / ( x1 - x2 );
-		double b = y1 - a * x1;
-		
-		while ( p[segment+1] > distance[i] && i < n_points )
+		ind[k] = k;
+	}
+
+	for ( int k = 1; k < n - 1; k++ )
+	{
+		inddiffdist[k] = diffDist( ind, k );
+	}
+
+	// now take out one point in every step k
+	for ( int k = 0; k < n - 2; k++ )
+	{
+		double dmin = lineDist( 0, n - 1 );
+		int imerk = 1;
+		// now determine the smalles value of indiffdist
+		for ( int i = 1; i < ind.size() - 1; i++ )
 		{
-			if ( p[segment] < 0 || p[segment] > distance[n_points+1] || p[segment] > p[segment+1] )
+			double d = inddiffdist[i];
+			if ( dmin > d )
 			{
-				new_height[i] = -1000;
+				dmin = d;
+				imerk = i;
 			}
-			else
-			{
-				new_height[i] = a * distance[i] + b;
-			}
-			i++;
+		}
+
+		// remove position from ind
+		ind.remove( imerk );
+		// ... and also from inddiffdist
+		inddiffdist.remove( imerk );
+
+		// now do only update inddiffdist around position i
+		// (this saves a lot of execution time)
+		if ( imerk > 1 )
+		{
+			inddiffdist[imerk-1] = diffDist( ind, imerk - 1 );
+		}
+
+		if (imerk < ind.size() - 1)
+		{
+			inddiffdist[imerk] = diffDist( ind, imerk );
+		}
+
+		// remember result when we have 15 lines
+		if ( ind.size() == n_segments )
+		{
+			return ind;
 		}
 	}
+
+	Q_ASSERT( false );
+	return ind;
 }
 
 Segmentiser::Segmentiser( double* x_values, double* y_values, int count )
 {
-	// allocate space for our points, needs to be consecutive due to reasons
-	n_points = count;
-	data = new double[count*2];
-	assert( data != NULL );
-	x = data;
-	y = data + n_points;
-
-	// copy data as the levmar interface does not specify them to be constant
-	// although the documentation indicates that
-	memcpy( x, x_values, n_points * sizeof( double ) );
-	memcpy( y, y_values, n_points * sizeof( double ) );
+	n = count;
+	x = new double[n];
+	y = new double[n];
+	memcpy( x, x_values, sizeof(double) * n );
+	memcpy( y, y_values, sizeof(double) * n );
 
 	// NULL-initialise
 	segments_x = NULL;
@@ -124,16 +173,8 @@ void Segmentiser::segmentise( int segments )
 {
 	n_segments = segments;
 
-	double* p = new double[segments];
-	assert( p != NULL );
 
-	double furthest = x[n_points - 1];
-	for ( int i = 0; i < segments; i++ )
-	{
-		p[i] = ( i + 1 ) * furthest / segments;
-	}
-
-	dlevmar_dif( fit, p, y, segments, n_points, 1000, NULL, NULL, NULL, NULL, data );
+	QVector<int> result = letsStart();
 
 	delete [] segments_y;
 	delete [] segments_x;
@@ -141,11 +182,9 @@ void Segmentiser::segmentise( int segments )
 	segments_y = new double[segments];
 	for ( int i = 0; i < segments; i++ )
 	{
-		segments_x[i] = p[i];
-		segments_y[i] = distance2height( p[i], x, y, n_points );
+		segments_x[i] = x[result[i]];
+		segments_y[i] = y[result[i]];
 	}
-
-	delete [] p;
 }
 
 double* Segmentiser::segmentsX()
@@ -165,5 +204,6 @@ int Segmentiser::segmentsCount()
 
 Segmentiser::~Segmentiser()
 {
-	delete [] data;
+	delete [] x;
+	delete [] y;
 }

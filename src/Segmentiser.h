@@ -19,6 +19,11 @@
  *
  */
 
+#ifndef SEGMENTISER_H_
+#define SEGMENTISER_H_
+
+#include <QtCore/QVector>
+
 class Segmentiser
 {
 public:
@@ -32,14 +37,16 @@ public:
 	int segmentsCount();
 
 private:
-	static double distance2height(double x, double* x_data, double* y_data, int n_data);
-	static void fit(double *p, double *new_height, int m, int n, void *adata);
+	QVector<int> letsStart();
+	double diffDist(const QVector<int>& ind, int i);
+	double lineDist(int i1, int i2);
 
-	int n_points;
-	double* data;
+	int n;
 	double* x;
 	double* y;
 	int n_segments;
 	double* segments_x;
 	double* segments_y;
 } ;
+
+#endif /* SEGMENTISER_H_ */
