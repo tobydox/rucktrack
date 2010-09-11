@@ -25,7 +25,7 @@
  *
  */
 
-#ifndef NO_GDAL_SUPPORT
+#ifdef HAVE_GDAL_SUPPORT
 
 #include <QtCore/QFile>
 
@@ -136,4 +136,4 @@ void SrtmTiff::posFromLatLon( double lat, double lon, int * row, int * col,
 	if( *col > m_tile->ysize-1 ) *col = m_tile->ysize-1;
 }
 
-#endif
+#endif /* HAVE_GDAL_SUPPORT */

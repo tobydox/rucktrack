@@ -63,7 +63,7 @@ void SrtmLayer::cleanup()
 		delete it.value();
 	}
 	s_cache.clear();
-#endif
+#endif /* HAVE_GDAL_SUPPORT */
 }
 
 
@@ -166,7 +166,7 @@ bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 
 	delete s_cache[fileName];
 	s_cache.remove( fileName );
-#endif
+#endif /* HAVE_GDAL_SUPPORT */
 
 	return false;
 }
