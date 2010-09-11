@@ -36,9 +36,33 @@ IF(NOT NO_GDAL_SUPPORT)
 	FIND_PACKAGE(GDAL REQUIRED)
 	SET(HAVE_GDAL_SUPPORT 1)
 	ADD_DEFINITIONS(-DHAVE_GDAL_SUPPORT)
+	SET(GDAL_SOURCES
+			src/SrtmLayer.cpp
+			src/SrtmTiff.cpp
+			src/QtBzip2File.cpp
+			src/3rdparty/bzip2/bzlib.c
+			src/3rdparty/bzip2/crctable.c
+			src/3rdparty/bzip2/compress.c
+			src/3rdparty/bzip2/huffman.c
+			src/3rdparty/bzip2/randtable.c
+			src/3rdparty/bzip2/decompress.c
+			src/3rdparty/bzip2/blocksort.c
+			src/3rdparty/quazip/quazip/zip.c
+			src/3rdparty/quazip/quazip/unzip.c
+			src/3rdparty/quazip/quazip/quazipnewinfo.cpp
+			src/3rdparty/quazip/quazip/quazipfile.cpp
+			src/3rdparty/quazip/quazip/quazip.cpp
+			src/3rdparty/quazip/quazip/ioapi.c)
+	SET(GDAL_HEADERS
+			src/SrtmLayer.h
+			src/QtBzip2File.h
+			src/3rdparty/quazip/quazip/quazipfile.h)
+	SET(GDAL_INCLUDE_DIR ${GDAL_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/src/3rdparty/quazip/quazip ${CMAKE_SOURCE_DIR}/src/3rdparty/bzip2)
 ELSE(NOT NO_GDAL_SUPPORT)
 	SET(GDAL_INCLUDE_DIR "")
 	SET(GDAL_LIBRARY "")
+	SET(GDAL_SOURCES "")
+	SET(GDAL_HEADERS "")
 ENDIF(NOT NO_GDAL_SUPPORT)
 
 # if Doxygen is present, add a custom target to build the documentation
@@ -89,22 +113,6 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/StatisticsTable.cpp
 			src/Segmentiser.cpp
 			src/SegmentiserThread.cpp
-			src/SrtmLayer.cpp
-			src/SrtmTiff.cpp
-			src/QtBzip2File.cpp
-			src/3rdparty/quazip/quazip/zip.c
-			src/3rdparty/quazip/quazip/unzip.c
-			src/3rdparty/quazip/quazip/quazipnewinfo.cpp
-			src/3rdparty/quazip/quazip/quazipfile.cpp
-			src/3rdparty/quazip/quazip/quazip.cpp
-			src/3rdparty/quazip/quazip/ioapi.c
-			src/3rdparty/bzip2/bzlib.c
-			src/3rdparty/bzip2/crctable.c
-			src/3rdparty/bzip2/compress.c
-			src/3rdparty/bzip2/huffman.c
-			src/3rdparty/bzip2/randtable.c
-			src/3rdparty/bzip2/decompress.c
-			src/3rdparty/bzip2/blocksort.c
 			src/3rdparty/levmar/lm.c
 			src/3rdparty/levmar/Axb.c
 			src/3rdparty/levmar/misc.c
@@ -112,6 +120,7 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/3rdparty/levmar/lmbc.c
 			src/3rdparty/levmar/lmblec.c
 			src/3rdparty/levmar/lmbleic.c
+			${GDAL_SOURCES}
 			${QWT_SOURCES})
 
 SET(rucktrack_INCLUDES src/RTMainWindow.h
@@ -127,13 +136,11 @@ SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/RuckTrackNetworkAccessManager.h
 			src/RouteTableModel.h
 			src/TrackPoint.h
-			src/SrtmLayer.h
 			src/StatisticsTable.h
 			src/Segmentiser.h
 			src/SegmentiserThread.h
-			src/QtBzip2File.h
-			src/3rdparty/quazip/quazip/quazipfile.h
 			src/3rdparty/levmar/levmar.h
+			${GDAL_HEADERS}
 			${QWT_HEADERS})
 
 IF(WIN32)
@@ -178,7 +185,7 @@ QT4_WRAP_CPP(rucktrack_MOC_out ${rucktrack_INCLUDES})
 QT4_WRAP_UI(rucktrack_UIC_out ${rucktrack_UI})
 QT4_ADD_RESOURCES(rucktrack_RCC_out resources/rucktrack.qrc)
 
-INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR} ${QWT_INCLUDE_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/src/3rdparty/quazip/quazip ${CMAKE_SOURCE_DIR}/src/3rdparty/bzip2 ${CMAKE_BINARY_DIR})
+INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR} ${QWT_INCLUDE_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
 LINK_LIBRARIES(${QT_LIBRARIES} ${GDAL_LIBRARY} ${QWT_LIBRARY} -lz)
 ADD_EXECUTABLE(rucktrack ${rucktrack_SOURCES} ${rucktrack_UIC_out} ${rucktrack_MOC_out} ${rucktrack_RCC_out} ${WINRC} ${qm_files})
 
