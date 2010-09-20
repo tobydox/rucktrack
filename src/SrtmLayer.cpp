@@ -24,6 +24,7 @@
  * Boston, MA 02110-1301 USA.
  *
  */
+#ifdef HAVE_GDAL_SUPPORT
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
@@ -37,7 +38,6 @@
 #include "SrtmLayer.h"
 #include "SrtmTiff.h"
 #include "QtBzip2File.h"
-
 #include "quazipfile.h"
 
 #include <math.h>
@@ -57,13 +57,11 @@ SrtmLayer::SrtmLayer() :
 
 void SrtmLayer::cleanup()
 {
-#ifdef HAVE_GDAL_SUPPORT
 	for( Cache::Iterator it = s_cache.begin(); it != s_cache.end(); ++it )
 	{
 		delete it.value();
 	}
 	s_cache.clear();
-#endif
 }
 
 
@@ -71,7 +69,6 @@ void SrtmLayer::cleanup()
 
 bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 {
-#ifdef HAVE_GDAL_SUPPORT
 	QString fileName = getSrtmFilename( lat, lon );
 	if( !s_cache.contains( fileName ) )
 	{
@@ -166,7 +163,6 @@ bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 
 	delete s_cache[fileName];
 	s_cache.remove( fileName );
-#endif
 
 	return false;
 }
@@ -281,5 +277,4 @@ QString SrtmLayer::getSrtmFilename( float lat, float lon )
 }
 
 
-
-
+#endif /* HAVE_GDAL_SUPPORT */

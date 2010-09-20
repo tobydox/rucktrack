@@ -76,6 +76,11 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 									new RuckTrackNetworkAccessManager( this );
 	ui->mapView->page()->setNetworkAccessManager( nam );
 
+	// hide “fix elevations” button
+#ifndef HAVE_GDAL_SUPPORT
+	ui->actionFixElevations->setVisible( false );
+#endif /* HAVE_GDAL_SUPPORT */
+
 	// setup progress bar for MapView
 	m_webPageProgressBar->setFixedHeight( 16 );
 	m_webPageProgressBar->setTextVisible( false );
@@ -119,7 +124,9 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 RTMainWindow::~RTMainWindow()
 {
 	delete ui;
+#ifdef HAVE_GDAL_SUPPORT
 	SrtmLayer::cleanup();
+#endif /* HAVE_GDAL_SUPPORT */
 }
 
 
@@ -211,6 +218,7 @@ void RTMainWindow::loadRoute( const QString & fileName )
  */
 void RTMainWindow::fixElevations()
 {
+#ifdef HAVE_GDAL_SUPPORT
 	if( m_currentRoute.isEmpty() )
 	{
 		QMessageBox::information( this, tr( "No track loaded" ),
@@ -255,6 +263,7 @@ void RTMainWindow::fixElevations()
 			QString( "Failed to retrieve SRTM elevation data. "
 						"Please try again." ), 5000 );
 	}
+#endif /* HAVE_GDAL_SUPPORT */
 }
 
 
