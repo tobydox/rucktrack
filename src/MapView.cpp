@@ -48,7 +48,9 @@ MapView::~MapView()
 
 void MapView::setMapProvider( MapProvider * mapProvider )
 {
+	delete m_mapProvider;
 	m_mapProvider = mapProvider;
+	Q_ASSERT( mapProvider != NULL );
 	setUrl( mapProvider->mapUrl() );
 }
 
@@ -57,7 +59,7 @@ void MapView::setMapProvider( MapProvider * mapProvider )
 
 void MapView::showRoute( const Route & _route )
 {
-	if( mapProvider() )
+	if( mapProvider() != NULL )
 	{
 		mapProvider()->showRoute( _route );
 	}
@@ -68,7 +70,7 @@ void MapView::showRoute( const Route & _route )
 
 void MapView::highlightPoint( double _lat, double _lon )
 {
-	if( mapProvider() )
+	if( mapProvider() != NULL )
 	{
 		mapProvider()->highlightPoint( _lat, _lon );
 	}

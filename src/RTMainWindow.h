@@ -66,7 +66,7 @@ private slots:
 	void highlightSelectedTrackPoint( const QModelIndex & _current,
 										const QModelIndex & _prev );
 	void parseCommandLineParameters();
-
+	void redrawRoute();
 
 private:
 	void loadRoute( const QString & fileName );

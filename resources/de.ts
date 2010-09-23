@@ -337,6 +337,10 @@ Höhe: %3 m</translation>
         <source>Please load a track first!</source>
         <translation>Bitte laden Sie zunächst eine Strecke!</translation>
     </message>
+    <message utf8="true">
+        <source> – </source>
+        <translation> – </translation>
+    </message>
 </context>
 <context>
     <name>RouteTableModel</name>
