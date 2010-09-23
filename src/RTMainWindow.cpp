@@ -207,6 +207,7 @@ void RTMainWindow::loadRoute( const QString & fileName )
 		ui->plotView->showRoute( m_currentRoute );
 		ui->statsTable->update( m_currentRoute );
 		m_routeTableModel->update();
+		setWindowTitle( QCoreApplication::applicationName() + trUtf8(" – ") + QFileInfo( fileName ).fileName() );
 	}
 }
 
