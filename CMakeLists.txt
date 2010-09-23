@@ -113,13 +113,6 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/StatisticsTable.cpp
 			src/Segmentiser.cpp
 			src/SegmentiserThread.cpp
-			src/3rdparty/levmar/lm.c
-			src/3rdparty/levmar/Axb.c
-			src/3rdparty/levmar/misc.c
-			src/3rdparty/levmar/lmlec.c
-			src/3rdparty/levmar/lmbc.c
-			src/3rdparty/levmar/lmblec.c
-			src/3rdparty/levmar/lmbleic.c
 			${GDAL_SOURCES}
 			${QWT_SOURCES})
 
@@ -139,7 +132,6 @@ SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/StatisticsTable.h
 			src/Segmentiser.h
 			src/SegmentiserThread.h
-			src/3rdparty/levmar/levmar.h
 			${GDAL_HEADERS}
 			${QWT_HEADERS})
 

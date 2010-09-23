@@ -118,27 +118,27 @@ Höhe: %3 m</translation>
     </message>
     <message>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei-Import</translation>
     </message>
     <message>
         <source>File Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei-Import</translation>
     </message>
     <message>
         <source>Use GPSBabel for file import</source>
-        <translation type="unfinished"></translation>
+        <translation>GPSBabel für Datei-Import benutzen</translation>
     </message>
     <message>
         <source>GPSBabel executable:</source>
-        <translation type="unfinished"></translation>
+        <translation>GPSBabel-Programmdatei:</translation>
     </message>
     <message>
         <source>Select GPSBabel executable</source>
-        <translation type="unfinished"></translation>
+        <translation>GPSBabel-Programmdatei auswählen</translation>
     </message>
     <message>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Dateien (*)</translation>
     </message>
 </context>
 <context>
