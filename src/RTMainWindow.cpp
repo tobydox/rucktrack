@@ -317,6 +317,8 @@ void RTMainWindow::parseCommandLineParameters()
 {
 	// we do not want to parse command line parameters more than once
 	disconnect( this, SLOT( parseCommandLineParameters() ) );
+	// instead, we connect the redraw function (needed for switching MapProviders)
+	connect( ui->mapView, SIGNAL( loadFinished(bool) ), this, SLOT( redrawRoute() ) );
 
 	QStringList args = QApplication::instance()->arguments();
 
@@ -334,6 +336,17 @@ void RTMainWindow::parseCommandLineParameters()
 
 		loadRoute( filename );
 	}
+}
+
+
+/**
+ * Redraw the route every time the map is reloaded. This is needed for
+ * parsing command line parameters and for changing the MapProvider.
+ */
+void RTMainWindow::redrawRoute()
+{
+	ui->mapView->showRoute( m_currentRoute );
+	return;
 }
 
 
