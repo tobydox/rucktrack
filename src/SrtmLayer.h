@@ -25,6 +25,8 @@
 #ifndef _SRTM_LAYER_H
 #define _SRTM_LAYER_H
 
+#ifdef HAVE_GDAL_SUPPORT
+
 #include <QtCore/QMap>
 #include <QtCore/QString>
 
@@ -66,5 +68,7 @@ private:
 	static Cache s_cache;
 
 } ;
+
+#endif
 
 #endif // _SRTM_LAYER_H

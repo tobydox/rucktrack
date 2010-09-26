@@ -16,6 +16,8 @@ SOURCES += src/main.cpp \
     src/PlotView.cpp \
     src/RouteTableModel.cpp \
 	src/RuckTrackNetworkAccessManager.cpp	\
+    src/Segmentiser.cpp \
+    src/SegmentiserThread.cpp \
     src/StatisticsTable.cpp \
     src/SrtmLayer.cpp \
     src/SrtmTiff.cpp \
@@ -48,6 +50,8 @@ HEADERS += src/RTMainWindow.h \
     src/RuckTrackNetworkAccessManager.h \
     src/RouteTableModel.h \
     src/TrackPoint.h \
+    src/Segmentiser.h \
+    src/SegmentiserThread.h \
     src/SrtmLayer.h \
     src/StatisticsTable.h \
     src/QtBzip2File.h \
