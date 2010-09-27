@@ -155,6 +155,15 @@ QVector<int> Segmentiser::letsStart()
 	return ind;
 }
 
+
+/**
+ *  Create a Segmentiser object. This will take some track points as input variables
+ *  find the optimal division into linear sections. The desired number of sections
+ *  has to be given.
+ *  \param x_values x co-ordinates of the track points
+ *  \param y_valies y co-ordinates of the track points
+ *  \param count number of track points
+ */
 Segmentiser::Segmentiser( double* x_values, double* y_values, int count )
 {
 	n = count;
@@ -169,10 +178,20 @@ Segmentiser::Segmentiser( double* x_values, double* y_values, int count )
 }
 
 
+/**
+ *  Calculate the best division of the track into linear segments. The result
+ *  can be retrieved with \b segmentsX() and \b segmentY().
+ *  \param segments number of segments
+ */
 void Segmentiser::segmentise( int segments )
 {
 	n_segments = segments;
 
+	// only segmentise if we have less segments than track points
+	if ( segments > n )
+	{
+		return;
+	}
 
 	QVector<int> result = letsStart();
 
@@ -187,16 +206,30 @@ void Segmentiser::segmentise( int segments )
 	}
 }
 
+/**
+ *  Get the x co-ordinates of the segment boundaries. The segments produced at
+ *  the last call of \b segmentise() will be returned. Will be \b NULL if there
+ *  are no segments.
+ */
 double* Segmentiser::segmentsX()
 {
 	return segments_x;
 }
 
+/**
+ *  Get the y co-ordinates of the segment boundaries. The segments produced at
+ *  the last call of \b segmentise() will be returned. Will be \b NULL if there
+ *  are no segments.
+ */
 double* Segmentiser::segmentsY()
 {
 	return segments_y;
 }
 
+/**
+ *  Get the number of segments as returned by \b segmentsX() and \b segmentY().
+ *  Equals \b segments of the last call of \b segmentise().
+ */
 int Segmentiser::segmentsCount()
 {
 	return n_segments;
