@@ -99,6 +99,7 @@ public:
 	void showRoute( const Route & _route );
 
 	virtual bool eventFilter( QObject * _obj, QEvent * _event );
+	virtual QSize sizeHint() const;
 
 // 	enum DisplayType {DISPLAY_CONTINUOUS, DISPLAY_SEGMENTED};
 	enum CurveViewModes { CurveViewModeContinuous, CurveViewModeSegmented, CurveViewModesNumberOf };

@@ -388,6 +388,15 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 }
 
 
+/**
+ *  Return recommended size for the PlotView.
+ */
+QSize PlotView::sizeHint() const
+{
+	return QSize( 400, 120 );
+}
+
+
 
 /**
  *  Zoom into speed/elevation plot.
