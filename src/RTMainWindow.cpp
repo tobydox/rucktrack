@@ -67,6 +67,11 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 	ui->graphY1Label->hide();
 	ui->graphY2Label->hide();
 
+	ui->mapDock->setTitleBarWidget( ui->mapDockTitle );
+	ui->statsDock->setTitleBarWidget( ui->statsDockTitle );
+	ui->trackDetailsDock->setTitleBarWidget( ui->trackDetailsDockTitle );
+	ui->graphsDock->setTitleBarWidget( ui->graphControlWidget );
+
 	// graphsDock and trackDetailsDock should be tabified per default - designer doesn't
 	// allow to configure this, so do this manually and make sure, graphsDock still is on top
 	tabifyDockWidget( ui->graphsDock, ui->trackDetailsDock );
