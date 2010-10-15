@@ -35,7 +35,8 @@ class StatisticsTable : public QTableWidget
 public:
 	enum Properties
 	{
-		Time,
+		Date,
+		Duration,
 		Distance,
 		AverageSpeed,
 		MaxSpeed,

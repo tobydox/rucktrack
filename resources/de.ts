@@ -387,10 +387,6 @@ Höhe: %3 m</translation>
 <context>
     <name>StatisticsTable</name>
     <message>
-        <source>Time</source>
-        <translation>Zeit</translation>
-    </message>
-    <message>
         <source>Distance</source>
         <translation>Strecke</translation>
     </message>
@@ -419,10 +415,6 @@ Höhe: %3 m</translation>
         <translation>Max. Anstieg</translation>
     </message>
     <message>
-        <source>hh:mm:ss</source>
-        <translation>hh:mm:ss</translation>
-    </message>
-    <message>
         <source>%1 km</source>
         <translation>%1 km</translation>
     </message>
@@ -437,6 +429,22 @@ Höhe: %3 m</translation>
     <message>
         <source>%1 %</source>
         <translation>%1 %</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>yy-MM-dd hh:mm:ss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hh:mm:ss</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
