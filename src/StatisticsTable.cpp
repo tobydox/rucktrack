@@ -33,7 +33,8 @@ StatisticsTable::StatisticsTable( QWidget * _parent ) :
 	setRowCount( NumProperties );
 	setColumnCount( 2 );
 
-	setPropertyName( Time, tr( "Time" ) );
+	setPropertyName( Date, tr( "Date" ) );
+	setPropertyName( Duration, tr( "Duration" ) );
 	setPropertyName( Distance, tr( "Distance" ) );
 	setPropertyName( AverageSpeed, tr( "Average speed" ) );
 	setPropertyName( MaxSpeed, tr( "Max speed" ) );
@@ -109,7 +110,8 @@ void StatisticsTable::update( const Route & _route )
 		}
 	}
 
-	setPropertyValue( Time, QTime().addSecs( timeSecs ).toString( tr( "hh:mm:ss" ) ) );
+	setPropertyValue( Date, _route.first().first().time().toString( tr( "yyyy-MM-dd hh:mm:ss" ) ) );
+	setPropertyValue( Duration, QTime().addSecs( timeSecs ).toString( tr( "hh:mm:ss" ) ) );
 	setPropertyValue( Distance, tr( "%1 km" ).arg( length, 0, 'f', 1 ) );
 	setPropertyValue( AverageSpeed, tr( "%1 km/h" ).arg( 3600 * length / timeSecs, 0, 'f', 1 ) );
 	setPropertyValue( MaxSpeed, tr( "%1 km/h" ).arg( maxSpeed * 3.6, 0, 'f', 1 ) );
