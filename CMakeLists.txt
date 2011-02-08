@@ -230,12 +230,13 @@ ENDFOREACH(_item ${qm_targets})
 # add dist target
 #
 SET(TMP "rucktrack-${VERSION}")
+SET(S ${CMAKE_SOURCE_DIR})
 ADD_CUSTOM_TARGET(dist
 						COMMAND make clean
 						COMMAND rm -rf ${TMP}
 						COMMAND mkdir -p ${TMP}
-						COMMAND cp AUTHORS build_mingw32 CMakeLists.txt rucktrack.pro COPYING INSTALL rucktrack.rc.in README TODO ${TMP}
-						COMMAND cp -r 3rdparty cmake resources forms src ${TMP}
+						COMMAND cp ${S}/AUTHORS ${S}/build_mingw32 ${S}/build_mingw64 ${S}/CMakeLists.txt ${S}/rucktrack.pro ${S}/COPYING ${S}/INSTALL ${S}/rucktrack.rc.in ${S}/README ${S}/TODO ${TMP}
+						COMMAND cp -r ${S}/cmake ${S}/resources ${S}/forms ${S}/src ${TMP}
 						COMMAND rm -rf `find ${TMP} -name cmake_install.cmake` `find ${TMP} -name Makefile` `find ${TMP} -type d -name CMakeFiles` ${TMP}/CMakeCache.txt
 						COMMAND tar cjf rucktrack-${VERSION}.tar.bz2 ${TMP}
 						COMMAND rm -rf ${TMP})
