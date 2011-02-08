@@ -1,7 +1,7 @@
 /*
  * main.cpp - implementation of main() function
  *
- * Copyright (c) 2009-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>
+ * Copyright (c) 2009-2011 Tobias Doerffel <tobydox/at/users.sourceforge.net>
  *
  * This file is part of RuckTrack - http://rucktrack.sourceforge.net
  *
@@ -31,15 +31,22 @@
 #include "SrtmLayer.h"
 
 
-static inline void loadTranslation( const QString & _tname )
+static void loadTranslations()
 {
-	QTranslator * t = new QTranslator( QCoreApplication::instance() );
+	const QString loc = QLocale::system().name();
 
-	t->load( QString( ":/resources/%1.qm" ).arg( _tname ) );
+	QTranslator *tr = new QTranslator;
+	tr->load( QString( ":/resources/%1.qm" ).arg( loc ) );
+	QCoreApplication::installTranslator( tr );
 
-	QCoreApplication::instance()->installTranslator( t );
+	QTranslator *qtTr = new QTranslator;
+#ifdef QT_TRANSLATIONS_DIR
+	qtTr->load( QString( "qt_%1.qm" ).arg( loc ), QT_TRANSLATIONS_DIR );
+#else
+	qtTr->load( QString( ":/qt_%1.qm" ).arg( loc ) );
+#endif
+	QCoreApplication::installTranslator( qtTr );
 }
-
 
 
 
@@ -51,7 +58,11 @@ int main(int argc, char *argv[])
 	QCoreApplication::setOrganizationName( "RuckTrack Developers" );
 	QCoreApplication::setApplicationName( "RuckTrack" );
 
-	loadTranslation( QLocale::system().name().left( 2 ) );
+#ifndef QT_TRANSLATIONS_DIR
+	Q_INIT_RESOURCE(qt_qm);
+#endif
+
+	loadTranslations();
 
 	RTMainWindow w;
 	w.show();

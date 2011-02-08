@@ -4,6 +4,8 @@ PROJECT(RuckTrack)
 
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
+INCLUDE(Qt4Hacks)
+
 IF(COMMAND CMAKE_POLICY)
 	CMAKE_POLICY(SET CMP0005 NEW)
 	CMAKE_POLICY(SET CMP0003 NEW)
@@ -22,13 +24,28 @@ ENDIF(VERSION_SUFFIX)
 # check for Qt4
 SET(QT_MIN_VERSION "4.4.0")
 FIND_PACKAGE(Qt4 REQUIRED)
-SET(QT_QTGUI_INCLUDE_DIR ${QT_INCLUDE_DIR}/QtGui)
-SET(QT_QTNETWORK_INCLUDE_DIR ${QT_INCLUDE_DIR}/QtNetwork)
-SET(QT_QTWEBKIT_INCLUDE_DIR ${QT_INCLUDE_DIR}/QtWebKit)
-SET(QT_QTXML_INCLUDE_DIR ${QT_INCLUDE_DIR}/QtXml)
 SET(QT_USE_QTNETWORK 1)
 SET(QT_USE_QTWEBKIT 1)
 SET(QT_USE_QTXML 1)
+IF(WIN32)
+	SET(QT_QM_RCC "<!DOCTYPE RCC><RCC version=\"1.0\"><qresource>")
+	FILE(GLOB QT_QM ${MINGW_PREFIX}/share/qt4/translations/qt_*.qm)
+	FOREACH(f ${QT_QM})
+		STRING(REGEX MATCH ".*qt_help.*" TMP "${f}")
+		IF(NOT TMP)
+			STRING(REPLACE "${MINGW_PREFIX}/share/qt4/translations/" "" fa "${f}")
+			SET(QT_QM_RCC "${QT_QM_RCC}<file alias=\"${fa}\">${f}</file>")
+		ENDIF()
+	ENDFOREACH()
+	SET(QT_QM_RCC "${QT_QM_RCC}</qresource></RCC>")
+	FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/qt_qm.qrc "${QT_QM_RCC}")
+ELSE()
+	EXEC_PROGRAM(${QT_QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_TRANSLATIONS" OUTPUT_VARIABLE QT_TRANSLATIONS_DIR)
+	IF(EXISTS "${QT_TRANSLATIONS_DIR}")
+		MESSAGE("-- Found Qt translations in ${QT_TRANSLATIONS_DIR}")
+		ADD_DEFINITIONS(-D'QT_TRANSLATIONS_DIR="${QT_TRANSLATIONS_DIR}"')
+	ENDIF(EXISTS "${QT_TRANSLATIONS_DIR}")
+ENDIF()
 INCLUDE(${QT_USE_FILE})
 
 # check for GDAL
@@ -144,6 +161,7 @@ IF(WIN32)
 				${QT_BINARY_DIR}/QtWebKit4.dll
 				${QT_BINARY_DIR}/phonon4.dll
 				${QT_BINARY_DIR}/libgdal-1.dll
+				${QT_BINARY_DIR}/zlib1.dll
 				DESTINATION .)
 	SET(WINRC "${CMAKE_BINARY_DIR}/rucktrackrc.obj")
 	ADD_CUSTOM_COMMAND(OUTPUT ${WINRC}
@@ -160,26 +178,18 @@ SET(rucktrack_UI
 					forms/PreferencesDialog.ui
 					)
 
-IF(NOT QT_LUPDATE_EXECUTABLE STREQUAL "QT_LUPDATE_EXECUTABLE-NOTFOUND")
-	SET(LANGUAGES de)
-	SET(LANGUAGE_TS_FILES)
-	FOREACH(LANGUAGE ${LANGUAGES})
-		SET(TS_FILE "${CMAKE_CURRENT_SOURCE_DIR}/resources/${LANGUAGE}.ts")
-		SET(LANGUAGE_TS_FILES ${LANGUAGE_TS_FILES} ${TS_FILE})
-	ENDFOREACH(LANGUAGE ${LANGUAGES})
-	IF(LANGUAGE_TS_FILES)
-		QT4_CREATE_TRANSLATION(qm_files ${rucktrack_SOURCES} ${rucktrack_UI} ${LANGUAGE_TS_FILES} OPTIONS -locations none -no-ui-lines -no-obsolete)
-	ENDIF(LANGUAGE_TS_FILES)
-ENDIF(NOT QT_LUPDATE_EXECUTABLE STREQUAL "QT_LUPDATE_EXECUTABLE-NOTFOUND")
-
-
+SET(QRC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/resources/rucktrack.qrc)
 QT4_WRAP_CPP(rucktrack_MOC_out ${rucktrack_INCLUDES})
 QT4_WRAP_UI(rucktrack_UIC_out ${rucktrack_UI})
-QT4_ADD_RESOURCES(rucktrack_RCC_out resources/rucktrack.qrc)
+QT4_ADD_RESOURCES(rucktrack_RCC_out ${QRC_FILE})
+IF(WIN32)
+	QT4_ADD_RESOURCES(ructrack_qt_qm_out ${CMAKE_CURRENT_BINARY_DIR}/qt_qm.qrc)
+ENDIF()
+QT4_TRANSLATIONS_FOR_QRC(${QRC_FILE} ${ructrack_SOURCES} ${rucktrack_INCLUDES})
 
 INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR} ${QWT_INCLUDE_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
 LINK_LIBRARIES(${QT_LIBRARIES} ${GDAL_LIBRARY} ${QWT_LIBRARY} -lz)
-ADD_EXECUTABLE(rucktrack ${rucktrack_SOURCES} ${rucktrack_UIC_out} ${rucktrack_MOC_out} ${rucktrack_RCC_out} ${WINRC} ${qm_files})
+ADD_EXECUTABLE(rucktrack ${rucktrack_SOURCES} ${rucktrack_UIC_out} ${rucktrack_MOC_out} ${rucktrack_RCC_out} ${ructrack_qt_qm_out} ${WINRC} ${qm_files})
 
 IF(WIN32)
 	SET_TARGET_PROPERTIES(rucktrack PROPERTIES LINK_FLAGS "${LINK_FLAGS} -mwindows")
@@ -188,6 +198,33 @@ IF(WIN32)
 ELSE(WIN32)
 	INSTALL(TARGETS rucktrack RUNTIME DESTINATION bin)
 ENDIF(WIN32)
+
+#
+# rules for building localizations
+#
+FILE(GLOB rucktrack_LOCALES ${CMAKE_SOURCE_DIR}/resources/*.ts)
+SET(ts_targets "")
+SET(qm_targets "")
+FILE(GLOB_RECURSE rucktrack_SOURCES_for_l10n *.cpp *.h *.ui)
+FOREACH(_ts_file ${rucktrack_LOCALES})
+	STRING(REPLACE "${CMAKE_SOURCE_DIR}/resources/" "" _ts_target "${_ts_file}")
+	STRING(REPLACE ".ts" ".qm" _qm_file "${_ts_file}")
+	STRING(REPLACE ".ts" ".qm" _qm_target "${_ts_target}")
+	ADD_CUSTOM_TARGET(${_ts_target} COMMAND ${QT_LUPDATE_EXECUTABLE} -locations none -no-obsolete ${rucktrack_SOURCES_for_l10n} -ts ${_ts_file})
+	ADD_CUSTOM_TARGET(${_qm_target} COMMAND ${QT_LRELEASE_EXECUTABLE} ${_ts_file} -qm ${_qm_file})
+	LIST(APPEND ts_targets "${_ts_target}")
+	LIST(APPEND qm_targets "${_qm_target}")
+ENDFOREACH(_ts_file ${rucktrack_LOCALES})
+
+ADD_CUSTOM_TARGET(update-locales)
+FOREACH(_item ${ts_targets})
+	ADD_DEPENDENCIES(update-locales ${_item})
+ENDFOREACH(_item ${ts_targets})
+
+ADD_CUSTOM_TARGET(finalize-locales)
+FOREACH(_item ${qm_targets})
+	ADD_DEPENDENCIES(finalize-locales ${_item})
+ENDFOREACH(_item ${qm_targets})
 
 #
 # add dist target
@@ -206,7 +243,7 @@ ADD_CUSTOM_TARGET(dist
 
 INCLUDE(InstallRequiredSystemLibraries)
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "RuckTrack")
-SET(CPACK_PACKAGE_VENDOR "Tobias Doerffel")
+SET(CPACK_PACKAGE_VENDOR "RuckTrack Developers")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
 
@@ -216,20 +253,33 @@ SET(CPACK_PACKAGE_VERSION_PATCH "${VERSION_PATCH}")
 IF(VERSION_SUFFIX)
 	SET(CPACK_PACKAGE_VERSION_PATCH "${VERSION_PATCH}-${VERSION_SUFFIX}")
 ENDIF(VERSION_SUFFIX)
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "RuckTrack ${VERSION}")
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "RuckTrack")
 IF(WIN32)
 SET(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/resources\\\\rucktrack.ico")
 SET(CPACK_NSIS_INSTALLED_ICON_NAME "rucktrack.exe")
 SET(CPACK_NSIS_DISPLAY_NAME "RuckTrack")
 SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\rucktrack.sourceforge.net")
 SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\rucktrack.sourceforge.net")
-SET(CPACK_NSIS_CONTACT "tobias.doerffel@gmail.com")
+SET(CPACK_NSIS_CONTACT "tobydox@users.sourceforge.net")
 SET(CPACK_PACKAGE_EXECUTABLES "rucktrack.exe;RuckTrack")
 SET(CPACK_NSIS_MENU_LINKS "rucktrack.exe;RuckTrack")
+SET(CPACK_NSIS_DEFINES "!include ${CMAKE_SOURCE_DIR}/cmake/nsis/FileAssociation.nsh")
+SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+  \\\${registerExtension} \\\"$INSTDIR\\\\rucktrack.exe\\\" \\\".gpx\\\" \\\"RuckTrack GPS track\\\"
+  ")
+SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+  \\\${unregisterExtension} \\\".gpx\\\" \\\"RuckTrack GPS track\\\"
+  ")
 ELSE(WIN32)
 SET(CPACK_STRIP_FILES "bin/rucktrack")
 SET(CPACK_PACKAGE_EXECUTABLES "rucktrack" "RuckTrack binary")
 ENDIF(WIN32)
+
+IF(WIN64)
+	SET(CPACK_PACKAGE_FILE_NAME "RuckTrack-${VERSION}-win64")
+	SET(CPACK_NSIS_DEFINES "${CPACK_NSIS_DEFINES}
+			InstallDir \\\"\\\$PROGRAMFILES64\\\\${CPACK_PACKAGE_INSTALL_DIRECTORY}\\\"")
+ENDIF(WIN64)
 
 SET(MACOSX_BUNDLE_ICON_FILE "${CMAKE_SOURCE_DIR}/resources/logo.png")
 SET(MACOSX_BUNDLE_GUI_IDENTIFIER "RuckTrack")
@@ -237,7 +287,7 @@ SET(MACOSX_BUNDLE_LONG_VERSION_STRING "${VERSION}")
 SET(MACOSX_BUNDLE_BUNDLE_NAME "RuckTrack")
 SET(MACOSX_BUNDLE_SHORT_VERSION_STRING "${VERSION}")
 SET(MACOSX_BUNDLE_BUNDLE_VERSION "${VERSION}")
-SET(MACOSX_BUNDLE_COPYRIGHT "Tobias Doerffel, 2009")
+SET(MACOSX_BUNDLE_COPYRIGHT "Tobias Doerffel, 2009-2011")
 
 SET(CPACK_SOURCE_GENERATOR "TBZ2")
 SET(CPACK_SOURCE_PACKAGE_FILE_NAME "rucktrack-${VERSION}")
