@@ -229,7 +229,8 @@ bool SrtmLayer::downloadSrtmTiff( const QString & filename )
 	}
 
 	m_activeDownload = m_netAccMgr.get( QNetworkRequest(
-		"http://hypersphere.telascience.org/elevation/cgiar_srtm_v4/tiff/zip/" +
+		//"http://hypersphere.telascience.org/elevation/cgiar_srtm_v4/tiff/zip/" +
+		"http://collections.sdsc.edu/dac2/telascience/telascience_data/elevation/cgiar_srtm_v4/tiff/zip/" +
 		filename ) );
 	connect( m_activeDownload, SIGNAL( readyRead() ),
 				this, SLOT( putDownloadData() ) );
