@@ -22,7 +22,7 @@
  *
  */
 
-#include <QtWebKit/QWebFrame>
+#include <QWebFrame>
 
 #include "MapProvider.h"
 #include "MapView.h"

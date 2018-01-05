@@ -21,7 +21,7 @@
  */
 
 #include <QtCore/QDebug>
-#include <QtWebKit/QWebFrame>
+#include <QWebFrame>
 #include <QVariant>
 #include <QSettings>
 

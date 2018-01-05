@@ -27,8 +27,8 @@
 
 #include <QtCore/QMap>
 
-#include <qwt_plot.h>
-#include <qwt_plot_curve.h>
+#include <qwt/qwt_plot.h>
+#include <qwt/qwt_plot_curve.h>
 
 #include "RTMainWindow.h"
 #include "Route.h"

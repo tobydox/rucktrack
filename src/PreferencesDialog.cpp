@@ -23,10 +23,10 @@
  */
 
 #include <QtCore/QSettings>
-#include <QtGui/QApplication>
-#include <QtGui/QCompleter>
-#include <QtGui/QDirModel>
-#include <QtGui/QFileDialog>
+#include <QApplication>
+#include <QCompleter>
+#include <QDirModel>
+#include <QFileDialog>
 #include <QtCore/QFileInfo>
 
 #include "PreferencesDialog.h"

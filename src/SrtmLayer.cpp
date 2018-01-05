@@ -31,7 +31,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #include <QtCore/QSettings>
-#include <QtGui/QProgressDialog>
+#include <QProgressDialog>
 #include <QtNetwork/QNetworkReply>
 
 #include "RTMainWindow.h"

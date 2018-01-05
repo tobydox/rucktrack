@@ -27,7 +27,7 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
-#include <QtGui/QDesktopServices>
+#include <QStandardPaths>
 #include <QtNetwork/QNetworkDiskCache>
 #include <QtNetwork/QNetworkReply>
 
@@ -78,7 +78,7 @@ QString RuckTrackNetworkAccessManager::cachePath()
 
 	if ( useSystemCacheDirectory )
 	{
-		path = QDesktopServices::storageLocation( QDesktopServices::CacheLocation );
+		path = QStandardPaths::writableLocation( QStandardPaths::CacheLocation );
 	}
 	else
 	{

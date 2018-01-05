@@ -27,7 +27,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QUrl>
-#include <QtWebKit/QWebFrame>
+#include <QWebFrame>
 
 #include "Route.h"
 

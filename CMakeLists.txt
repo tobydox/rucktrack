@@ -13,7 +13,7 @@ ENDIF(COMMAND CMAKE_POLICY)
 
 SET(VERSION_MAJOR "0")
 SET(VERSION_MINOR "1")
-SET(VERSION_PATCH "0")
+SET(VERSION_PATCH "1")
 #SET(VERSION_SUFFIX "")
 
 SET(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
@@ -21,15 +21,16 @@ IF(VERSION_SUFFIX)
 	SET(VERSION "${VERSION}-${VERSION_SUFFIX}")
 ENDIF(VERSION_SUFFIX)
 
-# check for Qt4
-SET(QT_MIN_VERSION "4.4.0")
-FIND_PACKAGE(Qt4 REQUIRED)
-SET(QT_USE_QTNETWORK 1)
-SET(QT_USE_QTWEBKIT 1)
-SET(QT_USE_QTXML 1)
+# check for Qt5
+FIND_PACKAGE(Qt5Network REQUIRED)
+FIND_PACKAGE(Qt5Widgets REQUIRED)
+FIND_PACKAGE(Qt5Xml REQUIRED)
+FIND_PACKAGE(Qt5WebKit REQUIRED)
+FIND_PACKAGE(Qt5WebKitWidgets REQUIRED)
+
 IF(WIN32)
 	SET(QT_QM_RCC "<!DOCTYPE RCC><RCC version=\"1.0\"><qresource>")
-	FILE(GLOB QT_QM ${MINGW_PREFIX}/share/qt4/translations/qt_*.qm)
+	FILE(GLOB QT_QM ${MINGW_PREFIX}/share/qt5/translations/qt_*.qm)
 	FOREACH(f ${QT_QM})
 		STRING(REGEX MATCH ".*qt_help.*" TMP "${f}")
 		IF(NOT TMP)
@@ -46,7 +47,6 @@ ELSE()
 		ADD_DEFINITIONS(-D'QT_TRANSLATIONS_DIR="${QT_TRANSLATIONS_DIR}"')
 	ENDIF(EXISTS "${QT_TRANSLATIONS_DIR}")
 ENDIF()
-INCLUDE(${QT_USE_FILE})
 
 # check for GDAL
 IF(NOT NO_GDAL_SUPPORT)
@@ -92,22 +92,7 @@ IF (DOXYGEN_FOUND STREQUAL "YES")
 ENDIF()
 
 # check for Qwt; if not present, take from 3rdparty directory
-FIND_PACKAGE(Qwt)
-IF (QWT_FOUND)
-	SET(QWT_SOURCES "")
-	SET(QWT_HEADERS "")
-ELSE (QWT_FOUND)
-	SET(QWT_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src/3rdparty/qwt)
-	SET(QWT_LIBRARY "")
-	SET(QWT_SOURCES src/3rdparty/qwt/qwt-all.cpp)
-	SET(QWT_HEADERS src/3rdparty/qwt/qwt_dyngrid_layout.h
-		src/3rdparty/qwt/qwt_legend.h
-		src/3rdparty/qwt/qwt_legend_item.h
-		src/3rdparty/qwt/qwt_plot_canvas.h
-		src/3rdparty/qwt/qwt_plot.h
-		src/3rdparty/qwt/qwt_text_label.h
-		src/3rdparty/qwt/qwt_scale_widget.h)
-ENDIF (QWT_FOUND)
+FIND_PACKAGE(Qwt REQUIRED)
 
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/rucktrack.rc.in ${CMAKE_BINARY_DIR}/rucktrack.rc)
 
@@ -130,8 +115,7 @@ SET(rucktrack_SOURCES src/main.cpp
 			src/StatisticsTable.cpp
 			src/Segmentiser.cpp
 			src/SegmentiserThread.cpp
-			${GDAL_SOURCES}
-			${QWT_SOURCES})
+			${GDAL_SOURCES})
 
 SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/AboutDialog.h
@@ -149,8 +133,7 @@ SET(rucktrack_INCLUDES src/RTMainWindow.h
 			src/StatisticsTable.h
 			src/Segmentiser.h
 			src/SegmentiserThread.h
-			${GDAL_HEADERS}
-			${QWT_HEADERS})
+			${GDAL_HEADERS})
 
 IF(WIN32)
 	INSTALL(FILES
@@ -179,17 +162,25 @@ SET(rucktrack_UI
 					)
 
 SET(QRC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/resources/rucktrack.qrc)
-QT4_WRAP_CPP(rucktrack_MOC_out ${rucktrack_INCLUDES})
-QT4_WRAP_UI(rucktrack_UIC_out ${rucktrack_UI})
-QT4_ADD_RESOURCES(rucktrack_RCC_out ${QRC_FILE})
+QT5_WRAP_CPP(rucktrack_MOC_out ${rucktrack_INCLUDES})
+QT5_WRAP_UI(rucktrack_UIC_out ${rucktrack_UI})
+QT5_ADD_RESOURCES(rucktrack_RCC_out ${QRC_FILE})
 IF(WIN32)
-	QT4_ADD_RESOURCES(ructrack_qt_qm_out ${CMAKE_CURRENT_BINARY_DIR}/qt_qm.qrc)
+	QT5_ADD_RESOURCES(ructrack_qt_qm_out ${CMAKE_CURRENT_BINARY_DIR}/qt_qm.qrc)
 ENDIF()
-QT4_TRANSLATIONS_FOR_QRC(${QRC_FILE} ${ructrack_SOURCES} ${rucktrack_INCLUDES})
 
-INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR} ${QWT_INCLUDE_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
-LINK_LIBRARIES(${QT_LIBRARIES} ${GDAL_LIBRARY} ${QWT_LIBRARY} -lz)
+INCLUDE_DIRECTORIES(${GDAL_INCLUDE_DIR} ${Qwt_INCLUDE_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+LINK_LIBRARIES(${GDAL_LIBRARY} -lqwt-qt5 -lz)
 ADD_EXECUTABLE(rucktrack ${rucktrack_SOURCES} ${rucktrack_UIC_out} ${rucktrack_MOC_out} ${rucktrack_RCC_out} ${ructrack_qt_qm_out} ${WINRC} ${qm_files})
+
+
+TARGET_LINK_LIBRARIES(rucktrack
+        Qt5::Gui
+        Qt5::Widgets
+        Qt5::WebKit
+        Qt5::WebKitWidgets
+        Qt5::Xml
+    )
 
 IF(WIN32)
 	SET_TARGET_PROPERTIES(rucktrack PROPERTIES LINK_FLAGS "${LINK_FLAGS} -mwindows")

@@ -25,7 +25,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QLocale>
 #include <QtCore/QTranslator>
-#include <QtGui/QApplication>
+#include <QApplication>
 
 #include "RTMainWindow.h"
 #include "SrtmLayer.h"

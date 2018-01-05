@@ -25,7 +25,7 @@
 #ifndef _STATISTICS_TABLE_H
 #define _STATISTICS_TABLE_H
 
-#include <QtGui/QTableWidget>
+#include <QTableWidget>
 
 #include "Route.h"
 

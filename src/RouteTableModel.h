@@ -48,7 +48,8 @@ public:
 	int rowOfNearestTrackPoint( const TrackPoint & _tp ) const;
 	void update()
 	{
-		reset();
+		beginResetModel();
+		endResetModel();
 	}
 
 

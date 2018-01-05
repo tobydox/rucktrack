@@ -23,7 +23,7 @@
  */
 
 #include <QtCore/QDebug>
-#include <QtWebKit/QWebFrame>
+#include <QWebFrame>
 
 #include "GoogleMapsProvider.h"
 

@@ -25,7 +25,7 @@
 #ifndef _MAP_VIEW_H
 #define _MAP_VIEW_H
 
-#include <QtWebKit/QWebView>
+#include <QWebView>
 
 #include "Route.h"
 

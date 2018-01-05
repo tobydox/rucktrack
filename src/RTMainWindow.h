@@ -27,8 +27,8 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QModelIndex>
-#include <QtGui/QMainWindow>
-#include <QtGui/QProgressBar>
+#include <QMainWindow>
+#include <QProgressBar>
 
 #include "TrackPoint.h"
 

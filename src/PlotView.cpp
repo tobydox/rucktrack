@@ -23,24 +23,23 @@
  */
 
 #include <QtCore/QDebug>
-#include <QtGui/QMouseEvent>
-#include <QtGui/QToolTip>
+#include <QMouseEvent>
+#include <QToolTip>
 
 #include "PlotView.h"
 
-#include <qwt_legend.h>
-#include <qwt_legend_item.h>
-#include <qwt_plot_canvas.h>
+#include <qwt/qwt_legend.h>
+#include <qwt/qwt_plot_canvas.h>
 
 #include "Segmentiser.h"
 
 PlotCurve::PlotCurve( int _numPoints, const QString & _title,
-										const QColor & _color ) :
-	QwtPlotCurve( _title ),
-	m_numPoints( _numPoints ),
-	m_yData( new double[m_numPoints] ),
-	m_xAxisMin( 0 ),
-	m_xAxisMax( 0 )
+                                        const QColor & _color ) :
+    QwtPlotCurve( _title ),
+    m_numPoints( _numPoints ),
+    m_yData( new double[m_numPoints] ),
+    m_xAxisMin( 0 ),
+    m_xAxisMax( 0 )
 {
 	QColor c = _color;
 	c.setAlpha( 176 );
@@ -92,17 +91,19 @@ void PlotCurve::attachData(PlotView* _plotView, double* _xData, double* _yData)
 
 void PlotCurve::attachData( PlotView * _plotView, double * _xData )
 {
-	setData( _xData, m_yData, m_numPoints );
+	//setData( _xData, m_yData, m_numPoints );
 	attach( _plotView );
 	setBaseline( 0 );
 	delete[] m_yData;
 	m_yData = NULL;
 
 	// setup our legend item
-	QWidget * w = _plotView->legend()->find( this );
+#if QT_VERSION < 0x050000
+	QWidget * w = _plotView->legend()->find( windowI );
 	QPalette pal = w->palette();
 	pal.setColor( QPalette::Text, pen().color() );
 	w->setPalette( pal );
+#endif
 
 	// save min and max values for x axis
 	m_xAxisMin = _xData[0];
@@ -121,7 +122,7 @@ void PlotCurve::xAxisZoomBy(double factor, double centre)
 	// calculate new width of the plot
 	double distance = ( m_xAxisMax - m_xAxisMin ) * factor;
 
-	if ( distance >  x( m_numPoints - 1 ) -  x( 0 ) )
+/*	if ( distance >  x( m_numPoints - 1 ) -  x( 0 ) )
 	{
 		m_xAxisMin = x( 0 );
 		m_xAxisMax = x( m_numPoints - 1 );
@@ -141,7 +142,7 @@ void PlotCurve::xAxisZoomBy(double factor, double centre)
 	{
 		xAxisPanBy( -m_xAxisMin );
 		return;
-	}
+	}*/
 }
 
 
@@ -159,22 +160,22 @@ void PlotCurve::xAxisPanBy(double s)
 
 
 PlotView::PlotView( QWidget * _parent ) :
-	QwtPlot( _parent ),
-	m_curves(),
-	m_numPoints( 0 ),
-	m_xData( NULL ),
-	m_trackPoints( NULL ),
-	m_curveViewMode( CurveViewModeContinuous ),
-	m_segmentiserThread( this )
+    QwtPlot( _parent ),
+    m_curves(),
+    m_numPoints( 0 ),
+    m_xData( NULL ),
+    m_trackPoints( NULL ),
+    m_curveViewMode( CurveViewModeContinuous ),
+    m_segmentiserThread( this )
 {
 	enableAxis( yRight );
-	canvas()->setLineWidth( 0 );
+	//canvas()->setLineWidth( 0 );
 	canvas()->installEventFilter( this );
 	canvas()->setMouseTracking( true );
 
 	QwtLegend * legend = new QwtLegend;
-	legend->setDisplayPolicy( QwtLegend::FixedIdentifier,
-								QwtLegendItem::ShowText );
+/*	legend->setDisplayPolicy( QwtLegend::FixedIdentifier,
+								QwtLegendItem::ShowText );*/
 	legend->setStyleSheet( "font-weight:bold;" );
 	legend->setFrameStyle( QFrame::NoFrame );
 	insertLegend( legend, QwtPlot::RightLegend );
@@ -227,7 +228,7 @@ void PlotView::showRoute( const Route & _route )
 				timeSecs += secs;
 				length += dist;
 				const double dElev = pt.elevation() -
-							lastPoint.elevation();
+				            lastPoint.elevation();
 				if( dElev < 0 )
 				{
 					elevLoss += -dElev;
@@ -246,7 +247,7 @@ void PlotView::showRoute( const Route & _route )
 				m_curves[Elevation].data()[pointCount] = pt.elevation();
 				speed = (dist*1000 / secs);
 				m_curves[Speed].data()[pointCount] =
-											qRound( speed *3.6 * 100 ) / 100.0;
+				                            qRound( speed *3.6 * 100 ) / 100.0;
 				++pointCount;
 			}
 			lastPoint = pt;
@@ -348,30 +349,30 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 
 	switch( _event->type() )
 	{
-		case QEvent::MouseMove:
-		{
-			const double x = invTransform( xBottom,
-									((QMouseEvent *)_event)->pos().x() );
+	    case QEvent::MouseMove:
+	    {
+		    const double x = invTransform( xBottom,
+			                        ((QMouseEvent *)_event)->pos().x() );
 			for( int i = 0; i < m_numPoints; ++i )
 			{
 				if( m_xData[i] >= x )
 				{
 					emit clickedPoint( m_trackPoints[i]->latitude(),
-										m_trackPoints[i]->longitude() );
-					QToolTip::showText( QCursor::pos(),
+					                    m_trackPoints[i]->longitude() );
+/*					QToolTip::showText( QCursor::pos(),
 						QString( tr( "at %1 km\nspeed: %2 km/h\nelevation: %3 m" ) ).
 									arg( qRound( x*100 ) / 100.0 ).
 									arg( m_curves[Speed].y( i ) ).
 									arg( m_curves[Elevation].y( i ) ),
-									this );
+									this );*/
 					break;
 				}
 			}
 			return true;
-		}
-		case QEvent::Wheel:
-		{
-			QWheelEvent * e = (QWheelEvent *) _event;
+	    }
+	    case QEvent::Wheel:
+	    {
+		    QWheelEvent * e = (QWheelEvent *) _event;
 
 			// 15° normally is one step
 			// positive: forwads/away from the user, negative: backwards/towards the user
@@ -379,9 +380,9 @@ bool PlotView::eventFilter( QObject * _obj, QEvent * _event )
 			const double x = invTransform( xBottom, e->x() );
 
 			emit turnedWheel( rotated, x );
-		}
-		default:
-			break;
+	    }
+	    default:
+		    break;
 	}
 
 	return QObject::eventFilter( _obj, _event );
@@ -438,16 +439,16 @@ void PlotView::hideUnneededCurves()
 {
 	switch ( m_curveViewMode )
 	{
-		case CurveViewModeContinuous:
-			m_curves[SegmentedElevation].setStyle( QwtPlotCurve::NoCurve );
+	    case CurveViewModeContinuous:
+		    m_curves[SegmentedElevation].setStyle( QwtPlotCurve::NoCurve );
 			m_curves[Elevation].setStyle( QwtPlotCurve::Lines );
-			break;
-		case CurveViewModeSegmented:
-			m_curves[Elevation].setStyle( QwtPlotCurve::NoCurve );
+		    break;
+	    case CurveViewModeSegmented:
+		    m_curves[Elevation].setStyle( QwtPlotCurve::NoCurve );
 			m_curves[SegmentedElevation].setStyle( QwtPlotCurve::Lines );
-			break;
-		default:
-			Q_ASSERT( false );
+		    break;
+	    default:
+		    Q_ASSERT( false );
 	}
 	replot();
 }
