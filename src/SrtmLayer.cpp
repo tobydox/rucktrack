@@ -82,7 +82,7 @@ bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 			// no, do we have it in our standard cache?
 			if( !QFileInfo( cachedBZ2 ).isFile() )
 			{
-				const QString zipFileName = fileName + ".ZIP";
+				const QString zipFileName = fileName + ".zip";
 
 				QDir().mkpath( fastCachePath() );
 
@@ -92,7 +92,9 @@ bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 
 				// create zip-file object
 				QuaZipFile zipFile( &zip );
-				zip.goToFirstFile();
+				for(bool more=zip.goToFirstFile(); more && zip.getCurrentFileName().endsWith(".tif") == false; more = zip.goToNextFile() )
+				{
+				}
 				zipFile.open( QFile::ReadOnly );
 
 				if( !QFileInfo( fastCachePath() + zipFileName ).isFile() ||
@@ -104,7 +106,9 @@ bool SrtmLayer::getElevation( float lat, float lon, float & elev )
 					}
 					// re-open ZIP file
 					zip.open( QuaZip::mdUnzip );
-					zip.goToFirstFile();
+					for(bool more=zip.goToFirstFile(); more && zip.getCurrentFileName().endsWith(".tif") == false; more = zip.goToNextFile() )
+					{
+					}
 					zipFile.open( QFile::ReadOnly );
 				}
 
@@ -229,8 +233,7 @@ bool SrtmLayer::downloadSrtmTiff( const QString & filename )
 	}
 
 	m_activeDownload = m_netAccMgr.get( QNetworkRequest(
-		//"http://hypersphere.telascience.org/elevation/cgiar_srtm_v4/tiff/zip/" +
-		"http://collections.sdsc.edu/dac2/telascience/telascience_data/elevation/cgiar_srtm_v4/tiff/zip/" +
+		"http://droppr.org/srtm/v4.1/6_5x5_TIFs/" +
 		filename ) );
 	connect( m_activeDownload, SIGNAL( readyRead() ),
 				this, SLOT( putDownloadData() ) );
