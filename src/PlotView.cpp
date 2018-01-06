@@ -28,8 +28,9 @@
 
 #include "PlotView.h"
 
-#include <qwt/qwt_legend.h>
-#include <qwt/qwt_plot_canvas.h>
+#include <qwt_legend.h>
+#include <qwt_plot_canvas.h>
+#include <qwt_point_data.h>
 
 #include "Segmentiser.h"
 
@@ -92,6 +93,8 @@ void PlotCurve::attachData(PlotView* _plotView, double* _xData, double* _yData)
 void PlotCurve::attachData( PlotView * _plotView, double * _xData )
 {
 	//setData( _xData, m_yData, m_numPoints );
+    QwtPointArrayData *pointSeriesData = new QwtPointArrayData (_xData, m_yData, m_numPoints);
+    setData(pointSeriesData);
 	attach( _plotView );
 	setBaseline( 0 );
 	delete[] m_yData;
@@ -266,7 +269,7 @@ void PlotView::showRoute( const Route & _route )
 	m_curves[Speed].setYAxis( 1 );
 
 	setAxisScale( xBottom, 0, length );
-	hideUnneededCurves();
+    hideUnneededCurves();
 	replot();
 }
 
