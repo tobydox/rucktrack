@@ -35,17 +35,17 @@ static void loadTranslations()
 {
 	const QString loc = QLocale::system().name();
 
-	QTranslator *tr = new QTranslator;
-	tr->load( QString( ":/resources/%1.qm" ).arg( loc ) );
-	QCoreApplication::installTranslator( tr );
+    QTranslator *tr = new QTranslator;
+    tr->load( QString( ":/resources/%1.qm" ).arg( loc ) );
+    QCoreApplication::installTranslator( tr );
 
-	QTranslator *qtTr = new QTranslator;
+    QTranslator *qtTr = new QTranslator;
 #ifdef QT_TRANSLATIONS_DIR
-	qtTr->load( QString( "qt_%1.qm" ).arg( loc ), QT_TRANSLATIONS_DIR );
+    qtTr->load( QString( "qt_%1.qm" ).arg( loc ), QT_TRANSLATIONS_DIR );
 #else
-	qtTr->load( QString( ":/qt_%1.qm" ).arg( loc ) );
+    qtTr->load( QString( ":/qt_%1.qm" ).arg( loc ) );
 #endif
-	QCoreApplication::installTranslator( qtTr );
+    QCoreApplication::installTranslator( qtTr );
 }
 
 
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 	QCoreApplication::setApplicationName( "RuckTrack" );
 
 #ifndef QT_TRANSLATIONS_DIR
-	Q_INIT_RESOURCE(qt_qm);
+//	Q_INIT_RESOURCE(qt_qm);
 #endif
 
 	loadTranslations();

@@ -23,12 +23,12 @@
  */
 
 #include <QtCore/QDebug>
-#include <QWebFrame>
+#include <QWebEnginePage>
 
 #include "GoogleMapsProvider.h"
 
 
-GoogleMapsProvider::GoogleMapsProvider( QWebFrame * _parent ) :
+GoogleMapsProvider::GoogleMapsProvider( QWebEnginePage * _parent ) :
 	MapProvider( _parent, publicName() )
 {
 }
@@ -45,7 +45,7 @@ GoogleMapsProvider::~GoogleMapsProvider()
 
 void GoogleMapsProvider::showRoute( const Route & _route )
 {
-	webFrame()->addToJavaScriptWindowObject( "mapProvider", this );
+//	webFrame()->addToJavaScriptWindowObject( "mapProvider", this );
 	QString polyline;
 	QStringList markers;
 	const double invalidVal = -1000;

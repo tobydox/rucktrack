@@ -31,7 +31,7 @@ class WmsMapProvider : public MapProvider
 {
 	Q_OBJECT
 public:
-	WmsMapProvider( QWebFrame * _parent );
+	WmsMapProvider( QWebEnginePage * _parent );
 	virtual ~WmsMapProvider();
 
 	virtual void showRoute( const Route & _route );

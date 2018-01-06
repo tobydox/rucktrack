@@ -25,13 +25,13 @@
 #ifndef _MAP_VIEW_H
 #define _MAP_VIEW_H
 
-#include <QWebView>
+#include <QWebEngineView>
 
 #include "Route.h"
 
 class MapProvider;
 
-class MapView : public QWebView
+class MapView : public QWebEngineView
 {
 public:
 	MapView( QWidget * _parent );

@@ -25,7 +25,7 @@
 #include "MapProvider.h"
 
 
-MapProvider::MapProvider( QWebFrame * _parent, const QString & name ) :
+MapProvider::MapProvider( QWebEnginePage * _parent, const QString & name ) :
 	QObject( _parent ),
 	m_name( name ),
 	m_webFrame( _parent )

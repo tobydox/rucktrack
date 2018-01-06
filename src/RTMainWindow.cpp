@@ -79,7 +79,7 @@ RTMainWindow::RTMainWindow(QWidget *parent) :
 
 	RuckTrackNetworkAccessManager * nam =
 									new RuckTrackNetworkAccessManager( this );
-	ui->mapView->page()->setNetworkAccessManager( nam );
+//	ui->mapView->page()->setNetworkAccessManager( nam );
 
 	// hide “fix elevations” button
 #ifndef HAVE_GDAL_SUPPORT
@@ -387,20 +387,20 @@ void RTMainWindow::setPreferenceMapProvider()
 		{
 			// install OpenStreetMapProvider
 			mapProvider =  new OpenStreetMapProvider(
-											ui->mapView->page()->mainFrame() );
+                                            ui->mapView->page());
 		}
 		else if( preferredMapProvider ==
 				WmsMapProvider::publicName() )
 		{
 			// install WmsMapProvider
 			mapProvider =  new WmsMapProvider(
-											ui->mapView->page()->mainFrame() );
+                                            ui->mapView->page());
 		}
 		else
 		{
 			// install GoogleMapsProvider
 			mapProvider =  new GoogleMapsProvider(
-											ui->mapView->page()->mainFrame() );
+                                            ui->mapView->page());
 		}
 		ui->mapView->setMapProvider( mapProvider );
 	}
