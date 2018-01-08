@@ -27,17 +27,17 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QUrl>
-#include <QWebFrame>
+#include <QWebEnginePage>
 
 #include "Route.h"
 
-class QWebFrame;
+class QWebEnginePage;
 
 class MapProvider : public QObject
 {
 	Q_OBJECT
 public:
-	MapProvider( QWebFrame * _parent, const QString & name );
+    MapProvider( QWebEnginePage * _parent, const QString & name );
 	virtual ~MapProvider();
 
 	// pure virtual functions to be implemented by subclasses
@@ -65,10 +65,10 @@ protected:
 	 */
 	inline QVariant evalJS( const QString & scriptSource )
 	{
-		return webFrame()->evaluateJavaScript( scriptSource );
+        webFrame()->runJavaScript( scriptSource, [=](const QVariant &v){ return v;});
 	}
 
-	QWebFrame * webFrame()
+    QWebEnginePage * webFrame()
 	{
 		return m_webFrame;
 	}
@@ -76,7 +76,7 @@ protected:
 
 private:
 	QString m_name;
-	QWebFrame * m_webFrame;
+    QWebEnginePage * m_webFrame;
 
 
 signals:

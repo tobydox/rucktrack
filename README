@@ -33,7 +33,7 @@ Requirements
 
 * Qt4 SDK
 * libgdal
-
+* libzip-dev
 
 
 Building

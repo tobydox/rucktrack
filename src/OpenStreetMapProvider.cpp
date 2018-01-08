@@ -21,7 +21,7 @@
  */
 
 #include <QtCore/QDebug>
-#include <QWebFrame>
+#include <QWebEnginePage>
 #include <QVariant>
 
 #include "OpenStreetMapProvider.h"
@@ -32,7 +32,7 @@
  * Constructor for OpenStreetMapProvider.
  * \param _parent pointer to parent window.
  */
-OpenStreetMapProvider::OpenStreetMapProvider( QWebFrame * _parent ) :
+OpenStreetMapProvider::OpenStreetMapProvider( QWebEnginePage * _parent ) :
 	MapProvider( _parent, publicName() )
 {
 	
@@ -57,7 +57,7 @@ OpenStreetMapProvider::~OpenStreetMapProvider()
  */
 void OpenStreetMapProvider::showRoute( const Route & _route )
 {
-	webFrame()->addToJavaScriptWindowObject( "mapProvider", this );
+//	webFrame()->addToJavaScriptWindowObject( "mapProvider", this );
 	QString polyline;
 	QString markers;
 	const double invalidVal = -1000;

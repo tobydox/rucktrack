@@ -21,7 +21,7 @@
  */
 
 #include <QtCore/QDebug>
-#include <QWebFrame>
+#include <QWebEnginePage>
 #include <QVariant>
 #include <QSettings>
 
@@ -33,7 +33,7 @@
  * Constructor for WmsMapProvider.
  * \param _parent pointer to parent window.
  */
-WmsMapProvider::WmsMapProvider( QWebFrame * _parent ) :
+WmsMapProvider::WmsMapProvider( QWebEnginePage * _parent ) :
 	MapProvider( _parent, publicName() )
 {
 	connect( webFrame(), SIGNAL( loadFinished(bool) ), this, SLOT( webFrameLoadFinished() ) );
@@ -62,7 +62,7 @@ void WmsMapProvider::webFrameLoadFinished()
 	if ( !called )
 	{
 		called = true;
-		webFrame()->addToJavaScriptWindowObject( "mapProvider", this );
+//		webFrame()->addToJavaScriptWindowObject( "mapProvider", this );
 
 		const QString layerName = QSettings().value( "WmsMapProvider/LayerName",
 			"Web Map Service" ).toString();

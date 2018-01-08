@@ -30,7 +30,7 @@
 class OpenStreetMapProvider : public MapProvider
 {
 public:
-	OpenStreetMapProvider( QWebFrame * _parent );
+	OpenStreetMapProvider( QWebEnginePage * _parent );
 	virtual ~OpenStreetMapProvider();
 
 	virtual void showRoute( const Route & _route );

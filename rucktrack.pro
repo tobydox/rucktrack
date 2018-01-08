@@ -1,7 +1,11 @@
-QT += webkit \
-    network \
+QT +=     network \
     xml
-CONFIG += release
+#webkit \
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): greaterThan(QT_MINOR_VERSION, 8): QT += webenginewidgets
+
+#CONFIG += release
+
 TARGET = rucktrack
 TEMPLATE = app
 SOURCES += src/main.cpp \
@@ -35,7 +39,16 @@ SOURCES += src/main.cpp \
     src/3rdparty/bzip2/randtable.c \
     src/3rdparty/bzip2/decompress.c \
     src/3rdparty/bzip2/blocksort.c \
-	src/3rdparty/qwt/qwt-all.cpp
+#    src/3rdparty/qwt/qwt_dyngrid_layout.cpp \
+#    src/3rdparty/qwt/qwt_legend.cpp \
+##    src/3rdparty/qwt/qwt_legend_item.cpp \
+#    src/3rdparty/qwt/qwt_plot_item.cpp \
+#    src/3rdparty/qwt/qwt_plot_canvas.cpp \
+#    src/3rdparty/qwt/qwt_plot_curve.cpp \
+#    src/3rdparty/qwt/qwt_plot.cpp \
+#    src/3rdparty/qwt/qwt_text_label.cpp \
+#    src/3rdparty/qwt/qwt_scale_widget.cpp
+##	src/3rdparty/qwt/qwt-all.cpp
 
 HEADERS += src/RTMainWindow.h \
     src/AboutDialog.h \
@@ -55,22 +68,27 @@ HEADERS += src/RTMainWindow.h \
     src/SrtmLayer.h \
     src/StatisticsTable.h \
     src/QtBzip2File.h \
-    src/3rdparty/quazip/quazip/quazipfile.h \
-    src/3rdparty/qwt/qwt_dyngrid_layout.h \
-    src/3rdparty/qwt/qwt_legend.h \
-    src/3rdparty/qwt/qwt_legend_item.h \
-    src/3rdparty/qwt/qwt_plot_canvas.h \
-    src/3rdparty/qwt/qwt_plot.h \
-    src/3rdparty/qwt/qwt_text_label.h \
-    src/3rdparty/qwt/qwt_scale_widget.h
+    src/3rdparty/quazip/quazip/quazipfile.h
+#    src/3rdparty/qwt/qwt_dyngrid_layout.h \
+#    src/3rdparty/qwt/qwt_legend.h \
+##    src/3rdparty/qwt/qwt_legend_item.h \
+#    src/3rdparty/qwt/qwt_plot_item.h \
+#    src/3rdparty/qwt/qwt_plot_canvas.h \
+#    src/3rdparty/qwt/qwt_plot_curve.h \
+#    src/3rdparty/qwt/qwt_plot.h \
+#    src/3rdparty/qwt/qwt_text_label.h \
+#    src/3rdparty/qwt/qwt_scale_widget.h
 
 INCLUDEPATH += src \
     src/3rdparty/quazip/quazip \
 	src/3rdparty/bzip2/ \
-	src/3rdparty/qwt/
+        src/3rdparty/qwt/src \
+        src/3rdparty/
+
 DEFINES += NO_GDAL_SUPPORT
 unix:LIBS += -lz
 win32:LIBS += -lwsock32
+LIBS += -Lsrc/3rdparty/qwt/lib -L$$PWD/lib -lqwt
 FORMS += forms/rtmainwindow.ui		\
 			forms/AboutDialog.ui	\
 			forms/PreferencesDialog.ui

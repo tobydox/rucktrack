@@ -22,17 +22,17 @@
  *
  */
 
-#include <QWebFrame>
+#include <QWebEnginePage>
 
 #include "MapProvider.h"
 #include "MapView.h"
 
 
 MapView::MapView( QWidget * _parent ) :
-	QWebView( _parent ),
+	QWebEngineView( _parent ),
 	m_mapProvider( NULL )
 {
-	page()->mainFrame()->addToJavaScriptWindowObject( "mapView", this );
+//	page()->mainFrame()->addToJavaScriptWindowObject( "mapView", this );
 }
 
 
